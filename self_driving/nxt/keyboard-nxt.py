@@ -8,8 +8,7 @@ ID = '00:16:53:17:EF:0A' # MAC address NXT11
 sock =  BlueSock(ID)
 
 def moveCar(bk):
-    ''' keyboard control function to NXT robot
-    robot with keyboard inputs.
+    ''' remote control function to NXT robot with keyboard inputs.
 
     Args:
         bk (brick): brick object 
