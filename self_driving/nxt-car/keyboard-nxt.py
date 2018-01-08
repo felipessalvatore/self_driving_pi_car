@@ -1,7 +1,7 @@
 from nxt.bluesock import BlueSock
 import sys
 import nxt
-import keyboard as key 
+import keyboard as key
 
 ID = '00:16:53:17:EF:0A' # MAC address NXT11
 
@@ -11,7 +11,7 @@ def moveCar(bk):
     ''' remote control function to NXT robot with keyboard inputs.
 
     Args:
-        bk (brick): brick object 
+        bk (brick): brick object
 
     Returns:
         None - user stops exectution when pressing 'q'
@@ -21,8 +21,8 @@ def moveCar(bk):
     # both = nxt.SynchronizedMotors(leftMotor, rightMotor, 0)
     # rightboth = nxt.SynchronizedMotors(leftMotor, rightMotor, 100)
     # leftboth = nxt.SynchronizedMotors(rightMotor, leftMotor, 100)
-
     while True:
+
         try:
             if key.is_pressed('q'):
                 print('Exiting...')
@@ -59,13 +59,11 @@ def moveCar(bk):
             break
 
 if sock:
-
    # Connect to brick
    print('READY')
    brick = sock.connect()
 
    moveCar(brick)
-
    # Close socket
    sock.close()
 
