@@ -1,5 +1,6 @@
 import unittest
 import cv2
+import os
 
 class CamTest(unittest.TestCase):
 
