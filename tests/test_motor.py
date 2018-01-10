@@ -1,6 +1,7 @@
 import unittest
 from nxt.bluesock import BlueSock
 import nxt
+import time
 
 class NxtTest(unittest.TestCase):
 
@@ -23,10 +24,11 @@ class NxtTest(unittest.TestCase):
         cls.rightMotor.reset_position(False)
     
     def test_motor_left_right(self):
-        turnDegrees = 30 
+        turnDegrees = 360 
         self.rightMotor.weak_turn(20,turnDegrees)
-        self.leftMotor.weak_turn(20,turnDegrees)
-        rtc = self.rightMotor.get_tacho().get_tacho
-        ltc = self.leftMotor.get_tacho().get_tacho
+        self.leftMotor.weak_turn(-20,turnDegrees)
+        time.sleep(3) # wait for the motors to stop
+        rtc = abs(self.rightMotor.get_tacho().tacho_count)
+        ltc = abs(self.leftMotor.get_tacho().tacho_count)
         self.assertAlmostEqual(rtc, turnDegrees, delta=3)
         self.assertAlmostEqual(ltc, turnDegrees, delta=3)
