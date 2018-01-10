@@ -8,7 +8,7 @@ class BluetoothTest(unittest.TestCase):
     def setUp(cls):
        cls.ID = '00:16:53:17:EF:0A' # MAC address NXT11
 
-    def test_rasberry_can_find_nxt_via_bluetooth(self):
+    def test_bluetooth_raspberry_can_find_nxt(self):
         blue_list = blue.discover_devices()
         self.assertIn(self.ID, blue_list)
 
