@@ -2,8 +2,8 @@ import time
 
 def get_date():
     """
-    gives you the date in form:
-    day - month - year
+    Gives you the date in form:
+    year-month-day-minutes-second 
     :rtype: str
     """
-    return time.strftime('%d-%m-%Y')
+    return time.strftime('%Y-%m-%d-%-M-%S')
