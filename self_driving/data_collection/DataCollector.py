@@ -18,7 +18,7 @@ class DataCollector(object):
     to do
     """
     def __init__(self, name=""):
-        sock, brick = bluetooth.connectCar()
+        self.sock, brick = bluetooth.connectCar()
         self.leftMotor = nxt.Motor(brick, nxt.PORT_C)
         self.rightMotor = nxt.Motor(brick, nxt.PORT_B)
         turn_ratio = 0
@@ -88,3 +88,9 @@ class DataCollector(object):
             except:
                 break
 
+if __name__ == '__main__':
+    dc = DataCollector("teste_1")
+    print("image folder = {}".format(dc.dir_name))
+    dc.generate()
+    bluetooth.disconnectCar(dc.sock)
+    
