@@ -24,12 +24,12 @@ while True:
                 #rightMotor.weak_turn(20, 100)
                 #leftMotor.weak_turn(20, 100)
                  both.run(40)
-		 time.sleep(0.05)
+		         time.sleep(0.05)
             elif key.is_pressed('down'):
                 #rightMotor.weak_turn(-20,30)
                 #leftMotor.weak_turn(-20,30)
                  both.run(-40)
-		 time.sleep(0.05)
+		        time.sleep(0.05)
             elif key.is_pressed('left'):
                 rightMotor.weak_turn(60,30)
                 leftMotor.weak_turn(-60,30)
