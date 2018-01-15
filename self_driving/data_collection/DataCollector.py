@@ -4,7 +4,8 @@ import inspect
 import keyboard as key
 import nxt
 from util import get_date
-
+import cv2
+import time
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
@@ -26,7 +27,7 @@ class DataCollector(object):
                                       self.rightMotor,
                                       turn_ratio)
         self.dir_name = name + get_date()
-        os.makedir(self.dir_name)
+        os.mkdir(self.dir_name)
         self.data_dict = {}
         self.count = 0
 
@@ -44,9 +45,10 @@ class DataCollector(object):
 
 
     def generate(self):
-        while True:
+	while True:
             _, im = self.camera.read()
-            try:
+	    print im.shape
+            if True:
                 if key.is_pressed('q'):
                     print('Exiting...')
                     break
@@ -64,14 +66,14 @@ class DataCollector(object):
                     time.sleep(0.05)
 
                 elif key.is_pressed('left'):
-                    self.rightMotor.weak_turn(40,30)
-                    self.leftMotor.weak_turn(-40,30)
+                    self.rightMotor.weak_turn(20,30)
+                    self.leftMotor.weak_turn(-20,30)
                     self.saveImage(self.dir_name, str(self.count),im)
                     self.saveDict('left')
 
                 elif key.is_pressed('right'):
-                    self.rightMotor.weak_turn(-40,30)
-                    self.leftMotor.weak_turn(40,30)
+                    self.rightMotor.weak_turn(-20,30)
+                    self.leftMotor.weak_turn(20,30)
                     self.saveImage(self.dir_name, str(self.count),im)
                     self.saveDict('right')
 
@@ -83,14 +85,17 @@ class DataCollector(object):
                 #     print('stopping...')
 
                 else:
+		    print 'else'
                     self.leftMotor.idle()
                     self.rightMotor.idle()
-            except:
-                break
+#            except:
+#		print 'except'
+#                break
 
 if __name__ == '__main__':
     dc = DataCollector("teste_1")
     print("image folder = {}".format(dc.dir_name))
     dc.generate()
     bluetooth.disconnectCar(dc.sock)
-    
+    print(dc.data_dict)
+
