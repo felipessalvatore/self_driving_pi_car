@@ -19,8 +19,8 @@ class DataCollector(object):
     """
     def __init__(self, name=""):
         sock, brick = bluetooth.connectCar()
-        self.leftMotor = nxt.Motor(brick, nxt.PORT_B)
-        self.rightMotor = nxt.Motor(brick, nxt.PORT_A)
+        self.leftMotor = nxt.Motor(brick, nxt.PORT_C)
+        self.rightMotor = nxt.Motor(brick, nxt.PORT_B)
         turn_ratio = 0
         self.both = nxt.SynchronizedMotors(self.leftMotor,
                                       self.rightMotor,
