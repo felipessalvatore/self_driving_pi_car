@@ -2,6 +2,7 @@ import unittest
 import cv2
 import os
 
+
 class CamTest(unittest.TestCase):
 
     @classmethod
@@ -17,13 +18,12 @@ class CamTest(unittest.TestCase):
         height_param = 4
         width_param = 3
         width_size = 160
-        height_size = 90 
+        height_size = 90
         cls.cam.set(width_param, width_size)
         cls.cam.set(height_param, height_size)
-        
 
     def test_take_and_save_image_as_grayscale(self):
-        _ , img = self.cam.read()
+        _, img = self.cam.read()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cv2.imwrite(self.img_path, img)
         test_shape = (90, 160)
