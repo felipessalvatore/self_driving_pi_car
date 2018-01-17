@@ -1,4 +1,4 @@
-import bluetooth as blue
+import bluetooth
 from nxt import bluesock
 
 NXT_ID = '00:16:53:17:EF:0A'  # MAC address NXT11
@@ -19,7 +19,7 @@ def connectCar(blue_id=NXT_ID):
         sock = bluesock.BlueSock(blue_id)
         brick = sock.connect()
         return sock, brick
-    except blue.btcommon.BluetoothError:
+    except:
         print("NO connection with {}".format(NXT_ID))
 
 
