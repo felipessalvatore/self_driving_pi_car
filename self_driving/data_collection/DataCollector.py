@@ -4,6 +4,7 @@ import inspect
 import keyboard as key
 from util import get_date
 import abc
+import time
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
@@ -14,16 +15,17 @@ from nxt_car.DiffCar import DiffCar # noqa
 from vision.Camera import Camera # noqa
 
 
-class DataCollector(metaclass=abc.ABCMeta): # noqa
+class DataCollector():
+    __metaclass__ = abc.ABCMeta
+
     """
     to do
     """
     def __init__(self, robot, cam, name=None):
         date = get_date()
         if name is not None:
-            if os.path.exists(name):
-                name += date
-            os.mkdir(name)
+            if not os.path.exists(name):
+                os.mkdir(name)
             self.dir_name = os.path.join(name, date)
             self.pickle_name = os.path.join(name,
                                             date + '_pickle')
@@ -60,11 +62,11 @@ class BasicDiffCollector(DataCollector):
     """
 
     def __init__(self, robot, cam, name):
-        super().__init__(robot, cam, name)
+        super(BasicDiffCollector,self).__init__(robot, cam, name)
 
-    def generate(self, state):
+    def generate(self):
         while True:
-            img = self.cam.take_picture_rgb()
+            img = self.camera.take_picture_rgb()
 
             print "Working"
 
