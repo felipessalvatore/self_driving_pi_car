@@ -89,7 +89,7 @@ class BasicDiffCollector(DataCollector):
                 self.save_image_write_dict(img, 'left')
 
             elif key.is_pressed('right'):
-                self.robot.move_left()
+                self.robot.move_right()
                 self.save_image_write_dict(img, 'right')
             else:
                 self.robot.idle()
