@@ -35,3 +35,10 @@ class Camera(object):
         _, img = self.cam.read()
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return img
+
+    def take_picture_green(self):
+        """
+        to do
+        """
+        _, img = self.cam.read()
+        return img[1]
