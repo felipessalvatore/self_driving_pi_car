@@ -97,9 +97,10 @@ class BasicDiffCollector(DataCollector):
 
 if __name__ == '__main__':
     name = "basic_test"
-    robot = DiffCar()
+    robot = DiffCar(bluetooth=True)
     cam = Camera()
     dc = BasicDiffCollector(robot, cam, name)
     dc.generate()
-    bluetooth.disconnectCar(robot.sock)
+    if robot.btCon:
+        robot.disconnect(robot.sock)
     print(dc.data_dict)

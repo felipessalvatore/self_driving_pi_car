@@ -13,10 +13,14 @@ class DiffCar(object):
                  power_left=20,
                  tacho_left=30,
                  power_right=20,
-                 tacho_right=30):
-        self.sock, self.brick = nxt_bluetooth.connectCar()
-        self.leftMotor = nxt.Motor(self.brick, nxt.PORT_C)
-        self.rightMotor = nxt.Motor(self.brick, nxt.PORT_B)
+                 tacho_right=30,
+                 bluetooth=False):
+        if bluetooth:
+            self.sock, self.brick = nxt_bluetooth.connectCar('00:16:53:17:B4:04')
+        else:
+            self.brick = nxt.locator.find_one_brick()
+        self.leftMotor = nxt.Motor(self.brick, nxt.PORT_B)
+        self.rightMotor = nxt.Motor(self.brick, nxt.PORT_A)
         self.both = nxt.SynchronizedMotors(self.leftMotor,
                                            self.rightMotor,
                                            turn_ratio)
@@ -26,6 +30,7 @@ class DiffCar(object):
         self.tacho_left = tacho_left
         self.power_right = power_right
         self.tacho_right = tacho_right
+        self.btCon = bluetooth
 
     def move_up(self):
         """
@@ -59,3 +64,9 @@ class DiffCar(object):
         """
         self.leftMotor.idle()
         self.rightMotor.idle()
+
+    def disconnect(self, socket):
+        """
+        to do
+        """
+        nxt_bluetooth.disconnectCar(socket)
