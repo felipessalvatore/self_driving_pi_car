@@ -1,7 +1,6 @@
 import nxt
 import nxt_bluetooth
 
-
 class DiffCar(object):
     """
     to do
@@ -16,7 +15,7 @@ class DiffCar(object):
                  tacho_right=30,
                  bluetooth=False):
         if bluetooth:
-            self.sock, self.brick = nxt_bluetooth.connectCar('00:16:53:17:B4:04')
+            self.sock, self.brick = nxt_bluetooth.connectCar() # PKSM '00:16:53:17:B4:04'
         else:
             self.brick = nxt.locator.find_one_brick()
         self.leftMotor = nxt.Motor(self.brick, nxt.PORT_B)
