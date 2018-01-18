@@ -97,10 +97,11 @@ class BasicDiffCollector(DataCollector):
 
 if __name__ == '__main__':
     name = "basic_test"
-    robot = DiffCar(bluetooth=True)
+    robot = DiffCar(bluetooth=False)
     cam = Camera()
     dc = BasicDiffCollector(robot, cam, name)
     dc.generate()
     if robot.btCon:
         robot.disconnect(robot.sock)
     print(dc.data_dict)
+    time.sleep(0.3) # waits for keyboard thread to shutdown
