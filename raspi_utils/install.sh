@@ -45,7 +45,22 @@ sudo ldconfig
 sudo pip install nxt-python
 sudo pip install keyboard
 sudo pip install pybluez
+sudo pip install pyusb
 sudo apt-get install bluetooth libbluetooth-dev
+sudo apt-get install libusb-dev
+
+# Setup USB connection for nxt robot
+sudo dd of=/etc/udev/rules.d/70-lego.rules << EOF
+# Lego NXT brick in normal mode
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="00$
+# Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="61$
+EOF
+sudo groupadd lego
+sudo gpasswd -a pi lego
+sudo gpasswd -a root lego
+sudo udevadm control --reload-rules
+sudo reboot
 
 # Getting our repo for self-driving car!
 git clone git@github.com:felipessalvatore/self_driving_project.git
