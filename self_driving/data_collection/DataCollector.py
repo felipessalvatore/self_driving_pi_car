@@ -5,6 +5,8 @@ import keyboard as key
 from util import get_date
 import abc
 import time
+import pickle
+import bluetooth
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
@@ -62,7 +64,7 @@ class BasicDiffCollector(DataCollector):
     """
 
     def __init__(self, robot, cam, name):
-        super(BasicDiffCollector,self).__init__(robot, cam, name)
+        super(BasicDiffCollector, self).__init__(robot, cam, name)
 
     def generate(self):
         while True:
@@ -93,6 +95,8 @@ class BasicDiffCollector(DataCollector):
                 self.save_image_write_dict(img, 'right')
             else:
                 self.robot.idle()
+        with open(self.pickle_name, "wb") as f:
+            pickle.dump(self.data_dict, f)
 
 
 if __name__ == '__main__':
