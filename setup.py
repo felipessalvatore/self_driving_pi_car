@@ -5,5 +5,5 @@ setup(
     version='0.1',
     description='Autonomous car in rasberry pi with tensorflow',
     packages=find_packages(),
-    test_suite="tests",
+    test_suite="tests"
 )
