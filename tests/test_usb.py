@@ -11,7 +11,13 @@ class USBTest(unittest.TestCase):
         cls.generator = locator.find_bricks(method=cls.connection_method)
 
     def test_usb_1_raspberry_is_not_connected(self):
-        self.assertRaises(StopIteration, self.generator.next)
+        #self.assertRaises(StopIteration, self.generator.next)
+        raise_exception = False
+        try:
+            next_item = next(self.generator)
+        except StopIteration:
+            raise_exception = True
+        self.assertFalse(raise_exception)
 
     def test_usb_2_check_usbsock_nxt(self):
         get_result = next(self.generator, None)
