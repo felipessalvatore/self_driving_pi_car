@@ -19,8 +19,8 @@ class NxtTest(unittest.TestCase):
         ID = '00:16:53:17:EF:0A'  # MAC address NXT11
         cls.sock = BlueSock(ID)
         brick = cls.sock.connect()
-        cls.leftMotor = nxt.Motor(brick, nxt.PORT_B)
-        cls.rightMotor = nxt.Motor(brick, nxt.PORT_A)
+        cls.leftMotor = nxt.Motor(brick, nxt.PORT_C)
+        cls.rightMotor = nxt.Motor(brick, nxt.PORT_B)
         cls.leftMotor.reset_position(False)
         cls.rightMotor.reset_position(False)
 
