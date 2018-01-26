@@ -40,7 +40,6 @@ def folder2array(folder_path,
         all_images.append(image)
         all_labels.append(label)
     all_labels = change_type_to_uint8(np.array(all_labels))
-    all_labels = all_labels.reshape((all_labels.shape[0], 1))
     all_images = np.array(all_images)
     return all_images, all_labels
 
