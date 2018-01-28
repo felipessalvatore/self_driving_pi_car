@@ -11,8 +11,8 @@ from util import command2int
 
 def folder2array(folder_path,
                  pickle_path,
-                 width,
                  height,
+                 width,
                  channels,
                  verbose):
     """
@@ -23,10 +23,10 @@ def folder2array(folder_path,
     :type folder_path: str
     :param pickle_path: path to pickle containing the labels
     :type pickle_path: str
-    :param width: image width
-    :type width: int
     :param height: image height
     :type height: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
 
@@ -67,8 +67,8 @@ def change_type_to_uint8(image):
 def create_data_set_as_np_array(folder_path,
                                 data_name="data",
                                 label_name="labels",
-                                width=160,
                                 height=90,
+                                width=160,
                                 channels=3,
                                 verbose=True):
     """
@@ -84,10 +84,10 @@ def create_data_set_as_np_array(folder_path,
     :type data_name: str
     :param label_name: name of the labels array to be saved
     :type label_name: str
-    :param width: image width
-    :type width: int
     :param height: image height
     :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
     :param verbose: param to print path information
@@ -102,8 +102,8 @@ def create_data_set_as_np_array(folder_path,
             pickle_path = folder + "_pickle"
             images, labels = folder2array(folder,
                                           pickle_path,
-                                          width,
                                           height,
+                                          width,
                                           channels,
                                           verbose)
             all_images.append(images)
@@ -128,16 +128,16 @@ def main():
                         type=str, help='path to data to be saved')
     parser.add_argument('labels_path',
                         type=str, help='path to labels to be saved')
-    parser.add_argument("-w",
-                        "--image_width",
-                        type=int,
-                        default=160,
-                        help="width number (default=160)")
     parser.add_argument("-H",
                         "--image_height",
                         type=int,
                         default=90,
                         help="height number (default=90)")
+    parser.add_argument("-w",
+                        "--image_width",
+                        type=int,
+                        default=160,
+                        help="width number (default=160)")
     parser.add_argument("-c",
                         "--image_channels",
                         type=int,
@@ -147,8 +147,8 @@ def main():
     create_data_set_as_np_array(user_args.img_folder_path,
                                 user_args.data_path,
                                 user_args.labels_path,
-                                user_args.image_width,
                                 user_args.image_height,
+                                user_args.image_width,
                                 user_args.image_channels)
 
 

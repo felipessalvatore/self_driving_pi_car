@@ -116,7 +116,7 @@ def green_dataset(data):
     return data, shape
 
 
-def dataset_augmentation(data, labels, width=160, height=90, channels=3):
+def dataset_augmentation(data, labels, height=90, width=160, channels=3):
     """
     Augment a dataset by inserting a vertical random shadow and
     by bluring with a Gaussian convolution
@@ -136,7 +136,7 @@ def dataset_augmentation(data, labels, width=160, height=90, channels=3):
     size = data.shape[0]
     flat_shape = data.shape[1]
     for i in range(size):
-        image = get_image(data[i], width, height, channels)
+        image = get_image(data[i], height, width, channels)
         new_image = img_mani.random_shadow(image)
         new_image = new_image.reshape(flat_shape)
         new_label = labels[i]

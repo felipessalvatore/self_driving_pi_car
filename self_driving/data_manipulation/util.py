@@ -22,8 +22,8 @@ def run_test(testClass):
 
 def get_image_and_command(data_index,
                           label_index,
-                          width=160,
                           height=90,
+                          width=160,
                           channels=3):
     """
     Get and reshape image
@@ -33,10 +33,10 @@ def get_image_and_command(data_index,
 
     :type data_index: numpy.ndarray
     :type label_index: numpy.ndarray
-    :param width: image width
-    :type width: int
     :param height: image height
     :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
     :rtype: numpy.ndarray, str
@@ -47,8 +47,8 @@ def get_image_and_command(data_index,
 
 
 def get_image(data_index,
-              width=160,
               height=90,
+              width=160,
               channels=3):
     """
     Get and reshape image with parameters:
@@ -57,10 +57,10 @@ def get_image(data_index,
 
     :type data_index: numpy.ndarray
     :rtype: numpy.ndarray
-    :param width: image width
-    :type width: int
     :param height: image height
     :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
     """
