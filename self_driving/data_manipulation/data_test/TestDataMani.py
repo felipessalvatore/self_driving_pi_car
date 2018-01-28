@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import unittest
 import os
 import sys
@@ -20,7 +23,7 @@ class TestDataMani(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        cls.image_folder = currentdir
+        cls.image_folder = os.path.join(currentdir, "pictures_for_test")
         cls.width = 160
         cls.height = 90
         cls.channels = 3
@@ -53,5 +56,4 @@ class TestDataMani(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    run_test(TestDataMani,
-             "\n=== Running data manipulation tests ===\n")
+    run_test(TestDataMani)

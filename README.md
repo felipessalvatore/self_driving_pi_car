@@ -1,8 +1,17 @@
 # self_driving_project
+
 Our project of self driving car
 
-To run all test type:
+To run the raspberry pi test type:
 
 ```
-$ python -m unittest discover -v 
+$ python setup.py test 
+```
+
+To run the tests for the dataset manipulation type:
+
+```
+$ cd /self_driving/data_manipulation/data_test
+$ python3 test_all.py 
+
 ```
