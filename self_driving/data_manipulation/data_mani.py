@@ -3,34 +3,39 @@ import pickle
 import os
 from scipy import misc
 import numpy as np
-
-command2int = {"up": 0, "down": 1, "left": 2, "right": 3}
-int2command = {i[1]: i[0] for i in command2int.items()}
+from util import command2int
 
 
 def folder2array(folder_path,
                  pickle_path,
-                 image_width,
-                 image_height,
-                 image_channels):
+                 width,
+                 height,
+                 channels,
+                 verbose):
     """
     Function to transform all images from the folder folder_name
     into a tuple of np arrays.
 
-    :param
+    :param folder_path: path to folder containing images
     :type folder_path: str
-    :type
-    :rtype: (np.array,np.array
+    :param pickle_path: path to pickle containing the labels
+    :type pickle_path: str
+    :param width: image width
+    :type width: int
+    :param height: image height
+    :type height: int
+    :param channels: image channels
+    :type channels: int
+
+    :rtype: (np.array,np.array)
     """
     all_images = []
     all_labels = []
-    image_width = 160
-    image_height = 90
-    image_channels = 3
-    flat_shape = image_width * image_height * image_channels
+    flat_shape = width * height * channels
     with open(pickle_path, "rb") as f:
         label_dict = pickle.load(f)
-    print("Trying to convert images from {} \n".format(folder_path))
+    if verbose:
+        print("Trying to convert images from {} \n".format(folder_path))
     for filename in os.listdir(folder_path):
         key = filename[:- 4]
         label = command2int[label_dict[key]]
@@ -48,9 +53,9 @@ def change_type_to_uint8(image):
     """
     Change type to uint8 Unsigned integer (0 to 255)
 
-    :type image: np array
-    :param
-    :rtype: np array
+    :param image: image as an np.array
+    :type image: np.array
+    :rtype: np.array
     """
     image = image.astype('uint8')
     return image
@@ -59,19 +64,31 @@ def change_type_to_uint8(image):
 def create_data_set_as_np_array(folder_path,
                                 data_name="data",
                                 label_name="labels",
-                                image_width=160,
-                                image_height=90,
-                                image_channels=3):
+                                width=160,
+                                height=90,
+                                channels=3,
+                                verbose=True):
     """
     Giving one path to a folder of folders of images,
     this function transform all images in two arrays
     one 'data_name' with all the flatted images
     and other 'label_name' with all the respective labels
 
-    :type folder_name: str
-    :param
+    :param folder_path: path to folder containing folders of images
+                        and pickles
+    :type folder_path: str
+    :param data_name: name of the data array to be saved
     :type data_name: str
-    :type data_name: str
+    :param label_name: name of the labels array to be saved
+    :type label_name: str
+    :param width: image width
+    :type width: int
+    :param height: image height
+    :type heights: int
+    :param channels: image channels
+    :type channels: int
+    :param verbose: param to print path information
+    :type verbose: boolean
     """
     assert os.path.exists(folder_path)
     all_images = []
@@ -79,25 +96,26 @@ def create_data_set_as_np_array(folder_path,
     for folder in os.listdir(folder_path):
         folder = os.path.join(folder_path, folder)
         if os.path.isdir(folder):
-            print(folder)
             pickle_path = folder + "_pickle"
             images, labels = folder2array(folder,
                                           pickle_path,
-                                          image_width,
-                                          image_height,
-                                          image_channels)
+                                          width,
+                                          height,
+                                          channels,
+                                          verbose)
             all_images.append(images)
             all_labels.append(labels)
     all_images = np.concatenate(all_images, axis=0)
     all_labels = np.concatenate(all_labels, axis=0)
-    print(all_images.shape, all_labels.shape)
+    all_labels = all_labels.reshape((all_labels.shape[0], 1))
     np.save(data_name, all_images)
     np.save(label_name, all_labels)
 
 
 def main():
     """
-    to do
+    Script to transform one folder containing folders of images
+    and pickles to a tuple of np.arrays
     """
     parser = argparse.ArgumentParser()
 
