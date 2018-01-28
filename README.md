@@ -11,7 +11,7 @@ $ python setup.py test
 To run the tests for the dataset manipulation type:
 
 ```
-$ cd /self_driving/data_manipulation/data_test
+$ cd /self_driving/data_manipulation/test
 $ python3 test_all.py 
 
 ```
