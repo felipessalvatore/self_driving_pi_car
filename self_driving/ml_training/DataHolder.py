@@ -2,7 +2,6 @@ import numpy as np
 import os
 import sys
 import inspect
-from textblob import TextBlob
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
