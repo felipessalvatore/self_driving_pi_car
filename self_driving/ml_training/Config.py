@@ -13,6 +13,8 @@ class Config(object):
     :type channels: int
     :param architecture: network architecture
     :type architecture: list of int
+    :param activations: list of different tf functions
+    :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
     :param batch_size: batch size for training
     :type batch_size: int
     :param epochs: number of epochs
@@ -42,6 +44,7 @@ class Config(object):
                  width=160,
                  channels=3,
                  architecture=[1000, 500, 100, 10, 4],
+                 activations=None,
                  batch_size=32,
                  epochs=10,
                  num_steps=1000,
@@ -52,6 +55,7 @@ class Config(object):
         self.width = width
         self.channels = channels
         self.architecture = architecture
+        self.activations = activations
         self.batch_size = batch_size
         self.epochs = epochs
         self.num_steps = num_steps
