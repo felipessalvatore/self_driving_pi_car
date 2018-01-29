@@ -6,8 +6,12 @@ import argparse
 import numpy as np
 import sys
 import inspect
-from util import get_image_and_command, get_image, get_flat_shape
-from util import load_dataset, save_dataset
+try:
+    from util import get_image_and_command, get_image, get_flat_shape
+    from util import load_dataset, save_dataset
+except ImportError:
+    from data_manipulation.util import get_image_and_command, get_image, get_flat_shape # noqa
+    from data_manipulation.util import load_dataset, save_dataset
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)

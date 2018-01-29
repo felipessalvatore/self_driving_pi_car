@@ -14,7 +14,7 @@ sys.path.insert(0, parentdir)
 
 
 from util import run_test, get_image # noqa
-from data_mani import create_data_set_as_np_array # noqa
+from img2array import create_data_set_as_np_array # noqa
 from data_aug import extend_dataset_flip_axis, binarize_dataset # noqa
 from data_aug import gray_dataset, green_dataset, dataset_augmentation # noqa
 

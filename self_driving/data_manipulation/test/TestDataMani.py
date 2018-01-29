@@ -14,7 +14,7 @@ sys.path.insert(0, parentdir)
 
 
 from util import run_test # noqa
-from data_mani import create_data_set_as_np_array # noqa
+from img2array import create_data_set_as_np_array # noqa
 
 
 class TestDataMani(unittest.TestCase):
