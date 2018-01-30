@@ -21,7 +21,7 @@ class DFN():
         self.activations = config.activations
         self.architecture = config.architecture
         if self.activations is not None:
-            assert len(self.activations) - 1 == len(self.architecture)
+            assert len(self.architecture) - 1 == len(self.activations)
         self.graph = graph
         with self.graph.as_default():
             self.build_net()

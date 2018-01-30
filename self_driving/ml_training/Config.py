@@ -43,13 +43,13 @@ class Config(object):
                  height=90,
                  width=160,
                  channels=3,
-                 architecture=[1000, 500, 100, 10, 4],
+                 architecture=[4],
                  activations=None,
                  batch_size=32,
-                 epochs=10,
+                 epochs=5,
                  num_steps=1000,
                  save_step=100,
-                 learning_rate=0.00217346380124,
+                 learning_rate=0.02,
                  optimizer=tf.train.GradientDescentOptimizer):
         self.height = height
         self.width = width
@@ -62,3 +62,17 @@ class Config(object):
         self.save_step = save_step
         self.learning_rate = learning_rate
         self.optimizer = optimizer
+
+    def get_status(self):
+        status = "height = {}\n".format(self.height)
+        status += "width = {}\n".format(self.width)
+        status += "channels = {}\n".format(self.channels)
+        status += "architecture = {}\n".format(self.architecture)
+        status += "activations = {}\n".format(self.activations)
+        status += "batch_size = {}\n".format(self.batch_size)
+        status += "epochs = {}\n".format(self.epochs)
+        status += "num_steps = {}\n".format(self.num_steps)
+        status += "save_step = {}\n".format(self.save_step)
+        status += "learning_rate = {}\n".format(self.learning_rate)
+        status += "optimizer = {}\n".format(self.optimizer)
+        return status
