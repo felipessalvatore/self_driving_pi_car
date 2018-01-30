@@ -43,6 +43,7 @@ class Trainer():
         self.save_dir = save_dir
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
+        self.build_graph()
 
     def build_graph(self):
         """
@@ -50,41 +51,108 @@ class Trainer():
         """
         flat_size = self.height * self.width * self.channels
         with self.graph.as_default():
-            self.input_image = tf.placeholder(tf.float32,
-                                              shape=(None, flat_size),
-                                              name="input_image")
-            self.iterator_train = get_iterator(self.tfrecords_train,
-                                               self.batch_size,
-                                               parser_with_normalization)
-            self.iterator_valid = get_iterator(self.tfrecords_valid,
-                                               self.batch_size,
-                                               parser_with_normalization)
-            train_images, train_labels = self.iterator_train.get_next()
-            train_images = tf.reshape(train_images,
-                                      (self.batch_size, flat_size))
-            train_labels = tf.reshape(train_labels, (self.batch_size,))
-            train_logits = self.model.get_logits(train_images)
-            tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels, # noqa
-                                                                       logits=train_logits) # noqa
-            self.tf_train_loss = tf.reduce_mean(tf_train_loss)
-            optimizer = self.tf_optimizer(self.learning_rate)
-            self.update_weights = optimizer.minimize(self.tf_train_loss)
+            with tf.name_scope("placeholders"):
+                self.input_image = tf.placeholder(tf.float32,
+                                                  shape=(None, flat_size),
+                                                  name="input_image")
+            with tf.name_scope("iterators"):
+                self.iterator_train = get_iterator(self.tfrecords_train,
+                                                   self.batch_size,
+                                                   parser_with_normalization)
+                self.iterator_valid = get_iterator(self.tfrecords_valid,
+                                                   self.batch_size,
+                                                   parser_with_normalization)
+                self.iterator_test = get_iterator(self.tfrecords_test,
+                                                  self.batch_size,
+                                                  parser_with_normalization)
+            with tf.name_scope("prediction"):
+                self.tf_prediction = self.model.get_prediction(self.input_image) # noqa
 
-            valid_images, valid_labels = self.iterator_valid.get_next()
-            valid_images = tf.reshape(valid_images,
-                                      (self.batch_size, flat_size))
-            valid_labels = tf.reshape(valid_labels, (self.batch_size,))
-            valid_logits = self.model.get_logits(valid_images)
-            valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels, # noqa
-                                                                       logits=valid_logits) # noqa
-            self.tf_valid_loss = tf.reduce_mean(valid_loss)
+            with tf.name_scope("train_loss"):
+                train_images, train_labels = self.iterator_train.get_next()
+                train_images = tf.reshape(train_images,
+                                          (self.batch_size, flat_size))
+                train_labels = tf.reshape(train_labels, (self.batch_size,))
+                train_logits = self.model.get_logits(train_images)
+                tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels, # noqa
+                                                                           logits=train_logits) # noqa
+                self.tf_train_loss = tf.reduce_mean(tf_train_loss)
 
-            self.tf_prediction = self.model.get_prediction(self.input_image)
+            with tf.name_scope("optimization"):
+                optimizer = self.tf_optimizer(self.learning_rate)
+                self.update_weights = optimizer.minimize(self.tf_train_loss)
 
-            self.saver = tf.train.Saver()
-            self.save_path = os.path.join(self.save_dir, 'best_validation')
+            with tf.name_scope("valid_loss"):
+                valid_images, valid_labels = self.iterator_valid.get_next()
+                valid_images = tf.reshape(valid_images,
+                                          (self.batch_size, flat_size))
+                valid_labels = tf.reshape(valid_labels, (self.batch_size,))
+                valid_logits = self.model.get_logits(valid_images)
+                valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels, # noqa
+                                                                           logits=valid_logits) # noqa
+                self.tf_valid_loss = tf.reduce_mean(valid_loss)
 
-    def fit(self):
+            with tf.name_scope("valid_accuracy"):
+                valid_prediction = tf.nn.softmax(valid_logits)
+                valid_prediction = tf.argmax(valid_prediction, axis=1)
+                valid_prediction = tf.cast(valid_prediction, dtype=tf.int32)
+                valid_prediction = tf.equal(valid_prediction,
+                                            valid_labels)
+                self.valid_accuracy = tf.reduce_mean(tf.cast(valid_prediction,
+                                                             'float'),
+                                                     name='valid_accuracy')
+            with tf.name_scope("test_accuracy"):
+                test_images, test_labels = self.iterator_test.get_next()
+                test_prediction = self.model.get_prediction(test_images)
+                test_prediction = tf.argmax(test_prediction, axis=1)
+                test_prediction = tf.cast(test_prediction, dtype=tf.int32)
+                test_prediction = tf.equal(test_prediction,
+                                           test_labels)
+                self.test_accuracy = tf.reduce_mean(tf.cast(test_prediction,
+                                                            'float'),
+                                                    name='test_accuracy')
+
+            with tf.name_scope("saver"):
+                self.saver = tf.train.Saver()
+                self.save_path = os.path.join(self.save_dir, 'best_validation')
+
+    def get_accuracy(self, iterator_initializer, accuracy_tensor, iterations):
+        """
+        Method to compute the accuracy of the model's predictions
+        on the test dataset
+        """
+        with tf.Session(graph=self.graph) as sess:
+            sess.run(iterator_initializer)
+            if os.listdir(self.save_dir) == []:
+                sess.run(tf.global_variables_initializer())
+            else:
+                self.saver.restore(sess=sess, save_path=self.save_path)
+            acc = 0
+            for _ in range(iterations):
+                acc += sess.run(accuracy_tensor)
+        return acc / iterations
+
+    def get_valid_accuracy(self,
+                           iterations=50):
+        """
+        Method to compute the accuracy of the model's predictions
+        on the test dataset
+        """
+        return self.get_accuracy(self.iterator_valid.initializer,
+                                 self.valid_accuracy,
+                                 iterations)
+
+    def get_test_accuracy(self,
+                          iterations=50):
+        """
+        Method to compute the accuracy of the model's predictions
+        on the test dataset
+        """
+        return self.get_accuracy(self.iterator_test.initializer,
+                                 self.test_accuracy,
+                                 iterations)
+
+    def fit(self, verbose=True):
         """
         fiting the data
         """
@@ -94,42 +162,66 @@ class Trainer():
             sess.run(self.iterator_valid.initializer)
             sess.run(tf.global_variables_initializer())
             show_loss = sess.run(self.tf_train_loss)
-            for i in range(self.epochs):
-                print("loss =", show_loss)
+            for epoch in range(self.epochs):
                 for step in range(self.iterations):
                     _, loss = sess.run([self.update_weights,
                                         self.tf_train_loss])
                     show_loss = loss
                     if step % self.show_step == 0:
+                        if verbose:
+                            info = 'Epoch {0:5},'.format(epoch + 1)
+                            info += ' step {0:5}:'.format(step + 1)
+                            info += ' train_loss = {0:.6f} |'.format(show_loss)
+                            info += ' valid_loss = {0:.6f}\r'.format(best_valid_loss) # noqa
+                            print(info, end='') # noqa
                         valid_loss = sess.run(self.tf_valid_loss)
                         if valid_loss < best_valid_loss:
                             self.saver.save(sess=sess,
                                             save_path=self.save_path)
                             best_valid_loss = valid_loss
-                            print("save", valid_loss)
 
     def predict(self, img):
         """
         predict the data
         """
+        type_msg = "not in the correct type"
+        assert img.dtype == np.float32, type_msg
         with tf.Session(graph=self.graph) as sess:
-            self.saver.restore(sess=sess, save_path=self.save_path)
+            if os.listdir(self.save_dir) == []:
+                sess.run(tf.global_variables_initializer())
+            else:
+                self.saver.restore(sess=sess, save_path=self.save_path)
             feed_dict = {self.input_image: img}
             result = sess.run(self.tf_prediction,
                               feed_dict=feed_dict)
             result = np.argmax(result, axis=1)
+            result = result.astype(np.int32)
         return result
 
 
-if __name__ == '__main__':
-    my_graph = tf.Graph()
-    my_config = Config()
-    my_data = DataHolder(my_config,
-                         data_path="data.npy",
-                         label_path="labels.npy",
-                         record_path="pista1",
-                         flip=True,
-                         augmentation=True)
-    my_data.create_records()
-    network = DFN(my_graph, my_config)
-    my_train = Trainer(my_graph, my_config, network, my_data)
+# if __name__ == '__main__':
+#     my_graph = tf.Graph()
+#     my_config = Config(channels=1)
+#     my_data = DataHolder(my_config,
+#                          data_path="pista1/data.npy",
+#                          label_path="pista1labels.npy",
+#                          record_path="pista1",
+#                          flip=True,
+#                          augmentation=False,
+#                          binary=True,
+#                          records=["pista1_train.tfrecords", "pista1_valid.tfrecords", "pista1_test.tfrecords"])
+#     # my_data.create_records()
+#     network = DFN(my_graph, my_config)
+#     my_train = Trainer(my_graph, my_config, network, my_data)
+#     a1 = my_train.get_valid_accuracy()
+#     print("valid acc = ", a1)
+#     a2 = my_train.get_test_accuracy()
+#     print("test acc = ", a2)
+#     print("start training\n")
+#     print(my_config.get_status())
+#     my_train.fit()
+#     a1 = my_train.get_valid_accuracy()
+#     print()
+#     print("valid acc = ", a1)
+#     a2 = my_train.get_test_accuracy()
+#     print("test acc = ", a2)
