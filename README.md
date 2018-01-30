@@ -15,3 +15,12 @@ $ cd /self_driving/data_manipulation/test
 $ python3 test_all.py 
 
 ```
+
+
+To run the tests for the machine learning training type:
+
+```
+$ cd /self_driving/ml_trainig/test
+$ python3 test_all.py 
+
+```
