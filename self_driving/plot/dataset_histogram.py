@@ -5,14 +5,14 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_histogram(labelpath):
+def plot_histogram(labels_dataset):
     """
     Plot dataset histogram 
 
     :type label_path: str 
     :param label_path: absolute path to labels.npy  
     """
-    labels_dataset = np.load(labelpath)
+    # labels_dataset = np.load(labelpath)
 
     data_hist = plt.hist(labels_dataset, bins=np.arange(5)-0.5, edgecolor='black')
     axes = plt.gca() # Get Current Axes

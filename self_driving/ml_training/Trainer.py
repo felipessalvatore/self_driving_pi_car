@@ -5,6 +5,7 @@ from tf_function import get_iterator, parser_with_normalization
 from DataHolder import DataHolder
 from Config import Config
 from DFN import DFN
+from util import reconstruct_from_record, accuracy_per_category
 
 
 class Trainer():
@@ -62,9 +63,9 @@ class Trainer():
                 self.iterator_valid = get_iterator(self.tfrecords_valid,
                                                    self.batch_size,
                                                    parser_with_normalization)
-                self.iterator_test = get_iterator(self.tfrecords_test,
-                                                  self.batch_size,
-                                                  parser_with_normalization)
+                # self.iterator_test = get_iterator(self.tfrecords_test,
+                #                                   self.batch_size,
+                #                                   parser_with_normalization)
             with tf.name_scope("prediction"):
                 self.tf_prediction = self.model.get_prediction(self.input_image) # noqa
 
@@ -101,16 +102,16 @@ class Trainer():
                 self.valid_accuracy = tf.reduce_mean(tf.cast(valid_prediction,
                                                              'float'),
                                                      name='valid_accuracy')
-            with tf.name_scope("test_accuracy"):
-                test_images, test_labels = self.iterator_test.get_next()
-                test_prediction = self.model.get_prediction(test_images)
-                test_prediction = tf.argmax(test_prediction, axis=1)
-                test_prediction = tf.cast(test_prediction, dtype=tf.int32)
-                test_prediction = tf.equal(test_prediction,
-                                           test_labels)
-                self.test_accuracy = tf.reduce_mean(tf.cast(test_prediction,
-                                                            'float'),
-                                                    name='test_accuracy')
+            # with tf.name_scope("test_accuracy"):
+            #     test_images, test_labels = self.iterator_test.get_next()
+            #     test_prediction = self.model.get_prediction(test_images)
+            #     test_prediction = tf.argmax(test_prediction, axis=1)
+            #     test_prediction = tf.cast(test_prediction, dtype=tf.int32)
+            #     test_prediction = tf.equal(test_prediction,
+            #                                test_labels)
+            #     self.test_accuracy = tf.reduce_mean(tf.cast(test_prediction,
+            #                                                 'float'),
+            #                                         name='test_accuracy')
 
             with tf.name_scope("saver"):
                 self.saver = tf.train.Saver()
@@ -142,15 +143,15 @@ class Trainer():
                                  self.valid_accuracy,
                                  iterations)
 
-    def get_test_accuracy(self,
-                          iterations=50):
-        """
-        Method to compute the accuracy of the model's predictions
-        on the test dataset
-        """
-        return self.get_accuracy(self.iterator_test.initializer,
-                                 self.test_accuracy,
-                                 iterations)
+    # def get_test_accuracy(self,
+    #                       iterations=50):
+    #     """
+    #     Method to compute the accuracy of the model's predictions
+    #     on the test dataset
+    #     """
+    #     return self.get_accuracy(self.iterator_test.initializer,
+    #                              self.test_accuracy,
+    #                              iterations)
 
     def fit(self, verbose=True):
         """
@@ -197,31 +198,3 @@ class Trainer():
             result = np.argmax(result, axis=1)
             result = result.astype(np.int32)
         return result
-
-
-# if __name__ == '__main__':
-#     my_graph = tf.Graph()
-#     my_config = Config(channels=1)
-#     my_data = DataHolder(my_config,
-#                          data_path="pista1/data.npy",
-#                          label_path="pista1labels.npy",
-#                          record_path="pista1",
-#                          flip=True,
-#                          augmentation=False,
-#                          binary=True,
-#                          records=["pista1_train.tfrecords", "pista1_valid.tfrecords", "pista1_test.tfrecords"])
-#     # my_data.create_records()
-#     network = DFN(my_graph, my_config)
-#     my_train = Trainer(my_graph, my_config, network, my_data)
-#     a1 = my_train.get_valid_accuracy()
-#     print("valid acc = ", a1)
-#     a2 = my_train.get_test_accuracy()
-#     print("test acc = ", a2)
-#     print("start training\n")
-#     print(my_config.get_status())
-#     my_train.fit()
-#     a1 = my_train.get_valid_accuracy()
-#     print()
-#     print("valid acc = ", a1)
-#     a2 = my_train.get_test_accuracy()
-#     print("test acc = ", a2)
