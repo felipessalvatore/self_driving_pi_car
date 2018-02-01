@@ -70,10 +70,8 @@ def accuracy_per_category(pred, label, categories):
 
 
 def get_random_architecture_and_activations(network_sizes,
-                                            height=90,
-                                            width=160,
-                                            channels=3,
-                                            categories=4):
+                                            categories=4,
+                                            upper_bound=6000):
     """
     Creates a random architecture list and activations list
     using a list of sizes for different networks.
@@ -93,7 +91,6 @@ def get_random_architecture_and_activations(network_sizes,
                         2: tf.nn.tanh}
     hidden_layers = []
     activations = []
-    upper_bound = channels * height * width
     lower_bound = categories
 
     for size in network_sizes:
