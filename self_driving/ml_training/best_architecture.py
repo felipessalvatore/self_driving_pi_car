@@ -16,6 +16,7 @@ from util import int2command, get_random_architecture_and_activations
 
 
 def architecture_search(records,
+                        channels,
                         experiments=10,
                         deepest_net_size=4):
     """
@@ -30,7 +31,8 @@ def architecture_search(records,
 
     for arch, act in zip(hidden_layers, activations):
         config = Config(architecture=arch,
-                        activations=act)
+                        activations=act,
+                        channels=channels)
 
         data = DataHolder(config,
                           records=records)
@@ -85,12 +87,16 @@ def main():
                         default="pure",
                         help="mode for data: pure, flip, aug, bin, gray, green (default=pure)") # noqa
     args = parser.parse_args()
+    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
+        channels = 1
+    else:
+        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
         record = args.mode + record
         new_records.append(record)
-    architecture_search(new_records)
+    architecture_search(new_records, channels=channels)
 
 
 if __name__ == "__main__":
