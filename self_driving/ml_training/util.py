@@ -67,3 +67,53 @@ def accuracy_per_category(pred, label, categories):
         else:
             results.append((right / total))
     return results
+
+
+def get_random_architecture_and_activations(network_sizes,
+                                            height=90,
+                                            width=160,
+                                            channels=3,
+                                            categories=4):
+    """
+    Creates a random architecture list and activations list
+    using a list of sizes for different networks.
+
+    :param network_sizes: list of network's size
+    :type network_sizes: list of int
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :rtype: list of int, list of function tensorflow
+    """
+    activations_dict = {0: tf.nn.relu,
+                        1: tf.nn.sigmoid,
+                        2: tf.nn.tanh}
+    hidden_layers = []
+    activations = []
+    upper_bound = channels * height * width
+    lower_bound = categories
+
+    for size in network_sizes:
+        hidden_sizes = []
+        last = upper_bound
+        for _ in range(size):
+            if lower_bound < last / 2:
+                new_size = np.random.randint(lower_bound, last / 2)
+            else:
+                new_size = np.random.randint(lower_bound, lower_bound + 1)
+            hidden_sizes.append(new_size)
+            last = new_size
+        hidden_layers.append(hidden_sizes)
+
+    for hidden in hidden_layers:
+        activ = np.random.randint(0, 3, len(hidden))
+        activ = list(map(lambda x: activations_dict[x], activ))
+        activations.append(activ)
+
+    for hidden in hidden_layers:
+        hidden.append(categories)
+
+    return hidden_layers, activations
