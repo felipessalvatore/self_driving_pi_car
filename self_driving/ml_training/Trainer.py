@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import os
 import numpy as np
 import tensorflow as tf
@@ -63,9 +66,6 @@ class Trainer():
                 self.iterator_valid = get_iterator(self.tfrecords_valid,
                                                    self.batch_size,
                                                    parser_with_normalization)
-                # self.iterator_test = get_iterator(self.tfrecords_test,
-                #                                   self.batch_size,
-                #                                   parser_with_normalization)
             with tf.name_scope("prediction"):
                 self.tf_prediction = self.model.get_prediction(self.input_image) # noqa
 
@@ -102,16 +102,6 @@ class Trainer():
                 self.valid_accuracy = tf.reduce_mean(tf.cast(valid_prediction,
                                                              'float'),
                                                      name='valid_accuracy')
-            # with tf.name_scope("test_accuracy"):
-            #     test_images, test_labels = self.iterator_test.get_next()
-            #     test_prediction = self.model.get_prediction(test_images)
-            #     test_prediction = tf.argmax(test_prediction, axis=1)
-            #     test_prediction = tf.cast(test_prediction, dtype=tf.int32)
-            #     test_prediction = tf.equal(test_prediction,
-            #                                test_labels)
-            #     self.test_accuracy = tf.reduce_mean(tf.cast(test_prediction,
-            #                                                 'float'),
-            #                                         name='test_accuracy')
 
             with tf.name_scope("saver"):
                 self.saver = tf.train.Saver()
@@ -143,16 +133,6 @@ class Trainer():
                                  self.valid_accuracy,
                                  iterations)
 
-    # def get_test_accuracy(self,
-    #                       iterations=50):
-    #     """
-    #     Method to compute the accuracy of the model's predictions
-    #     on the test dataset
-    #     """
-    #     return self.get_accuracy(self.iterator_test.initializer,
-    #                              self.test_accuracy,
-    #                              iterations)
-
     def fit(self, verbose=True):
         """
         fiting the data
@@ -173,7 +153,7 @@ class Trainer():
                             info = 'Epoch {0:5},'.format(epoch + 1)
                             info += ' step {0:5}:'.format(step + 1)
                             info += ' train_loss = {0:.6f} |'.format(show_loss)
-                            info += ' valid_loss = {0:.6f}\r'.format(best_valid_loss) # noqa
+                            info += ' valid_loss = {0:.6f}\n'.format(best_valid_loss) # noqa
                             print(info, end='') # noqa
                         valid_loss = sess.run(self.tf_valid_loss)
                         if valid_loss < best_valid_loss:

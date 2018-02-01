@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import os
 import sys
@@ -52,7 +55,6 @@ class DataHolder():
         """
         create all records
         """
-        assert self.records is None
         if self.gray or self.green or self.binary:
             msg = "only one condition should be True"
             assert self.gray ^ self.green ^ self.binary, msg

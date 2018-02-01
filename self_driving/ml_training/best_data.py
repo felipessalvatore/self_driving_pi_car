@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import tensorflow as tf
 import os
 import numpy as np
@@ -12,49 +15,71 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command
 
 
-def data_search(data_path,
-                label_path):
+def data_search(data_path=None,
+                label_path=None,
+                have_records=False):
     """
     :type train_data_path: str
     :type eval_data_path: str
     """
     config_pure = Config(architecture=[4])
-
-    data_pure = DataHolder(config_pure,
-                           records=["pista1_pure_train.tfrecords",
-                                    "pista1_pure_valid.tfrecords",
-                                    "pista1_pure_test.tfrecords"])
-
     config_flip = Config(architecture=[4])
-    data_flip = DataHolder(config_flip,
-                           records=["pista1_flip_train.tfrecords",
-                                    "pista1_flip_valid.tfrecords",
-                                    "pista1_flip_test.tfrecords"])
-
     config_aug = Config(architecture=[4])
+    config_bin = Config(architecture=[4], channels=1)
+    config_green = Config(architecture=[4], channels=1)
+    config_gray = Config(architecture=[4], channels=1)
+    data_pure = DataHolder(config_pure,
+                           data_path=data_path,
+                           label_path=label_path,
+                           record_path="pure",
+                           records=["pure_train.tfrecords",
+                                    "pure_valid.tfrecords",
+                                    "pure_test.tfrecords"])
+    data_flip = DataHolder(config_flip,
+                           data_path=data_path,
+                           label_path=label_path,
+                           record_path="flip",
+                           flip=True,
+                           records=["flip_train.tfrecords",
+                                    "flip_valid.tfrecords",
+                                    "flip_test.tfrecords"])
     data_aug = DataHolder(config_aug,
-                          records=["pista1_aug_train.tfrecords",
-                                   "pista1_aug_valid.tfrecords",
-                                   "pista1_aug_test.tfrecords"])
+                          data_path=data_path,
+                          label_path=label_path,
+                          record_path="aug",
+                          flip=True,
+                          augmentation=True,
+                          records=["aug_train.tfrecords",
+                                   "aug_valid.tfrecords",
+                                   "aug_test.tfrecords"])
 
-    config_bin = Config(architecture=[4])
     data_bin = DataHolder(config_bin,
-                          records=["pista1_bin_train.tfrecords",
-                                   "pista1_bin_valid.tfrecords",
-                                   "pista1_bin_test.tfrecords"])
-
-    config_green = Config(architecture=[4])
+                          data_path=data_path,
+                          label_path=label_path,
+                          record_path="bin",
+                          flip=True,
+                          binary=True,
+                          records=["bin_train.tfrecords",
+                                   "bin_valid.tfrecords",
+                                   "bin_test.tfrecords"])
     data_green = DataHolder(config_green,
-                            records=["pista1_green_train.tfrecords",
-                                     "pista1_green_valid.tfrecords",
-                                     "pista1_green_test.tfrecords"])
-
-    config_gray = Config(architecture=[4])
+                            data_path=data_path,
+                            label_path=label_path,
+                            record_path="green",
+                            flip=True,
+                            green=True,
+                            records=["green_train.tfrecords",
+                                     "green_valid.tfrecords",
+                                     "green_test.tfrecords"])
     data_gray = DataHolder(config_gray,
-                           records=["pista1_gray_train.tfrecords",
-                                    "pista1_gray_valid.tfrecords",
-                                    "pista1_gray_test.tfrecords"])
-
+                           data_path=data_path,
+                           label_path=label_path,
+                           record_path="gray",
+                           flip=True,
+                           green=True,
+                           records=["gray_train.tfrecords",
+                                    "gray_valid.tfrecords",
+                                    "gray_test.tfrecords"])
     all_data = [data_pure,
                 data_flip,
                 data_aug,
@@ -78,24 +103,27 @@ def data_search(data_path,
     results = []
     for data, config, name in zip(all_data, all_config, names):
         print(name + ":\n")
-        # data.create_records()
+        if not have_records:
+            assert data_path is not None
+            assert label_path is not None
+            data.create_records()
         graph = tf.Graph()
         network = DFN(graph, config)
         trainer = Trainer(graph, config, network, data)
         trainer.fit(verbose=True)
         valid_acc = trainer.get_valid_accuracy()
         name += ': valid_acc = {0:.6f} | '.format(valid_acc)
-        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord()) # noqa
-        test_images = test_images.astype(np.float32) / 255
-        test_pred = trainer.predict(test_images)
-        acc_cat = accuracy_per_category(test_pred, test_labels, categories=4)
+        valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord()) # noqa
+        valid_images = valid_images.astype(np.float32) / 255
+        valid_pred = trainer.predict(valid_images)
+        acc_cat = accuracy_per_category(valid_pred, valid_labels, categories=4)
         for i, cat_result in enumerate(acc_cat):
             name += int2command[i] + ": = {0:.6f}, ".format(cat_result)
         results.append(name)
         if os.path.exists("checkpoints"):
             shutil.rmtree("checkpoints")
 
-    file = open("different_data.txt", "w")
+    file = open("data_results.txt", "w")
     file.write("Results with different data\n")
     for result in results:
         result += "\n"
@@ -108,13 +136,23 @@ def main():
     Main script.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('train_data',
-                        type=str, help='train data path')
-    parser.add_argument('label_data',
-                        type=str, help='label data path')
+    parser.add_argument("-d",
+                        "--train_data",
+                        type=str,
+                        default=None,
+                        help="train data path (default=None)")
+    parser.add_argument("-l",
+                        "--train_label",
+                        type=str,
+                        default=None,
+                        help="label data path (default=None)")
     args = parser.parse_args()
+    cond1 = type(args.train_data) == str
+    cond2 = type(args.train_label) == str
+    have_records = not (cond1 and cond2)
     data_search(args.train_data,
-                args.label_data)
+                args.train_label,
+                have_records)
 
 
 if __name__ == "__main__":
