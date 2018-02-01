@@ -16,13 +16,13 @@ from util import int2command, get_random_architecture_and_activations
 
 
 def architecture_search(records,
-                        experiments=2,
+                        experiments=10,
                         deepest_net_size=4):
     """
     :type train_data_path: str
     :type eval_data_path: str
     """
-    sizes = np.random.randint(1, 2, experiments)
+    sizes = np.random.randint(1, deepest_net_size, experiments)
     hidden_layers, activations = get_random_architecture_and_activations(network_sizes=sizes) # noqa
     numeric_result = []
     results = []
@@ -30,11 +30,7 @@ def architecture_search(records,
 
     for arch, act in zip(hidden_layers, activations):
         config = Config(architecture=arch,
-                        activations=act,
-                        batch_size=32,
-                        epochs=1,
-                        num_steps=6,
-                        save_step=2)
+                        activations=act)
 
         data = DataHolder(config,
                           records=records)
@@ -47,10 +43,10 @@ def architecture_search(records,
         valid_acc = trainer.get_valid_accuracy()
         numeric_result.append(valid_acc)
         name += ': valid_acc = {0:.6f} | '.format(valid_acc)
-        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord()) # noqa
-        test_images = test_images.astype(np.float32) / 255
-        test_pred = trainer.predict(test_images)
-        acc_cat = accuracy_per_category(test_pred, test_labels, categories=4)
+        valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord()) # noqa
+        valid_images = valid_images.astype(np.float32) / 255
+        valid_pred = trainer.predict(valid_images)
+        acc_cat = accuracy_per_category(valid_pred, valid_labels, categories=4)
         for i, cat_result in enumerate(acc_cat):
             name += int2command[i] + ": = {0:.6f}, ".format(cat_result)
         results.append(name)
@@ -82,13 +78,16 @@ def main():
     """
     Main script.
     """
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('train_data',
-    #                     type=str, help='train data path')
-    # parser.add_argument('label_data',
-    #                     type=str, help='label data path')
-    # args = parser.parse_args()
-    records = ["pista1_pure_train.tfrecords", "pista1_pure_valid.tfrecords", "pista1_pure_test.tfrecords"] 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m",
+                        "--mode",
+                        type=str,
+                        default="pure",
+                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)") # noqa
+    args = parser.parse_args()
+    records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
+    for record in records:
+        record = args.name + record
     architecture_search(records)
 
 
