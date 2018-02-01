@@ -15,7 +15,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 
-from util import run_test # noqa
+from util import run_test, reconstruct_from_record # noqa
 from Config import Config # noqa
 from DataHolder import DataHolder # noqa
 
@@ -83,34 +83,6 @@ class TestDataHolder(unittest.TestCase):
             if os.path.exists(file_name):
                 os.remove(file_name)
 
-    def reconstruc_from_record(self, record_path):
-        reconstructed_images = []
-        reconstructed_labels = []
-        record_iterator = tf.python_io.tf_record_iterator(path=record_path)
-
-        for string_record in record_iterator:
-            example = tf.train.Example()
-            example.ParseFromString(string_record)
-            height = int(example.features.feature['height'].int64_list.value[0]) # noqa
-            width = int(example.features.feature['width'].int64_list.value[0]) # noqa
-            channels = int(example.features.feature['channels'].int64_list.value[0]) # noqa
-            img_string = (example.features.feature['image_raw']
-                                          .bytes_list
-                                          .value[0])
-            annotation_string = (example.features.feature['labels_raw']
-                                        .bytes_list
-                                        .value[0])
-
-            reconstructed_img = np.fromstring(img_string, dtype=np.uint8)
-            reconstructed_annotation = np.fromstring(annotation_string,
-                                                     dtype=np.uint8)
-            reconstructed_images.append(reconstructed_img)
-            reconstructed_labels.append(reconstructed_annotation)
-        shape = (height, width, channels)
-        reconstructed_images = np.array(reconstructed_images)
-        reconstructed_labels = np.array(reconstructed_labels)
-        return reconstructed_images, reconstructed_labels, shape
-
     def check_size_and_type_data_holder(self,
                                         dataholder,
                                         mode="train",
@@ -124,7 +96,7 @@ class TestDataHolder(unittest.TestCase):
         elif mode == "test":
             size = sizes[2]
             record_path = dataholder.get_test_tfrecord()
-        images, labels, shape = self.reconstruc_from_record(record_path)
+        images, labels, shape = reconstruct_from_record(record_path)
         self.assertEqual(images.shape, (size, shape[0] * shape[1] * shape[2]))
         self.assertEqual(labels.shape, (size, 1))
         self.assertEqual(np.uint8, labels.dtype)
