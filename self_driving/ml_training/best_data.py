@@ -18,80 +18,42 @@ def data_search(data_path,
     :type train_data_path: str
     :type eval_data_path: str
     """
-    config_pure = Config(architecture=[4],
-                         activations=None,
-                         batch_size=32,
-                         epochs=1,
-                         num_steps=6,
-                         save_step=2)
+    config_pure = Config(architecture=[4])
+
     data_pure = DataHolder(config_pure,
-                           data_path=data_path,
-                           label_path=label_path,
-                           record_path="pista1_pure")
+                           records=["pista1_pure_train.tfrecords",
+                                    "pista1_pure_valid.tfrecords",
+                                    "pista1_pure_test.tfrecords"])
 
-    config_flip = Config(architecture=[4],
-                         activations=None,
-                         batch_size=32,
-                         epochs=1,
-                         num_steps=6,
-                         save_step=2)
+    config_flip = Config(architecture=[4])
     data_flip = DataHolder(config_flip,
-                           data_path=data_path,
-                           label_path=label_path,
-                           record_path="pista1_flip",
-                           flip=True)
+                           records=["pista1_flip_train.tfrecords",
+                                    "pista1_flip_valid.tfrecords",
+                                    "pista1_flip_test.tfrecords"])
 
-    config_aug = Config(architecture=[4],
-                        activations=None,
-                        batch_size=32,
-                        epochs=1,
-                        num_steps=6,
-                        save_step=2)
+    config_aug = Config(architecture=[4])
     data_aug = DataHolder(config_aug,
-                          data_path=data_path,
-                          label_path=label_path,
-                          record_path="pista1_aug",
-                          flip=True,
-                          augmentation=True)
+                          records=["pista1_aug_train.tfrecords",
+                                   "pista1_aug_valid.tfrecords",
+                                   "pista1_aug_test.tfrecords"])
 
-    config_bin = Config(architecture=[4],
-                        activations=None,
-                        batch_size=32,
-                        epochs=1,
-                        num_steps=6,
-                        save_step=2)
+    config_bin = Config(architecture=[4])
     data_bin = DataHolder(config_bin,
-                          data_path=data_path,
-                          label_path=label_path,
-                          record_path="pista1_bin",
-                          flip=True,
-                          binary=True)
+                          records=["pista1_bin_train.tfrecords",
+                                   "pista1_bin_valid.tfrecords",
+                                   "pista1_bin_test.tfrecords"])
 
-    config_green = Config(architecture=[4],
-                          activations=None,
-                          batch_size=32,
-                          epochs=1,
-                          num_steps=6,
-                          save_step=2)
+    config_green = Config(architecture=[4])
     data_green = DataHolder(config_green,
-                            data_path=data_path,
-                            label_path=label_path,
-                            record_path="pista1_green",
-                            flip=True,
-                            green=True)
+                            records=["pista1_green_train.tfrecords",
+                                     "pista1_green_valid.tfrecords",
+                                     "pista1_green_test.tfrecords"])
 
-    config_gray = Config(architecture=[4],
-                         activations=None,
-                         batch_size=32,
-                         epochs=1,
-                         num_steps=6,
-                         save_step=2)
+    config_gray = Config(architecture=[4])
     data_gray = DataHolder(config_gray,
-                           data_path=data_path,
-                           label_path=label_path,
-                           record_path="pista1_gray",
-                           flip=True,
-                           green=True)
+                           records=["pista1_gray_train.tfrecords",
+                                    "pista1_gray_valid.tfrecords",
+                                    "pista1_gray_test.tfrecords"])
 
     all_data = [data_pure,
                 data_flip,
@@ -116,7 +78,7 @@ def data_search(data_path,
     results = []
     for data, config, name in zip(all_data, all_config, names):
         print(name + ":\n")
-        data.create_records()
+        # data.create_records()
         graph = tf.Graph()
         network = DFN(graph, config)
         trainer = Trainer(graph, config, network, data)
