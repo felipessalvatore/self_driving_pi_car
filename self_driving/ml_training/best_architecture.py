@@ -86,9 +86,11 @@ def main():
                         help="mode for data: pure, flip, aug, bin, gray, green (default=pure)") # noqa
     args = parser.parse_args()
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
+    new_records = []
     for record in records:
-        record = args.name + record
-    architecture_search(records)
+        record = args.mode + record
+        new_records.append(record)
+    architecture_search(new_records)
 
 
 if __name__ == "__main__":
