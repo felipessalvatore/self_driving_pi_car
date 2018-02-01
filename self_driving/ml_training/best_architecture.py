@@ -65,7 +65,7 @@ def architecture_search(records,
                       best_result[0],
                       best_result[2])
     file = open("architecture.txt", "w")
-    file.write("Results with different values for learing_rate\n")
+    file.write("Results for different architectures\n")
     for result in results:
         result += "\n"
         file.write(result)
