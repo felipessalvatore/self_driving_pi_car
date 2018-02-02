@@ -67,13 +67,15 @@ class Trainer():
                                                    self.batch_size,
                                                    parser_with_normalization)
             with tf.name_scope("prediction"):
-                self.tf_prediction = self.model.get_prediction(self.input_image) # noqa
+                self.tf_prediction = self.model.get_prediction(self.input_image, reuse=None) # noqa
 
             with tf.name_scope("train_loss"):
-                train_images, train_labels = self.iterator_train.get_next()
+                train_images, train_labels = self.iterator_valid.get_next()
                 train_images = tf.reshape(train_images,
                                           (self.batch_size, flat_size))
-                train_labels = tf.reshape(train_labels, (self.batch_size,))
+                print(train_images, "train images")
+                train_labels = tf.reshape(train_labels, (self.batch_size,)) 
+                print(train_labels, "train labels")
                 train_logits = self.model.get_logits(train_images)
                 tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels, # noqa
                                                                            logits=train_logits) # noqa
@@ -87,8 +89,10 @@ class Trainer():
                 valid_images, valid_labels = self.iterator_valid.get_next()
                 valid_images = tf.reshape(valid_images,
                                           (self.batch_size, flat_size))
+                print(valid_images, "valid images")
                 valid_labels = tf.reshape(valid_labels, (self.batch_size,))
-                valid_logits = self.model.get_logits(valid_images)
+                print(valid_labels, "valid labels")
+                valid_logits = self.model.get_logits(valid_images, reuse=True)
                 valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels, # noqa
                                                                            logits=valid_logits) # noqa
                 self.tf_valid_loss = tf.reduce_mean(valid_loss)
@@ -142,9 +146,11 @@ class Trainer():
             sess.run(self.iterator_train.initializer)
             sess.run(self.iterator_valid.initializer)
             sess.run(tf.global_variables_initializer())
-            show_loss = sess.run(self.tf_train_loss)
+            # show_loss = sess.run(self.tf_train_loss)
+            show_loss = 99.0
             for epoch in range(self.epochs):
                 for step in range(self.iterations):
+                    print(epoch, step, "!!!!!!!!!!!")
                     _, loss = sess.run([self.update_weights,
                                         self.tf_train_loss])
                     show_loss = loss

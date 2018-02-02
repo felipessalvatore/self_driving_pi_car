@@ -26,52 +26,51 @@ class DFN():
         if self.activations is not None:
             assert len(self.architecture) - 1 == len(self.activations)
         self.graph = graph
-        with self.graph.as_default():
-            self.build_net()
+        #with self.graph.as_default():
+        #   self.build_net()
 
-    def build_net(self, kernel_init=None):
+    def get_logits(self,
+                   img_input,
+                   reuse=None):
         """
-        Build network layers
-        """
-        self.layers = []
-        architecture_size = len(self.architecture)
-        for i, units in enumerate(self.architecture):
-            if i != architecture_size - 1:
-                if self.activations is None:
-                    activation = tf.nn.relu
-                else:
-                    activation = self.activations[i]
-                layer = tf.contrib.layers.fully_connected(num_outputs=units,
-                                        activation=activation,
-                                        weights_regularizer=kenel_init,
-                                        biases_initializer=tf.zeros_initializer(),
-                                        name="layer" + str(i + 1))
-                self.layers.append(layer)
-            else:
-                layer = tf.contrib.layers.fully_connected(num_outputs=units,
-                                        activation=None,
-                                        weights_regularizer=kernel_init,
-                                        biases_initializer=tf.zeros_initializer(),
-                                        name="output_layer")
-                self.layers.append(layer)
-
-    def get_logits(self, img_input):
-        """
-        return logits using the "img_input" as input
+        Get logits
         """
         with self.graph.as_default():
-            with tf.variable_scope("logits", reuse=tf.AUTO_REUSE):
+            with tf.variable_scope("logits", reuse=reuse):
                 tf_input = img_input
-                for layer in self.layers:
-                    tf_input = layer(tf_input)
-        return tf_input
+                architecture_size = len(self.architecture)
+                for i, units in enumerate(self.architecture):
+                    if i != architecture_size - 1:
+                        if self.activations is None:
+                            activation = tf.nn.relu
+                        else:
+                            activation = self.activations[i]
+                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,
+                                                                     num_outputs=units,
+                                                                     activation_fn=activation)
+                    else:
+                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,
+                                                                     num_outputs=units,
+                                                                     activation_fn=None)
+                return tf_input
 
-    def get_prediction(self, img_input):
+#    def get_logits(self, img_input):
+#        """
+#        return logits using the "img_input" as input
+#        """
+#        with self.graph.as_default():
+#            with tf.variable_scope("logits", reuse=tf.AUTO_REUSE):
+#                tf_input = img_input
+#                for layer in self.layers:
+#                    tf_input = layer(tf_input)
+#        return tf_input
+
+    def get_prediction(self, img_input, reuse=True):
         """
         return probabilistic using the "img_input" as input
         """
         with self.graph.as_default():
-            with tf.variable_scope("softmax", reuse=tf.AUTO_REUSE):
-                logits = self.get_logits(img_input)
+            with tf.variable_scope("softmax"):
+                logits = self.get_logits(img_input, reuse=reuse)
                 softmax = tf.nn.softmax(logits, name="output_layer_softmax")
         return softmax

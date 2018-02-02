@@ -7,9 +7,9 @@ def parser_with_normalization(tfrecord):
     """
     Parser function to dataset
     """
-    features = {'height': tf.FixedLenFeature([], tf.int64),
-                'width': tf.FixedLenFeature([], tf.int64),
-                'channels': tf.FixedLenFeature([], tf.int64),
+    features = {'height': tf.FixedLenFeature([], tf.float32),
+                'width': tf.FixedLenFeature([], tf.float32),
+                'channels': tf.FixedLenFeature([], tf.int32),
                 'image_raw': tf.FixedLenFeature([], tf.string),
                 'labels_raw': tf.FixedLenFeature([], tf.string)}
 
@@ -29,10 +29,13 @@ def get_iterator(filename, batch_size, parser):
     """
     return iterator from dataset
     """
-    dataset = tf.data.TFRecordDataset(filename)
+    dataset = tf.contrib.data.TFRecordDataset(filename)
     dataset = dataset.map(parser)
     dataset = dataset.repeat()
     dataset = dataset.batch(batch_size)
     dataset = dataset.shuffle(batch_size * 2)
+   #  dataset_r = dataset.range(batch_size + 1)
+    #iterator = dataset.make_initializer(dataset_range)
     iterator = dataset.make_initializable_iterator()
+    # iterator = dataset.range(batch_size + 1).batch(batch_size).make_initializable_iterator()
     return iterator
