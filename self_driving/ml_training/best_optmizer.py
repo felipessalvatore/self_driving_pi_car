@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import tensorflow as tf
 import os
@@ -17,29 +15,42 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command
 
 
-def lr_search(experiments,
-              channels,
-              records=None):
+def optmizers_search(channels,
+                     records=None):
     """
     :type train_data_path: str
     :type eval_data_path: str
     """
-    LR = np.random.random_sample([experiments]) / 100
-    LR = np.append(LR, 0.02)
-    experiments += 1
-    LR.sort()
+    OT = [tf.train.GradientDescentOptimizer,
+          tf.train.AdadeltaOptimizer,
+          tf.train.AdagradOptimizer,
+          # tf.train.AdagradDAOptimizer,
+          # tf.train.MomentumOptimizer,
+          tf.train.AdamOptimizer,
+          tf.train.FtrlOptimizer,
+          tf.train.ProximalGradientDescentOptimizer,
+          tf.train.ProximalAdagradOptimizer,
+          tf.train.RMSPropOptimizer]
+
+    OT_name = ["GradientDescentOptimizer",
+               "AdadeltaOptimizer",
+               "AdagradOptimizer",
+               # "AdagradDAOptimizer",
+               # "MomentumOptimizer",
+               "AdamOptimizer",
+               "FtrlOptimizer",
+               "ProximalGradientDescentOptimizer",
+               "ProximalAdagradOptimizer",
+               "RMSPropOptimizer"]
     numeric_result = []
     results = []
     info = []
-    LR = list(LR)
 
-    for lr in LR:
+    for name, opt in zip(OT_name, OT):
         config = Config(channels=channels,
-                        learning_rate=lr)
-
+                        optimizer=opt)
         data = DataHolder(config,
                           records=records)
-        name = "lr = {0:.6f}".format(lr)
         print(name + ":\n")
         graph = tf.Graph()
         network = DFN(graph, config)
@@ -61,16 +72,15 @@ def lr_search(experiments,
         config_info = ["%s: %s" % item for item in attrs.items()]
         info.append(config_info)
 
-    best_result = max(list(zip(numeric_result, LR, info)))
-    result_string = """In an experiment with {0} learning rate values
-    the best one is {1} with valid accuracy of {2}.
+    best_result = max(list(zip(numeric_result, OT_name, info)))
+    result_string = """In an experiment with different optmizers
+    the best one is {0} with valid accuracy of {1}.
     \nThe training uses the following params:
-    \n{3}\n""".format(experiments,
-                      best_result[1],
+    \n{2}\n""".format(best_result[1],
                       best_result[0],
                       best_result[2])
-    file = open("learing_rate.txt", "w")
-    file.write("Results with different values for learing_rate\n")
+    file = open("optmizers.txt", "w")
+    file.write("Results for different optmizers\n")
     for result in results:
         result += "\n"
         file.write(result)
@@ -89,12 +99,6 @@ def main():
                         type=str,
                         default="pure",
                         help="mode for data: pure, flip, aug, bin, gray, green (default=pure)") # noqa
-
-    parser.add_argument("-e",
-                        "--experiments",
-                        type=int,
-                        default=10,
-                        help="number of experiments") # noqa
     args = parser.parse_args()
     if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
         channels = 1
@@ -105,9 +109,8 @@ def main():
     for record in records:
         record = args.mode + record
         new_records.append(record)
-    lr_search(experiments=args.experiments,
-              channels=channels,
-              records=new_records)
+    optmizers_search(channels=channels,
+                     records=new_records)
 
 
 if __name__ == "__main__":
