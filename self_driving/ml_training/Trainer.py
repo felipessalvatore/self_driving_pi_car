@@ -5,11 +5,19 @@ from __future__ import print_function
 import os
 import numpy as np
 import tensorflow as tf
-from tf_function import get_iterator, parser_with_normalization
-from DataHolder import DataHolder
-from Config import Config
-from DFN import DFN
-from util import reconstruct_from_record, accuracy_per_category
+try:
+    from tf_function import get_iterator, parser_with_normalization
+    from DataHolder import DataHolder
+    from Config import Config
+    from DFN import DFN
+    from util import reconstruct_from_record, accuracy_per_category
+except ImportError:
+    from ml_training.tf_function import get_iterator, parser_with_normalization
+    from ml_training.DataHolder import DataHolder
+    from ml_training.Config import Config
+    from ml_training.DFN import DFN
+    from ml_training.util import reconstruct_from_record, accuracy_per_category
+
 
 class Trainer():
     """
