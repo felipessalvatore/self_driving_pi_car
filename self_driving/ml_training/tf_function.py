@@ -7,9 +7,9 @@ def parser_with_normalization(tfrecord):
     """
     Parser function to dataset
     """
-    features = {'height': tf.FixedLenFeature([], tf.float32),
-                'width': tf.FixedLenFeature([], tf.float32),
-                'channels': tf.FixedLenFeature([], tf.int32),
+    features = {'height': tf.FixedLenFeature([], tf.int64),
+                'width': tf.FixedLenFeature([], tf.int64),
+                'channels': tf.FixedLenFeature([], tf.int64),
                 'image_raw': tf.FixedLenFeature([], tf.string),
                 'labels_raw': tf.FixedLenFeature([], tf.string)}
 

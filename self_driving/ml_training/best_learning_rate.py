@@ -31,13 +31,7 @@ def lr_search(experiments=10,
     LR = list(LR)
 
     for lr in LR:
-        config = Config(architecture=[4],
-                        activations=None,
-                        batch_size=32,
-                        epochs=5,
-                        num_steps=5000,
-                        save_step=200,
-                        learning_rate=lr)
+        config = Config(learning_rate=lr)
 
         data = DataHolder(config,
                           records=records)
