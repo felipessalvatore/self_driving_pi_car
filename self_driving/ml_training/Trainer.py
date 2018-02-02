@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import os
 import numpy as np
 import tensorflow as tf
@@ -9,7 +10,6 @@ from DataHolder import DataHolder
 from Config import Config
 from DFN import DFN
 from util import reconstruct_from_record, accuracy_per_category
-
 
 class Trainer():
     """
