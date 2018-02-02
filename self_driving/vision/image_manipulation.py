@@ -4,7 +4,7 @@ Useful functions for data augmentation of images
 
 import cv2
 import numpy as np
-from scipy import ndimage
+#from scipy import ndimage
 from PIL import Image
 
 
@@ -90,7 +90,9 @@ def gaussian_blur(input_image,
 
     :type input_image: numpy.ndarray
     :rtype: numpy.ndarray
-    """
-    blur = ndimage.filters.gaussian_filter(input_image,
-                                           sigma=(kernel_size, kernel_size, 1))
+    ndarray"""
+    blur = cv2.GaussianBlur(input_image, (kernel_size, kernel_size), 0)
+    #blur = ndimage.filters.gaussian_filter(input_image,
+    #                                       sigma=(kernel_size, kernel_size, 1))
+    
     return blur

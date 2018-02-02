@@ -41,15 +41,17 @@ class DFN():
                     activation = tf.nn.relu
                 else:
                     activation = self.activations[i]
-                layer = tf.layers.Dense(units=units,
+                layer = tf.contrib.layers.fully_connected(num_outputs=units,
                                         activation=activation,
-                                        kernel_initializer=kernel_init,
+                                        weights_regularizer=kenel_init,
+                                        biases_initializer=tf.zeros_initializer(),
                                         name="layer" + str(i + 1))
                 self.layers.append(layer)
             else:
-                layer = tf.layers.Dense(units=units,
+                layer = tf.contrib.layers.fully_connected(num_outputs=units,
                                         activation=None,
-                                        kernel_initializer=kernel_init,
+                                        weights_regularizer=kernel_init,
+                                        biases_initializer=tf.zeros_initializer(),
                                         name="output_layer")
                 self.layers.append(layer)
 

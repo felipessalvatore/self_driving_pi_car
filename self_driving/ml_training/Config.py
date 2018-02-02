@@ -49,9 +49,9 @@ class Config(object):
                  architecture=[4],
                  activations=None,
                  batch_size=32,
-                 epochs=5,
-                 num_steps=1000,
-                 save_step=100,
+                 epochs=1,
+                 num_steps=6,
+                 save_step=2,
                  learning_rate=0.02,
                  optimizer=tf.train.GradientDescentOptimizer):
         self.height = height
