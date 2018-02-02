@@ -4,7 +4,7 @@
 import argparse
 import pickle
 import os
-from scipy import misc
+import cv2
 import numpy as np
 from util import command2int
 
@@ -30,7 +30,7 @@ def folder2array(folder_path,
     :param channels: image channels
     :type channels: int
 
-    :rtype: (np.array,np.array)
+    :rtype: (np.array,np.array
     """
     all_images = []
     all_labels = []
@@ -43,7 +43,7 @@ def folder2array(folder_path,
         key = filename[:- 4]
         label = command2int[label_dict[key]]
         image_path = os.path.join(folder_path, filename)
-        image = change_type_to_uint8(misc.imread(image_path))
+        image = change_type_to_uint8(cv2.imread(image_path))
         image = image.reshape(flat_shape)
         all_images.append(image)
         all_labels.append(label)
