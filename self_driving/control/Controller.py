@@ -11,11 +11,14 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
+print(parentdir)
+
 from vision.image_manipulation import binarize_image, green_channel, grayscale_image # noqa
-from ml_training.DataHolder import DataHolder # noqa
-from ml_training.Config import Config # noqa
-from ml_training.Trainer import Trainer # noqa
-from ml_training.DFN import DFN # noqa
+print(binarize_image)
+from DataHolder import DataHolder # noqa
+from Config import Config # noqa
+from Trainer import Trainer # noqa
+from DFN import DFN # noqa
 from nxt_car.DiffCar import DiffCar # noqa
 from vision.Camera import Camera # noqa
 
@@ -69,8 +72,7 @@ class Controller():
     def drive(self):
 
         while True:
-            img = self.camera.take_picture_rgb()
-            print "Working"
+            img = self.cam.take_picture_rgb()
 
             if key.is_pressed('q'):
                 print('Exiting...')
@@ -78,6 +80,7 @@ class Controller():
             else:
                 img = self.transform_image(img)
                 command = self.get_command(img)
+                print(command)
                 if command == 'up':
                     self.robot.move_up()
                     time.sleep(0.05)
