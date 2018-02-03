@@ -21,7 +21,7 @@ def architecture_search(records,
                         deepest_net_size):
     """
     Script to search different architectures for a DFN,
-    the result is saved on the file architecture.txt
+    the result is saved on the file architecture_results.txt
 
     :param records: list of paths to train, valid and test tf.records
     :type records: list of str
@@ -75,7 +75,7 @@ def architecture_search(records,
                       best_result[1],
                       best_result[0],
                       best_result[2])
-    file = open("architecture.txt", "w")
+    file = open("architecture_results.txt", "w")
     file.write("Results for different architectures\n")
     for result in results:
         result += "\n"
