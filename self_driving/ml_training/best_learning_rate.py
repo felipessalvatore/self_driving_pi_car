@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import tensorflow as tf
 import os
@@ -21,8 +19,16 @@ def lr_search(experiments,
               channels,
               records=None):
     """
-    :type train_data_path: str
-    :type eval_data_path: str
+    Script to run different experiments
+    to search a learning rate value,
+    the result is saved on the file learning_rate_results.txt
+
+    :param experiments: number of experiments to be made
+    :type experiments: int
+    :param channels: image channels
+    :type channels: int
+    :param records: list of paths to tf_records
+    :type records: none or list of str
     """
     LR = np.random.random_sample([experiments]) / 100
     LR = np.append(LR, 0.02)
@@ -48,7 +54,7 @@ def lr_search(experiments,
         valid_acc = trainer.get_valid_accuracy()
         numeric_result.append(valid_acc)
         name += ': valid_acc = {0:.6f} | '.format(valid_acc)
-        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord()) # noqa
+        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord())  # noqa
         test_images = test_images.astype(np.float32) / 255
         test_pred = trainer.predict(test_images)
         acc_cat = accuracy_per_category(test_pred, test_labels, categories=4)
@@ -69,7 +75,7 @@ def lr_search(experiments,
                       best_result[1],
                       best_result[0],
                       best_result[2])
-    file = open("learing_rate.txt", "w")
+    file = open("learing_rate_results.txt", "w")
     file.write("Results with different values for learing_rate\n")
     for result in results:
         result += "\n"
@@ -81,20 +87,32 @@ def lr_search(experiments,
 
 def main():
     """
-    Main script.
+    Main script to perform learnig rate search.
+
+    "mode" is the argument to choose which kind of data will be used:
+        "pure": rgb image with no manipulation.
+        "flip": flippped rgb image (a image with label "left" is
+                flipped and transform in an image with label
+                "right", and vice versa; to have a balanced data).
+        "aug": flippped rgb image with new shadowed and blurred images.
+        "bin": binary image, only one channel.
+        "gray": grayscale image, only one channel.
+        "green": image with only the green channel.
+
+    "experiment" is the number of experiments to be done.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-m",
                         "--mode",
                         type=str,
                         default="pure",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)") # noqa
+                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
 
     parser.add_argument("-e",
                         "--experiments",
                         type=int,
                         default=10,
-                        help="number of experiments") # noqa
+                        help="number of experiments")  # noqa
     args = parser.parse_args()
     if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
         channels = 1
@@ -112,4 +130,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
