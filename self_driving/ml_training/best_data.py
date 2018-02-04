@@ -20,8 +20,17 @@ def data_search(data_path=None,
                 label_path=None,
                 have_records=False):
     """
-    :type train_data_path: str
-    :type eval_data_path: str
+    Script to search different types of data, here we use
+    the simplest --model sofmax classifier--,
+    the result is saved on the file data_results.txt
+
+    :param data_path: path to data as numpy array
+    :type data_path: str
+    :param label_path: path to labels as numpy array
+    :type label_path: str
+    :param have_records: param to control if tf_records will be created
+                         or not.
+    :type have_records: bool
     """
     config_pure = Config(architecture=[4])
     config_flip = Config(architecture=[4])
@@ -134,7 +143,7 @@ def data_search(data_path=None,
 
 def main():
     """
-    Main script.
+    Main script to perform data search.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-d",
