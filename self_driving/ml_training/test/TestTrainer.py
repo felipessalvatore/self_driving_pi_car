@@ -16,11 +16,11 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 
-from util import run_test, reconstruct_from_record # noqa
-from Config import Config # noqa
-from DataHolder import DataHolder # noqa
-from DFN import DFN # noqa
-from Trainer import Trainer # noqa
+from util import run_test, reconstruct_from_record  # noqa
+from Config import Config  # noqa
+from DataHolder import DataHolder  # noqa
+from DFN import DFN  # noqa
+from Trainer import Trainer  # noqa
 
 
 class TestTrainer(unittest.TestCase):
@@ -81,7 +81,7 @@ class TestTrainer(unittest.TestCase):
     @classmethod
     def tearDown(cls):
         if cls.end:
-            sufixes = ['_train.tfrecords', '_valid.tfrecords', '_test.tfrecords'] # noqa
+            sufixes = ['_train.tfrecords', '_valid.tfrecords', '_test.tfrecords']  # noqa
             for car, cdr in itertools.product(cls.all_paths, sufixes):
                 file_name = car + cdr
                 if os.path.exists(file_name):

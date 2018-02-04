@@ -15,9 +15,9 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 
-from util import run_test, reconstruct_from_record # noqa
-from Config import Config # noqa
-from DataHolder import DataHolder # noqa
+from util import run_test, reconstruct_from_record  # noqa
+from Config import Config  # noqa
+from DataHolder import DataHolder  # noqa
 
 
 class TestDataHolder(unittest.TestCase):
