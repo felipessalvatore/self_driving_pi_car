@@ -67,6 +67,11 @@ class Config(object):
         self.optimizer = optimizer
 
     def get_status(self):
+        """
+        Get all attributs values.
+
+        :rtype: str
+        """
         status = "height = {}\n".format(self.height)
         status += "width = {}\n".format(self.width)
         status += "channels = {}\n".format(self.channels)
