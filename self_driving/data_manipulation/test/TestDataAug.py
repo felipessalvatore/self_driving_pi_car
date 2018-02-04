@@ -13,10 +13,10 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 
-from util import run_test, get_image # noqa
-from img2array import create_data_set_as_np_array # noqa
-from data_aug import extend_dataset_flip_axis, binarize_dataset # noqa
-from data_aug import gray_dataset, green_dataset, dataset_augmentation # noqa
+from util import run_test, get_image  # noqa
+from img2array import create_data_set_as_np_array  # noqa
+from data_aug import extend_dataset_flip_axis, binarize_dataset  # noqa
+from data_aug import gray_dataset, green_dataset, dataset_augmentation  # noqa
 
 
 class TestDataAug(unittest.TestCase):
@@ -67,7 +67,7 @@ class TestDataAug(unittest.TestCase):
         original_image = np.flip(original_image, axis=1)
         fliped_image = get_image(aug_data[one_left_image])
         condition = np.all(np.equal(original_image, fliped_image))
-        msg = "images: {} (orignal) and {} (augmentaded) are not equal".format(one_right_image, one_left_image) # noqa
+        msg = "images: {} (orignal) and {} (augmentaded) are not equal".format(one_right_image, one_left_image)  # noqa
         self.assertTrue(condition, msg=msg)
         only_left = aug_labels[25: 25 + 7]
         only_left = only_left.flatten()

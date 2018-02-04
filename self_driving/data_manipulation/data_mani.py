@@ -4,6 +4,14 @@ import numpy as np
 import tensorflow as tf
 
 
+def _bytes_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+
+def _int64_feature(value):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
 def randomize_in_place(list1, list2, init):
     """
     Function to randomize two lists the same way.
@@ -48,15 +56,7 @@ def data_cut(data, labels, init=0):
     valid_data, valid_labels = data[ff: ff + rest], labels[ff:ff + rest]
     ff = ff + rest
     test_data, test_labels = data[ff: ff + rest], labels[ff: ff + rest]
-    return train_data, train_labels, valid_data, valid_labels, test_data, test_labels # noqa
-
-
-def _bytes_feature(value):
-    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
-
-
-def _int64_feature(value):
-    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+    return train_data, train_labels, valid_data, valid_labels, test_data, test_labels  # noqa
 
 
 def create_record(record_path,

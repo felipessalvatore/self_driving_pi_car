@@ -10,7 +10,7 @@ try:
     from util import get_image_and_command, get_image, get_flat_shape
     from util import load_dataset, save_dataset
 except ImportError:
-    from data_manipulation.util import get_image_and_command, get_image, get_flat_shape # noqa
+    from data_manipulation.util import get_image_and_command, get_image, get_flat_shape  # noqa
     from data_manipulation.util import load_dataset, save_dataset
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -18,7 +18,7 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import vision.image_manipulation as img_mani # noqa
+import vision.image_manipulation as img_mani  # noqa
 
 
 def extend_dataset_flip_axis(data,
@@ -165,9 +165,9 @@ def main():
     parser.add_argument('labels_path',
                         type=str, help='path to current labels')
     parser.add_argument('new_data_folder_path',
-                        type=str, help='path to data and labels to be saved') # noqa
+                        type=str, help='path to data and labels to be saved')  # noqa
     parser.add_argument('dataset_name',
-                        nargs='?', default='dataset', type=str, help='name for dataset. (Default) dataset') # noqa
+                        nargs='?', default='dataset', type=str, help='name for dataset. (Default) dataset')  # noqa
 
     user_args = parser.parse_args()
 
