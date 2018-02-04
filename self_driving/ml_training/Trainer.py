@@ -6,13 +6,13 @@ import os
 import numpy as np
 import tensorflow as tf
 try:
-    from tf_function import get_iterator, parser_with_normalization
+    from util import get_iterator, parser_with_normalization
     from DataHolder import DataHolder
     from Config import Config
     from DFN import DFN
     from util import reconstruct_from_record, accuracy_per_category
 except ImportError:
-    from ml_training.tf_function import get_iterator, parser_with_normalization
+    from ml_training.util import get_iterator, parser_with_normalization
     from ml_training.DataHolder import DataHolder
     from ml_training.Config import Config
     from ml_training.DFN import DFN
@@ -21,7 +21,8 @@ except ImportError:
 
 class Trainer():
     """
-    Class that trains and predicts.
+    Class that trains a model and uses a model to predict
+    images.
 
     :type data_path: str
     :type label_path: str
@@ -59,7 +60,11 @@ class Trainer():
 
     def build_graph(self):
         """
-        build tensforflow graph
+        Build tensforflow graph. Main tensors:
+
+            self.tf_prediction: model prediction.
+            self.tf_train_loss: loss of a batch of the train dataset.
+            self.valid_accuracy: accuracy of batch of the valid dataset.
         """
         flat_size = self.height * self.width * self.channels
         with self.graph.as_default():
@@ -75,16 +80,16 @@ class Trainer():
                                                    self.batch_size,
                                                    parser_with_normalization)
             with tf.name_scope("prediction"):
-                self.tf_prediction = self.model.get_prediction(self.input_image, reuse=None) # noqa
+                self.tf_prediction = self.model.get_prediction(self.input_image, reuse=None)  # noqa
 
             with tf.name_scope("train_loss"):
                 train_images, train_labels = self.iterator_train.get_next()
                 train_images = tf.reshape(train_images,
                                           (self.batch_size, flat_size))
-                train_labels = tf.reshape(train_labels, (self.batch_size,)) 
+                train_labels = tf.reshape(train_labels, (self.batch_size,))
                 train_logits = self.model.get_logits(train_images)
-                tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels, # noqa
-                                                                           logits=train_logits) # noqa
+                tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels,  # noqa
+                                                                           logits=train_logits)  # noqa
                 self.tf_train_loss = tf.reduce_mean(tf_train_loss)
 
             with tf.name_scope("optimization"):
@@ -97,8 +102,8 @@ class Trainer():
                                           (self.batch_size, flat_size))
                 valid_labels = tf.reshape(valid_labels, (self.batch_size,))
                 valid_logits = self.model.get_logits(valid_images, reuse=True)
-                valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels, # noqa
-                                                                           logits=valid_logits) # noqa
+                valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels,  # noqa
+                                                                           logits=valid_logits)  # noqa
                 self.tf_valid_loss = tf.reduce_mean(valid_loss)
 
             with tf.name_scope("valid_accuracy"):
@@ -117,8 +122,15 @@ class Trainer():
 
     def get_accuracy(self, iterator_initializer, accuracy_tensor, iterations):
         """
-        Method to compute the accuracy of the model's predictions
-        on the test dataset
+        Method to compute accuracy.
+
+        :param iterator_initializer: initializer of the iterator
+        :type iterator_initializer: tf.contrib.data.Iterator method
+        :param accuracy_tensor: tensor with accuracy information
+        :type accuracy_tensor: tf.Tensor(shape=(), dype=tf.float32)
+        :param iterations: number of iterations
+        :type iterations: int
+        :rtype: float
         """
         with tf.Session(graph=self.graph) as sess:
             sess.run(iterator_initializer)
@@ -135,7 +147,11 @@ class Trainer():
                            iterations=50):
         """
         Method to compute the accuracy of the model's predictions
-        on the test dataset
+        on the valid dataset.
+
+        :param iterations: number of iterations
+        :type iterations: int
+        :rtype: float
         """
         return self.get_accuracy(self.iterator_valid.initializer,
                                  self.valid_accuracy,
@@ -143,7 +159,11 @@ class Trainer():
 
     def fit(self, verbose=True):
         """
-        fiting the data
+        Fitting the data.
+
+        :param verbose: param to control printing
+        :type verbose: bool
+        :rtype: float
         """
         best_valid_loss = float("inf")
         with tf.Session(graph=self.graph) as sess:
@@ -161,8 +181,8 @@ class Trainer():
                             info = 'Epoch {0:5},'.format(epoch + 1)
                             info += ' step {0:5}:'.format(step + 1)
                             info += ' train_loss = {0:.6f} |'.format(show_loss)
-                            info += ' valid_loss = {0:.6f}\n'.format(best_valid_loss) # noqa
-                            print(info, end='') # noqa
+                            info += ' valid_loss = {0:.6f}\n'.format(best_valid_loss)  # noqa
+                            print(info, end='')
                         valid_loss = sess.run(self.tf_valid_loss)
                         if valid_loss < best_valid_loss:
                             self.saver.save(sess=sess,
@@ -171,7 +191,11 @@ class Trainer():
 
     def predict(self, img):
         """
-        predict the data
+        Predict the category using img as input.
+
+        :param img: image
+        :type img: np.array
+        :rtype: np.array
         """
         type_msg = "not in the correct type"
         assert img.dtype == np.float32, type_msg
