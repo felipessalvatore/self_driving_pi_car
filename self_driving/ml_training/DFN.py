@@ -26,14 +26,20 @@ class DFN():
         if self.activations is not None:
             assert len(self.architecture) - 1 == len(self.activations)
         self.graph = graph
-        #with self.graph.as_default():
-        #   self.build_net()
 
     def get_logits(self,
                    img_input,
                    reuse=None):
         """
-        Get logits
+        Get logits from img_input.
+
+        :param img_input: input image
+        :type img_input: tf.Tensor(shape=(None,height*width*channels),
+                                          dype=tf.float32)
+        :param reuse: param to control reuse variables
+        :type reuse: None or True
+        :rtype: tf.Tensor(shape=(None, categories),
+                          dype=tf.float32)
         """
         with self.graph.as_default():
             with tf.variable_scope("logits", reuse=reuse):
@@ -45,29 +51,26 @@ class DFN():
                             activation = tf.nn.relu
                         else:
                             activation = self.activations[i]
-                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,
-                                                                     num_outputs=units,
-                                                                     activation_fn=activation)
+                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,  # noqa
+                                                                     num_outputs=units,  # noqa
+                                                                     activation_fn=activation)  # noqa
                     else:
-                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,
-                                                                     num_outputs=units,
-                                                                     activation_fn=None)
+                        tf_input = tf.contrib.layers.fully_connected(inputs=tf_input,  # noqa
+                                                                     num_outputs=units,  # noqa
+                                                                     activation_fn=None)  # noqa
                 return tf_input
-
-#    def get_logits(self, img_input):
-#        """
-#        return logits using the "img_input" as input
-#        """
-#        with self.graph.as_default():
-#            with tf.variable_scope("logits", reuse=tf.AUTO_REUSE):
-#                tf_input = img_input
-#                for layer in self.layers:
-#                    tf_input = layer(tf_input)
-#        return tf_input
 
     def get_prediction(self, img_input, reuse=True):
         """
-        return probabilistic using the "img_input" as input
+        Return probabilistic distribution using the "img_input" as input.
+
+        :param img_input: input image
+        :type img_input: tf.Tensor(shape=(None,height*width*channels),
+                                          dype=tf.float32)
+        :param reuse: param to control reuse variables
+        :type reuse: None or True
+        :rtype: tf.Tensor(shape=(None, categories),
+                          dype=tf.float32)
         """
         with self.graph.as_default():
             with tf.variable_scope("softmax"):
