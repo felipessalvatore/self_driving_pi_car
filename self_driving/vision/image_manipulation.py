@@ -4,7 +4,6 @@ Useful functions for data augmentation of images
 
 import cv2
 import numpy as np
-#from scipy import ndimage
 from PIL import Image
 
 
@@ -18,7 +17,7 @@ def grayscale_image(input_image):
     return cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
 
 
-def binarize_image(input_image):
+def binarize_image(input_image, threshold_value=177):
     """
     Convert input_image to binary representation
 
@@ -28,7 +27,7 @@ def binarize_image(input_image):
     gray_image = grayscale_image(input_image)
     bin_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
     _, bin_image = cv2.threshold(bin_image,
-                                 177,
+                                 threshold_value,
                                  255,
                                  cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return bin_image
@@ -90,9 +89,6 @@ def gaussian_blur(input_image,
 
     :type input_image: numpy.ndarray
     :rtype: numpy.ndarray
-    ndarray"""
+    """
     blur = cv2.GaussianBlur(input_image, (kernel_size, kernel_size), 0)
-    #blur = ndimage.filters.gaussian_filter(input_image,
-    #                                       sigma=(kernel_size, kernel_size, 1))
-    
     return blur
