@@ -16,17 +16,21 @@ class Camera(object):
     :type height_param: int
     :param width_param: param to set width on camera
     :type width_param: int
-
+    :param mode: param to control type of image
+    :type mode: str
     """
     def __init__(self,
                  width_size=160,
                  height_size=90,
                  input_cam_device=0,
                  height_param=4,
-                 width_param=3):
+                 width_param=3,
+                 mode="pure"):
         self.cam = cv2.VideoCapture(input_cam_device)
         self.cam.set(width_param, width_size)
         self.cam.set(height_param, height_size)
+        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
+        self.mode = mode
 
     def save_image(self, path, img):
         """
@@ -38,6 +42,20 @@ class Camera(object):
         :type img: np.ndarray
         """
         cv2.imwrite(path, img)
+
+    def take_picture(self):
+        """
+        Take picture according to the mode param.
+        :rtype: np.ndarray
+        """
+        if self.mode == "pure":
+            return self.take_picture_rgb()
+        elif self.mode == "green":
+            return self.take_picture_green()
+        elif self.mode == "bin":
+            return self.take_picture_bin()
+        elif self.mode == "gray":
+            return self.take_picture_gray()
 
     def take_picture_rgb(self):
         """
