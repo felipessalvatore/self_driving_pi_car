@@ -6,7 +6,6 @@ import os
 import sys
 import inspect
 import numpy as np
-import tensorflow as tf
 import itertools
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
