@@ -43,7 +43,7 @@ def data_cut(data, labels, init=0):
     """
     randomize_in_place(data, labels, init)
     data_size = data.shape[0]
-    ff = int((4 / 5) * data_size)
+    ff = int((4 / 5.0) * data_size)
     rest = data_size - ff
     if rest % 2 == 1:
         new_data = data[-1]
@@ -51,7 +51,7 @@ def data_cut(data, labels, init=0):
         data = np.vstack([data, new_data])
         labels = np.vstack([labels, new_label])
         rest += 1
-    rest = int(rest / 2)
+    rest = int(rest / 2.0)
     train_data, train_labels = data[0:ff], labels[0:ff]
     valid_data, valid_labels = data[ff: ff + rest], labels[ff:ff + rest]
     ff = ff + rest

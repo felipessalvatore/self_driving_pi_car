@@ -6,7 +6,6 @@ import os
 import sys
 import inspect
 import numpy as np
-import cv2
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
