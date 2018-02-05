@@ -6,6 +6,7 @@ import os
 import sys
 import inspect
 import numpy as np
+import cv2
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
@@ -61,7 +62,7 @@ class TestDataAug(unittest.TestCase):
         self.assertEqual(aug_labels.shape, (25 + 7, 1))
         self.assertEqual(np.uint8, aug_labels.dtype)
         self.assertEqual(np.uint8, aug_data.dtype)
-        one_right_image = 4
+        one_right_image = 0
         one_left_image = 25
         original_image = get_image(self.data[one_right_image])
         original_image = np.flip(original_image, axis=1)
