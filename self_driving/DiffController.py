@@ -77,6 +77,7 @@ class DiffController():
 
             if key.is_pressed('q'):
                 print('Exiting...')
+                self.robot.idle()
                 break
             else:
                 img = self.image2float(img)
