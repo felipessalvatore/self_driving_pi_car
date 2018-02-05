@@ -87,6 +87,9 @@ class TestTrainer(unittest.TestCase):
                 if os.path.exists(file_name):
                     os.remove(file_name)
 
+        if os.path.exists("checkpoints"):
+            shutil.rmtree("checkpoints")
+
     def check_overfitting_valid_data(self,
                                      config,
                                      dataholder):

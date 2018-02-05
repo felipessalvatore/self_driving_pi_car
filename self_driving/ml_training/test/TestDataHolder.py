@@ -28,6 +28,7 @@ class TestDataHolder(unittest.TestCase):
         config = Config()
         data_name = "toy_data.npy"
         label_name = "toy_label.npy"
+
         cls.original_dh = DataHolder(config,
                                      data_name,
                                      label_name,
