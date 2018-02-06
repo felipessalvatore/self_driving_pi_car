@@ -59,21 +59,3 @@ class DFN():
                                                                      num_outputs=units,  # noqa
                                                                      activation_fn=None)  # noqa
                 return tf_input
-
-    def get_prediction(self, img_input, reuse=True):
-        """
-        Return probabilistic distribution using the "img_input" as input.
-
-        :param img_input: input image
-        :type img_input: tf.Tensor(shape=(None,height*width*channels),
-                                          dype=tf.float32)
-        :param reuse: param to control reuse variables
-        :type reuse: None or True
-        :rtype: tf.Tensor(shape=(None, categories),
-                          dype=tf.float32)
-        """
-        with self.graph.as_default():
-            with tf.variable_scope("softmax"):
-                logits = self.get_logits(img_input, reuse=reuse)
-                softmax = tf.nn.softmax(logits, name="output_layer_softmax")
-        return softmax

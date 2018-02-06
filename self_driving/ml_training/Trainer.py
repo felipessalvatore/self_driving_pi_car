@@ -71,9 +71,6 @@ class Trainer():
                 self.iterator_valid = get_iterator(self.tfrecords_valid,
                                                    self.batch_size,
                                                    parser_with_normalization)
-            with tf.name_scope("prediction"):
-                self.tf_prediction = self.model.get_prediction(self.input_image, reuse=None)  # noqa
-
             with tf.name_scope("train_loss"):
                 train_images, train_labels = self.iterator_train.get_next()
                 train_images = tf.reshape(train_images,
@@ -107,6 +104,10 @@ class Trainer():
                 self.valid_accuracy = tf.reduce_mean(tf.cast(valid_prediction,
                                                              'float'),
                                                      name='valid_accuracy')
+            with tf.name_scope("prediction"):
+                tf_prediction = self.model.get_logits(self.input_image,
+                                                      reuse=True)
+                self.tf_prediction = tf.nn.softmax(tf_prediction)
 
             with tf.name_scope("saver"):
                 self.saver = tf.train.Saver()
