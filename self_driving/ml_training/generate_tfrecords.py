@@ -8,7 +8,7 @@ from util import int2command
 def data_search(channels, 
                 data_path, 
                 label_path, 
-                mode,
+                name,
                 flip=False,
                 augmentation=False,
                 gray=False,
@@ -19,7 +19,7 @@ def data_search(channels,
     data = DataHolder(config,
                       data_path=data_path,
                       label_path=label_path,
-                      record_path=mode,
+                      record_path=name,
                       flip=flip,
                       augmentation=augmentation,
                       gray=gray,
@@ -34,17 +34,23 @@ def main():
     Main script to perform data search.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m",
-                        "--mode",
+    parser.add_argument("-n",
+                        "--name",
                         type=str,
-                        default="pure",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
-
+                        default="data",
+                        help="name for tfrecords e.g. pure, flip, aug, bin, gray, green (default=data)")  # noqa
+    
     parser.add_argument("-f",
                         "--flip",
                         action="store_true",
                         default=False,
                         help="flag to flip x-axis (default=False)")  # noqa
+    
+    parser.add_argument("-p",
+                        "--pure",
+                        action="store_true",
+                        default=False,
+                        help="flag to pure (default=False)")  # noqa
 
     parser.add_argument("-a",
                         "--augmentation",
@@ -84,24 +90,26 @@ def main():
 
     args = parser.parse_args()
     
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
+    #if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
+    #    channels = 1
+    #else:
+    #    channels = 3
+    if args.binary or args.green or args.gray:
         channels = 1
     else:
-        channels = 3
-    
+        channels = 3 
     #cond1 = type(args.train_data) == str
     #cond2 = type(args.train_label) == str
     #have_records = not (cond1 and cond2)
     data_search(channels, 
                 args.train_data,
                 args.train_label, 
-                args.mode,
+                args.name,
                 args.flip,
                 args.augmentation,
                 args.gray,
                 args.green,
                 args.binary)
-
 
 if __name__ == "__main__":
     main()
