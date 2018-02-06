@@ -27,7 +27,6 @@ class Config(object):
     :param save_step: when step % save_step == 0, the model
                       parameters are saved.
     :type save_step: int
-    :type early_stopping: int
     :param learning_rate: learning rate for the optimizer
     :type learning_rate: float
     :param optimizer: a optimizer from tensorflow.
