@@ -90,7 +90,7 @@ def optmizers_search(channels,
 
 def main():
     """
-    Main script to perform learnig rate search.
+    Main script to perform optmizer search.
 
     "mode" is the argument to choose which kind of data will be used:
         "pure": rgb image with no manipulation.
@@ -102,7 +102,7 @@ def main():
         "gray": grayscale image, only one channel.
         "green": image with only the green channel.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Perform optmizer search')
     parser.add_argument("-m",
                         "--mode",
                         type=str,

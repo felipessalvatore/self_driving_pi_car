@@ -99,7 +99,7 @@ def main():
 
     "experiment" is the number of experiments to be done.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Perform learnig rate search')
     parser.add_argument("-m",
                         "--mode",
                         type=str,

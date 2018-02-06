@@ -145,7 +145,7 @@ def main():
     """
     Main script to perform data search.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Perform data search')
     parser.add_argument("-d",
                         "--train_data",
                         type=str,

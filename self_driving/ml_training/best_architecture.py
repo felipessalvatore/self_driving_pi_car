@@ -101,7 +101,7 @@ def main():
 
     "deep" is the deep of the model.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Perform architecture search')
     parser.add_argument("-m",
                         "--mode",
                         type=str,
