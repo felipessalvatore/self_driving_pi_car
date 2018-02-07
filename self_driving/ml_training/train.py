@@ -111,7 +111,7 @@ def train(mode,
         valid_images = valid_images.astype(np.float32) / 255
         valid_pred = trainer.predict(valid_images)
         valid_labels = valid_labels.reshape((valid_labels.shape[0],))
-        plotconfusion(valid_labels, valid_pred, name + ".png", int2command) # noqa
+        plotconfusion(valid_labels, valid_pred, name + ".png", int2command, classes=["left", "right", "up"]) # noqa
     if move:
         dst = os.path.join(parentdir, "checkpoints")
         shutil.move("checkpoints", dst)
