@@ -195,8 +195,8 @@ def main():
     parser.add_argument("-o",
                         "--optimizer",
                         type=str,
-                        default="GradientDescentOptimizer",
-                        help=opt_list + "(default=GradientDescentOptimizer)")
+                        default="GradientDescent",
+                        help=opt_list + "(default=GradientDescent)")
     parser.add_argument("-v",
                         "--verbose",
                         action="store_true",
