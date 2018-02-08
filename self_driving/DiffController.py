@@ -1,3 +1,4 @@
+import os
 import argparse
 import time
 import tensorflow as tf
@@ -10,6 +11,7 @@ from ml_training.DFN import DFN
 from nxt_car.DiffCar import DiffCar
 from vision.Camera import Camera
 from ml_training.util import int2command
+from vision.util import write_img
 
 
 class DiffController():
@@ -48,6 +50,22 @@ class DiffController():
         command_int = int(self.trainer.predict(img)[0])
         command_int = label_dict[command_int]
         return command_int
+
+    def get_command_and_prob(self, img, label_dict=int2command):
+        """
+        Get command from model's prediction
+
+        :param img: image
+        :type img: np.array
+        :param label_dict: dict translating label to command
+        :type label_dict: dict
+        """
+        prob = self.trainer.predict_prob(img)[0]
+        result = np.argmax(prob, axis=1)
+        result = result.astype(np.int32)
+        command_int = int(result[0])
+        command_int = label_dict[command_int]
+        return command_int, prob
 
     def image2float(self, img):
         """
@@ -98,6 +116,56 @@ class DiffController():
                         self.robot.idle()
                         last_command = command
 
+    def drive_debug(self):
+        """
+        Drive car until the key "q" is pressed.
+        images are stored in the folder "debug_run"
+        to check the model performance.
+        """
+        if not os.path.exists("debug_run"):
+            os.makedirs("debug_run")
+        last_command = None
+        count = 0
+        while True:
+            init = time.time()
+            img = self.cam.take_picture()
+            init = time.time() - init
+            print("take_picture_time = {0:.3f}".format(init))
+
+            if key.is_pressed('q'):
+                print('Exiting...')
+                self.robot.idle()
+                break
+            else:
+                img_flatt = self.image2float(img)
+                init = time.time()
+                command, prob = self.get_command_and_prob(img_flatt)
+                init = time.time() - init
+                print("foward_time = {0:.3f}".format(init))
+                commands = ['up', 'down', 'left', 'right']
+                commands_prob = []
+                for i, com in enumerate(commands):
+                    commands_prob.append(com + ":{0:.2f}".format(prob[i]))
+                print(commands_prob)
+                print(command)
+                name = os.path.join("debug_run", str(count) + ".png")
+                write_img(img, commands_prob, name)
+                if command == 'up':
+                    self.robot.move_up()
+                    time.sleep(0.05)
+                elif command == 'down':
+                    self.robot.move_down()
+                    time.sleep(0.05)
+                elif command == 'left':
+                    self.robot.move_left()
+                elif command == 'right':
+                    self.robot.move_right()
+                if last_command is not None:
+                    if last_command != command:
+                        self.robot.idle()
+                        last_command = command
+            count += 1
+
 
 def main():
     """
@@ -115,9 +183,17 @@ def main():
                         type=bool,
                         default=False,
                         help="bluetooth control (default=False)")
+    parser.add_argument("-d",
+                        "--debbug",
+                        action="store_true",
+                        default=False,
+                        help="debbug (default=False)")  # noqa
     user_args = parser.parse_args()
     car = DiffController(user_args.mode, user_args.bluetooth)
-    car.drive()
+    if user_args.debug:
+        car.drive_debug()
+    else:
+        car.drive()
     if car.robot.btCon:
         car.robot.disconnect(car.robot.sock)
     time.sleep(0.3)  # waits for keyboard thread to shutdown

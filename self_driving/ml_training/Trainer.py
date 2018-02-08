@@ -182,7 +182,7 @@ class Trainer():
                                             save_path=self.save_path)
                             best_valid_loss = valid_loss
 
-    def predict(self, img):
+    def predict_prob(self, img):
         """
         Predict the category using img as input.
 
@@ -200,6 +200,18 @@ class Trainer():
             feed_dict = {self.input_image: img}
             result = sess.run(self.tf_prediction,
                               feed_dict=feed_dict)
-            result = np.argmax(result, axis=1)
-            result = result.astype(np.int32)
+            result = result.astype(np.float32)
+        return result
+
+    def predict(self, img):
+        """
+        Predict the category using img as input.
+
+        :param img: image
+        :type img: np.array
+        :rtype: np.array
+        """
+        result = self.predict_prob(img)
+        result = np.argmax(result, axis=1)
+        result = result.astype(np.int32)
         return result
