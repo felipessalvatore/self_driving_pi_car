@@ -18,7 +18,8 @@ def simulate_run(folder_path,
                  output_path,
                  mode,
                  trainer,
-                 verbose):
+                 verbose,
+                 resize=100):
     """
     Function to simulate one driving using one of folder images.
 
@@ -35,13 +36,15 @@ def simulate_run(folder_path,
     """
     if verbose:
         print("Trying to run simulator in images from {} \n".format(folder_path))  # noqa
+    resize = resize / 100.0
     for filename in os.listdir(folder_path):
         if verbose:
             print(filename)
         image_path = os.path.join(folder_path, filename)
         image_path_output = os.path.join(output_path, filename)
         image_raw = cv2.imread(image_path)
-        image = image2float(image_raw, mode)
+        image = cv2.resize(image_raw, (0, 0), fx=resize, fy=resize)
+        image = image2float(image, mode)
         prob = trainer.predict_prob(image)[0]
         commands = ['up', 'down', 'left', 'right']
         commands_prob = []
@@ -102,6 +105,21 @@ def main():
                           type=str,
                           default="bin",
                           help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+    parser.add_argument("-he",
+                        "--height",
+                        type=int,
+                        default=90,
+                        help="image height (default=90)")
+    parser.add_argument("-w",
+                        "--width",
+                        type=int,
+                        default=160,
+                        help="image width (default=160)")
+    parser.add_argument("-r",
+                        "--resize",
+                        type=int,
+                        default=100,
+                        help="percentage to resize images in dataset (default=100)") # noqa
     parser.add_argument("-v",
                         "--verbose",
                         action="store_true",
@@ -126,9 +144,11 @@ def main():
     else:
         activations = args.activations
 
-    config = Config(channels=channels,
-                    architecture=args.architecture,
-                    activations=activations)
+    config = Config(architecture=args.architecture,
+                    activations=activations,
+                    height=args.height,
+                    width=args.width,
+                    channels=channels)
 
     data = DataHolder(config)
     graph = tf.Graph()
@@ -142,7 +162,8 @@ def main():
                  args.output_path,
                  args.mode,
                  trainer,
-                 args.verbose)
+                 args.verbose,
+                 args.resize)
 
 
 if __name__ == '__main__':
