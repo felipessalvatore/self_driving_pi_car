@@ -41,7 +41,7 @@ def folder2array(folder_path,
     shape = (height, width, channels)
     if resize != 100: 
         resized_shape = (int((height * resize)/100.0), int((width * resize)/100.0), channels)
-        flat_shape = new_shape[0] * new_shape[1] * new_shape[2]
+        flat_shape = resized_shape[0] * resized_shape[1] * resized_shape[2]
         shape = resized_shape
     resize = resize / 100.0
     with open(pickle_path, "rb") as f:
