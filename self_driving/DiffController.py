@@ -23,7 +23,7 @@ class DiffController():
     :param bluetooth: param to control if the bluetooth will be used.
     :type bluetooth: bool
     """
-    def __init__(self, height, width, mode="pure", bluetooth=False):
+    def __init__(self, height, width, mode="pure", bluetooth=False, architecture=[4]):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
         self.cam = Camera(mode=mode, debug=True)
@@ -34,7 +34,8 @@ class DiffController():
             channels = 1
         config = Config(channels=channels,
                         height=height,
-                        width=width)
+                        width=width,
+                        architecture=architecture)
         data = DataHolder(config)
         graph = tf.Graph()
         network = DFN(graph, config)
@@ -200,11 +201,18 @@ def main():
                         type=int,
                         default=160,
                         help="image width (default=160)")
+    parser.add_argument('-a',
+                        '--architecture',
+                        type=int,
+                        nargs='+',
+                        help='sizes for hidden layers and output layer, should end with "4" !, (default=[4])',  # noqa
+                        default=[4])
     user_args = parser.parse_args()
-    car = DiffController(user_args.heigh,
+    car = DiffController(user_args.height,
                          user_args.width,
                          user_args.mode,
-                         user_args.bluetooth)
+                         user_args.bluetooth,
+                         user_args.architecture)
     if user_args.debug:
         car.drive_debug()
     else:

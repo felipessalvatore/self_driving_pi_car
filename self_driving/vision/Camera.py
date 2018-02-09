@@ -32,6 +32,7 @@ class Camera(object):
         self.cam.set(height_param, height_size)
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.mode = mode
+        self.debug = debug
 
     def save_image(self, path, img):
         """
