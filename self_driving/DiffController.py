@@ -23,16 +23,18 @@ class DiffController():
     :param bluetooth: param to control if the bluetooth will be used.
     :type bluetooth: bool
     """
-    def __init__(self, mode="pure", bluetooth=False):
+    def __init__(self, height, width, mode="pure", bluetooth=False):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
-        self.cam = Camera(mode=mode)
+        self.cam = Camera(mode=mode, debug=True)
         self.mode = mode
         if mode == "pure":
             channels = 3
         else:
             channels = 1
-        config = Config(channels=channels)
+        config = Config(channels=channels,
+                        height=height,
+                        width=width)
         data = DataHolder(config)
         graph = tf.Graph()
         network = DFN(graph, config)
@@ -128,7 +130,7 @@ class DiffController():
         count = 0
         while True:
             init = time.time()
-            img = self.cam.take_picture()
+            img, original_img = self.cam.take_picture()
             init = time.time() - init
             print("take_picture_time = {0:.3f}".format(init))
 
@@ -149,7 +151,7 @@ class DiffController():
                 print(commands_prob)
                 print(command)
                 name = os.path.join("debug_run", str(count) + ".png")
-                write_img(img, commands_prob, name)
+                write_img(original_img, commands_prob, name)
                 if command == 'up':
                     self.robot.move_up()
                     time.sleep(0.05)
@@ -188,8 +190,21 @@ def main():
                         action="store_true",
                         default=False,
                         help="debug (default=False)")  # noqa
+    parser.add_argument("-he",
+                        "--height",
+                        type=int,
+                        default=90,
+                        help="image height (default=90)")
+    parser.add_argument("-w",
+                        "--width",
+                        type=int,
+                        default=160,
+                        help="image width (default=160)")
     user_args = parser.parse_args()
-    car = DiffController(user_args.mode, user_args.bluetooth)
+    car = DiffController(user_args.heigh,
+                         user_args.width,
+                         user_args.mode,
+                         user_args.bluetooth)
     if user_args.debug:
         car.drive_debug()
     else:
