@@ -26,12 +26,14 @@ class Camera(object):
                  height_param=4,
                  width_param=3,
                  mode="pure",
-                 debug=False):
+                 debug=False,
+                 resize=0.5):
         self.cam = cv2.VideoCapture(input_cam_device)
         self.cam.set(width_param, width_size)
         self.cam.set(height_param, height_size)
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.mode = mode
+        self.resize = resize
 
     def save_image(self, path, img):
         """
@@ -44,7 +46,7 @@ class Camera(object):
         """
         cv2.imwrite(path, img)
 
-    def take_picture(self, debug=False):
+    def take_picture(self):
         """
         Take picture according to the mode param.
         :rtype: np.ndarray
@@ -65,6 +67,7 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, img = self.cam.read()
+        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
         if self.debug:
             return _, img
         return img
@@ -76,6 +79,7 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
+        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
         img = grayscale_image(orig)
         if self.debug:
             return img, orig
@@ -88,6 +92,7 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
+        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
         img = binarize_image(orig)
         if self.debug:
             return img, orig
@@ -100,6 +105,9 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
+        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
         if self.debug:
             return img[1], orig
         return img[1]
+
+
