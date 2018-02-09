@@ -47,6 +47,9 @@ class Config(object):
                  channels=3,
                  architecture=[4],
                  activations=None,
+                 conv_architecture=[32, 64],
+                 kernel_sizes=[5, 5],
+                 pool_kernel=None,
                  batch_size=32,
                  epochs=5,
                  num_steps=1000,
@@ -58,6 +61,9 @@ class Config(object):
         self.channels = channels
         self.architecture = architecture
         self.activations = activations
+        self.conv_architecture = conv_architecture
+        self.kernel_sizes = kernel_sizes
+        self.pool_kernel = pool_kernel
         self.batch_size = batch_size
         self.epochs = epochs
         self.num_steps = num_steps
@@ -76,6 +82,10 @@ class Config(object):
         status += "channels = {}\n".format(self.channels)
         status += "architecture = {}\n".format(self.architecture)
         status += "activations = {}\n".format(self.activations)
+        status += "batch_size = {}\n".format(self.batch_size)
+        status += "conv_architecture = {}\n".format(self.conv_architecture)
+        status += "kernel_sizes = {}\n".format(self.kernel_sizes)
+        status += "pool_kernel = {}\n".format(self.pool_kernel)
         status += "batch_size = {}\n".format(self.batch_size)
         status += "epochs = {}\n".format(self.epochs)
         status += "num_steps = {}\n".format(self.num_steps)

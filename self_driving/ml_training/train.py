@@ -10,6 +10,7 @@ from DataHolder import DataHolder
 from Config import Config
 from Trainer import Trainer
 from DFN import DFN
+from CNN import CNN
 from util import reconstruct_from_record
 from util import int2command
 
@@ -29,6 +30,9 @@ def train(mode,
           channels,
           architecture,
           activations,
+          conv_architecture,
+          kernel_sizes,
+          pool_kernel,
           batch_size,
           epochs,
           num_steps,
@@ -37,7 +41,8 @@ def train(mode,
           optimizer,
           verbose,
           name,
-          move):
+          move,
+          conv=False):
     """
     Trains a model
 
@@ -90,6 +95,9 @@ def train(mode,
                     channels=channels,
                     architecture=architecture,
                     activations=activations,
+                    conv_architecture=conv_architecture,
+                    kernel_sizes=kernel_sizes,
+                    pool_kernel=pool_kernel,
                     batch_size=batch_size,
                     epochs=epochs,
                     num_steps=num_steps,
@@ -101,9 +109,15 @@ def train(mode,
                       records=records)
 
     graph = tf.Graph()
-    network = DFN(graph, config)
+    if conv:
+        network_name = "CNN"
+        network = CNN(graph, config)
+    else:
+        network_name = "DFN"
+        network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
-    print("\nTraining in the {} data\n".format(mode))
+    print("\nTraining in the {} data using one {}\n".format(mode,
+                                                            network_name))
     print("params:\n{}\n".format(config.get_status()))
     trainer.fit(verbose=verbose)
     if verbose:
@@ -159,6 +173,24 @@ def main():
                         nargs='+',
                         help='activations: relu, sigmoid, tanh (defaul=None)',
                         default=None)
+    parser.add_argument('-conva',
+                        '--conv_architecture',
+                        type=int,
+                        nargs='+',
+                        help='filters for conv layers (default=[32, 64])',  # noqa
+                        default=[32, 64])
+    parser.add_argument('-k',
+                        '--kernel_sizes',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for conv layers (default=None - 5 for every layer)',  # noqa
+                        default=None)
+    parser.add_argument('-p',
+                        '--pool_kernel',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for pooling layers (default=None - 2 for every layer)',  # noqa
+                        default=None)
     parser.add_argument("-b",
                         "--batch_size",
                         type=int,
@@ -211,7 +243,12 @@ def main():
                         "--move",
                         action="store_true",
                         default=False,
-                        help="move checpoits to parent folder (default=False)")  # noqa
+                        help="move checkpoits to parent folder (default=False)")  # noqa
+    parser.add_argument("-conv",
+                        "--conv",
+                        action="store_true",
+                        default=False,
+                        help="Use convolutional network (default=False)")  # noqa
     args = parser.parse_args()
     if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
         channels = 1
@@ -248,6 +285,9 @@ def main():
           channels=channels,
           architecture=args.architecture,
           activations=activations,
+          conv_architecture=args.conv_architecture,
+          kernel_sizes=args.kernel_sizes,
+          pool_kernel=args.pool_kernel,
           batch_size=args.batch_size,
           epochs=args.epochs,
           num_steps=args.num_steps,
@@ -256,7 +296,8 @@ def main():
           optimizer=optimizer,
           verbose=args.verbose,
           name=args.name,
-          move=args.move)
+          move=args.move,
+          conv=args.conv)
 
 
 if __name__ == '__main__':
