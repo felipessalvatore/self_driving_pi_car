@@ -61,9 +61,9 @@ class DiffController():
         :type label_dict: dict
         """
         prob = self.trainer.predict_prob(img)[0]
-        result = np.argmax(prob, axis=1)
+        result = np.argmax(prob, axis=0)
         result = result.astype(np.int32)
-        command_int = int(result[0])
+        command_int = int(result)
         command_int = label_dict[command_int]
         return command_int, prob
 
@@ -184,10 +184,10 @@ def main():
                         default=False,
                         help="bluetooth control (default=False)")
     parser.add_argument("-d",
-                        "--debbug",
+                        "--debug",
                         action="store_true",
                         default=False,
-                        help="debbug (default=False)")  # noqa
+                        help="debug (default=False)")  # noqa
     user_args = parser.parse_args()
     car = DiffController(user_args.mode, user_args.bluetooth)
     if user_args.debug:
