@@ -29,11 +29,11 @@ class TestDataAug(unittest.TestCase):
         cls.width = 160
         cls.height = 90
         cls.channels = 3
-        cls.data_name = os.path.join(currentdir, "toy_data.npy")
-        cls.label_name = os.path.join(currentdir, "toy_label.npy")
+        cls.data_name = os.path.join(currentdir, "toy_160_90_3_data.npy")
+        cls.label_name = os.path.join(currentdir, "toy_160_90_3_labels.npy")
         create_data_set_as_np_array(cls.image_folder,
-                                    cls.data_name,
-                                    cls.label_name,
+                                    currentdir,
+                                    "toy",
                                     cls.width,
                                     cls.height,
                                     cls.channels,

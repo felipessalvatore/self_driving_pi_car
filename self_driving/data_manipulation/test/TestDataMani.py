@@ -27,8 +27,8 @@ class TestDataMani(unittest.TestCase):
         cls.width = 160
         cls.height = 90
         cls.channels = 3
-        cls.data_name = os.path.join(currentdir, "toy_data.npy")
-        cls.label_name = os.path.join(currentdir, "toy_label.npy")
+        cls.data_name = os.path.join(currentdir, "toy_160_90_3_data.npy")
+        cls.label_name = os.path.join(currentdir, "toy_160_90_3_labels.npy")
 
     @classmethod
     def tearDown(cls):
@@ -39,8 +39,8 @@ class TestDataMani(unittest.TestCase):
 
     def test_data_is_created_from_image_folder_and_pickle(self):
         create_data_set_as_np_array(self.image_folder,
-                                    self.data_name,
-                                    self.label_name,
+                                    currentdir,
+                                    "toy",
                                     self.width,
                                     self.height,
                                     self.channels,

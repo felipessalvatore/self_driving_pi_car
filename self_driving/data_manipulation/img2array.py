@@ -29,7 +29,7 @@ def folder2array(folder_path,
     :param width: image width
     :type width: int
     :param channels: image channels
-    :type channels: int    
+    :type channels: int
     :param resize: percentage to scale the image
     :type resize: int
 
@@ -39,8 +39,10 @@ def folder2array(folder_path,
     all_labels = []
     flat_shape = height * width * channels
     shape = (height, width, channels)
-    if resize != 100: 
-        resized_shape = (int((height * resize)/100.0), int((width * resize)/100.0), channels)
+    if resize != 100:
+        resized_shape = (int((height * resize) / 100.0),
+                         int((width * resize) / 100.0),
+                         channels)
         flat_shape = resized_shape[0] * resized_shape[1] * resized_shape[2]
         shape = resized_shape
     resize = resize / 100.0
@@ -53,7 +55,7 @@ def folder2array(folder_path,
         label = command2int[label_dict[key]]
         image_path = os.path.join(folder_path, filename)
         image = change_type_to_uint8(cv2.imread(image_path))
-        image = cv2.resize(image, (0,0), fx=resize, fy=resize)
+        image = cv2.resize(image, (0, 0), fx=resize, fy=resize)
         image = image.reshape(flat_shape)
         all_images.append(image)
         all_labels.append(label)
@@ -87,7 +89,7 @@ def create_data_set_as_np_array(folder_path,
     this function transform all images in two arrays
     one with all the flatted images 'npy_name'_<np.shape>_data.npy
     and other with all the respective labels 'npy_name'_<np.shape>_labels.npy
-    both saved in 'npy_path'. 
+    both saved in 'npy_path'.
 
     :param folder_path: path to folder containing folders of images
                         and pickles
@@ -115,12 +117,12 @@ def create_data_set_as_np_array(folder_path,
         if os.path.isdir(folder):
             pickle_path = folder + "_pickle"
             images, labels, shape = folder2array(folder,
-                                          pickle_path,
-                                          height,
-                                          width,
-                                          channels,
-                                          resize,
-                                          verbose)
+                                                 pickle_path,
+                                                 height,
+                                                 width,
+                                                 channels,
+                                                 resize,
+                                                 verbose)
             all_images.append(images)
             all_labels.append(labels)
     all_images = np.concatenate(all_images, axis=0)
@@ -141,7 +143,7 @@ def main():
     parser.add_argument('npy_folder_path',
                         type=str, help='path to npy files to be saved')
     parser.add_argument('npy_name',
-                        type=str, default="data", help='name of npy files (dafault="data")')
+                        type=str, default="data", help='name of npy files (dafault="data")') # noqa
     parser.add_argument("-H",
                         "--image_height",
                         type=int,
@@ -161,7 +163,7 @@ def main():
                         "--resize",
                         type=int,
                         default=100,
-                        help="percentage to resize images in dataset (default=100)")
+                        help="percentage to resize images in dataset (default=100)") # noqa
     user_args = parser.parse_args()
     create_data_set_as_np_array(user_args.img_folder_path,
                                 user_args.npy_folder_path,
@@ -170,6 +172,7 @@ def main():
                                 user_args.image_width,
                                 user_args.image_channels,
                                 user_args.resize)
+
 
 if __name__ == '__main__':
     main()
