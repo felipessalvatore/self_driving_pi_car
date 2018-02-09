@@ -6,7 +6,7 @@ import pickle
 import os
 import cv2
 import numpy as np
-from util import command2int
+from util import command2int, save_dataset
 
 
 def folder2array(folder_path,
@@ -14,6 +14,7 @@ def folder2array(folder_path,
                  height,
                  width,
                  channels,
+                 resize,
                  verbose):
     """
     Function to transform all images from the folder folder_name
@@ -28,13 +29,21 @@ def folder2array(folder_path,
     :param width: image width
     :type width: int
     :param channels: image channels
-    :type channels: int
+    :type channels: int    
+    :param resize: percentage to scale the image
+    :type resize: int
 
-    :rtype: (np.array,np.array
+    :rtype: (np.array,np.array,np.array)
     """
     all_images = []
     all_labels = []
-    flat_shape = width * height * channels
+    flat_shape = height * width * channels
+    shape = (height, width, channels)
+    if resize != 100: 
+        resized_shape = (int((height * resize)/100.0), int((width * resize)/100.0), channels)
+        flat_shape = new_shape[0] * new_shape[1] * new_shape[2]
+        shape = resized_shape
+    resize = resize / 100.0
     with open(pickle_path, "rb") as f:
         label_dict = pickle.load(f)
     if verbose:
@@ -44,12 +53,13 @@ def folder2array(folder_path,
         label = command2int[label_dict[key]]
         image_path = os.path.join(folder_path, filename)
         image = change_type_to_uint8(cv2.imread(image_path))
+        image = cv2.resize(image, (0,0), fx=resize, fy=resize)
         image = image.reshape(flat_shape)
         all_images.append(image)
         all_labels.append(label)
     all_labels = change_type_to_uint8(np.array(all_labels))
     all_images = np.array(all_images)
-    return all_images, all_labels
+    return all_images, all_labels, shape
 
 
 def change_type_to_uint8(image):
@@ -65,31 +75,35 @@ def change_type_to_uint8(image):
 
 
 def create_data_set_as_np_array(folder_path,
-                                data_name="data",
-                                label_name="labels",
+                                npy_path,
+                                npy_name="data",
                                 height=90,
                                 width=160,
                                 channels=3,
+                                resize=100,
                                 verbose=True):
     """
     Giving one path to a folder of folders of images,
     this function transform all images in two arrays
-    one 'data_name' with all the flatted images
-    and other 'label_name' with all the respective labels
+    one with all the flatted images 'npy_name'_<np.shape>_data.npy
+    and other with all the respective labels 'npy_name'_<np.shape>_labels.npy
+    both saved in 'npy_path'. 
 
     :param folder_path: path to folder containing folders of images
                         and pickles
     :type folder_path: str
-    :param data_name: name of the data array to be saved
-    :type data_name: str
-    :param label_name: name of the labels array to be saved
-    :type label_name: str
+    :param npy_path: name of the data and labels array to be saved
+    :type npy_path: str
+    :param npy_name: path to data and labels array to be saved
+    :type npy_name: str
     :param height: image height
     :type heights: int
     :param width: image width
     :type width: int
     :param channels: image channels
     :type channels: int
+    :param resize: percentage to scale the image
+    :type resize: int
     :param verbose: param to print path information
     :type verbose: boolean
     """
@@ -100,19 +114,19 @@ def create_data_set_as_np_array(folder_path,
         folder = os.path.join(folder_path, folder)
         if os.path.isdir(folder):
             pickle_path = folder + "_pickle"
-            images, labels = folder2array(folder,
+            images, labels, shape = folder2array(folder,
                                           pickle_path,
                                           height,
                                           width,
                                           channels,
+                                          resize,
                                           verbose)
             all_images.append(images)
             all_labels.append(labels)
     all_images = np.concatenate(all_images, axis=0)
     all_labels = np.concatenate(all_labels, axis=0)
     all_labels = all_labels.reshape((all_labels.shape[0], 1))
-    np.save(data_name, all_images)
-    np.save(label_name, all_labels)
+    save_dataset(all_images, all_labels, npy_path, shape, npy_name)
 
 
 def main():
@@ -124,10 +138,10 @@ def main():
 
     parser.add_argument('img_folder_path',
                         type=str, help='path to image folder')
-    parser.add_argument('data_path',
-                        type=str, help='path to data to be saved')
-    parser.add_argument('labels_path',
-                        type=str, help='path to labels to be saved')
+    parser.add_argument('npy_folder_path',
+                        type=str, help='path to npy files to be saved')
+    parser.add_argument('npy_name',
+                        type=str, default="data", help='name of npy files (dafault="data")')
     parser.add_argument("-H",
                         "--image_height",
                         type=int,
@@ -143,14 +157,19 @@ def main():
                         type=int,
                         default=3,
                         help="number of channels (default=3)")
+    parser.add_argument("-r",
+                        "--resize",
+                        type=int,
+                        default=100,
+                        help="percentage to resize images in dataset (default=100)")
     user_args = parser.parse_args()
     create_data_set_as_np_array(user_args.img_folder_path,
-                                user_args.data_path,
-                                user_args.labels_path,
+                                user_args.npy_folder_path,
+                                user_args.npy_name,
                                 user_args.image_height,
                                 user_args.image_width,
-                                user_args.image_channels)
-
+                                user_args.image_channels,
+                                user_args.resize)
 
 if __name__ == '__main__':
     main()
