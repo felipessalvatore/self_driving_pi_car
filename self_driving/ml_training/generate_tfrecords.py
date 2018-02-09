@@ -3,7 +3,9 @@ from Config import Config
 from DataHolder import DataHolder
 
 
-def records_generator(channels,
+def records_generator(height,
+                      width,
+                      channels,
                       data_path,
                       label_path,
                       name,
@@ -39,7 +41,9 @@ def records_generator(channels,
     :type binary: boolean
     """
 
-    config = Config(channels=channels)
+    config = Config(height=height,
+                    width=width,
+                    channels=channels)
     data = DataHolder(config,
                       data_path=data_path,
                       label_path=label_path,
@@ -58,6 +62,22 @@ def main():
     Main script to perform data search.
     """
     parser = argparse.ArgumentParser()
+    parser.add_argument("-H",
+                        "--height",
+                        type=int,
+                        default=90,
+                        help="height number (default=90)")
+    parser.add_argument("-w",
+                        "--width",
+                        type=int,
+                        default=160,
+                        help="width number (default=160)")
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
+
     parser.add_argument("-n",
                         "--name",
                         type=str,
@@ -113,11 +133,13 @@ def main():
                         help="label data path (default=None)")
 
     args = parser.parse_args()
-    if args.binary or args.green or args.gray:
-        channels = 1
-    else:
-        channels = 3
-    records_generator(channels,
+    # if args.binary or args.green or args.gray:
+    #     channels = 1
+    # else:
+    #     channels = 3
+    records_generator(args.height,
+                      args.width,
+                      args.channels,
                       args.train_data,
                       args.train_label,
                       args.name,
