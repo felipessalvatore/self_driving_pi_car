@@ -73,7 +73,7 @@ class CNN():
                                                              kernel_size=conv_kernel_size)  # noqa
                 # Reshaping
                 shape = img_input.get_shape()
-                flat_shape = shape[1] * shape[2] * shape[3]
+                flat_shape = int(shape[1] * shape[2] * shape[3])
                 tf_input = tf.reshape(img_input, (-1, flat_shape))
 
                 # Dense Layers
