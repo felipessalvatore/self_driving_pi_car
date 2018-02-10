@@ -23,10 +23,18 @@ class DiffController():
     :param bluetooth: param to control if the bluetooth will be used.
     :type bluetooth: bool
     """
-    def __init__(self, height, width, mode="pure", bluetooth=False, architecture=[4], resize=100):
+    def __init__(self,
+                 height,
+                 width,
+                 mode="pure",
+                 bluetooth=False,
+                 architecture=[4],
+                 resize=100):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
-        self.cam = Camera(mode=mode, debug=True, resize=resize/100.0)
+        self.cam = Camera(mode=mode,
+                          debug=True,
+                          resize=resize / 100.0)
         self.mode = mode
         if mode == "pure":
             channels = 3
@@ -94,7 +102,7 @@ class DiffController():
         """
         last_command = None
         while True:
-            img = self.cam.take_picture()
+            img, _ = self.cam.take_picture()
 
             if key.is_pressed('q'):
                 print('Exiting...')
