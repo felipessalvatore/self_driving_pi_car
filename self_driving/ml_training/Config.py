@@ -47,14 +47,14 @@ class Config(object):
                  channels=3,
                  architecture=[4],
                  activations=None,
-                 conv_architecture=[32, 64],
+                 conv_architecture=[722, 4],
                  kernel_sizes=[5, 5],
                  pool_kernel=None,
                  batch_size=32,
                  epochs=5,
                  num_steps=1000,
                  save_step=100,
-                 learning_rate=0.02,
+                 learning_rate=0.0054,
                  optimizer=tf.train.GradientDescentOptimizer):
         self.height = height
         self.width = width
