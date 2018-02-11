@@ -93,7 +93,11 @@ class DataHolder():
         # fliping the original data
         # and dividing it into train, test and valid
         if self.flip:
-            data, labels = extend_dataset_flip_axis(data, labels)
+            data, labels = extend_dataset_flip_axis(data,
+                                                    labels,
+                                                    self.config.height,
+                                                    self.config.width,
+                                                    self.config.channels)
         train_data, train_labels, valid_data, valid_labels, test_data, test_labels = data_cut(data, labels)  # noqa
 
         # applying data augmentation to the train dataset
@@ -105,23 +109,50 @@ class DataHolder():
                                                             self.config.channels)  # noqa
         # transforming all images into grayscale
         if self.gray:
-            train_data, _ = gray_dataset(train_data)
-            valid_data, _ = gray_dataset(valid_data)
-            test_data, _ = gray_dataset(test_data)
+            train_data, _ = gray_dataset(train_data,
+                                         self.config.height,
+                                         self.config.width,
+                                         self.config.channels)
+            valid_data, _ = gray_dataset(valid_data,
+                                         self.config.height,
+                                         self.config.width,
+                                         self.config.channels)
+            test_data, _ = gray_dataset(test_data,
+                                        self.config.height,
+                                        self.config.width,
+                                        self.config.channels)
             self.config.channels = 1
 
         # transforming all images into images with only green channel
         if self.green:
-            train_data, _ = green_dataset(train_data)
-            valid_data, _ = green_dataset(valid_data)
-            test_data, _ = green_dataset(test_data)
+            train_data, _ = green_dataset(train_data,
+                                          self.config.height,
+                                          self.config.width,
+                                          self.config.channels)
+            valid_data, _ = green_dataset(valid_data,
+                                          self.config.height,
+                                          self.config.width,
+                                          self.config.channels)
+            test_data, _ = green_dataset(test_data,
+                                         self.config.height,
+                                         self.config.width,
+                                         self.config.channels)
             self.config.channels = 1
 
         # transforming all images into binary images
         if self.binary:
-            train_data, _ = binarize_dataset(train_data)
-            valid_data, _ = binarize_dataset(valid_data)
-            test_data, _ = binarize_dataset(test_data)
+            train_data, _ = binarize_dataset(train_data,
+                                             self.config.height,
+                                             self.config.width,
+                                             self.config.channels)
+            valid_data, _ = binarize_dataset(valid_data,
+                                             self.config.height,
+                                             self.config.width,
+                                             self.config.channels)
+            test_data, _ = binarize_dataset(test_data,
+                                            self.config.height,
+                                            self.config.width,
+                                            self.config.channels)
             self.config.channels = 1
 
         # transforming all data into tf.records

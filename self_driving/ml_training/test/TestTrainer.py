@@ -29,38 +29,46 @@ class TestTrainer(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        data_name = "toy_data.npy"
-        label_name = "toy_label.npy"
+        data_name = "toy_160_90_3_data.npy"
+        label_name = "toy_160_90_3_labels.npy"
 
         cls.config3d = Config(epochs=1,
                               architecture=[4],
                               num_steps=100,
                               save_step=10)
-        cls.config1d = Config(epochs=1,
-                              architecture=[4],
-                              num_steps=100,
-                              save_step=10)
+        cls.config_green = Config(epochs=1,
+                                  architecture=[4],
+                                  num_steps=100,
+                                  save_step=10)
+        cls.config_gray = Config(epochs=1,
+                                 architecture=[4],
+                                 num_steps=100,
+                                 save_step=10)
+        cls.config_bin = Config(epochs=1,
+                                architecture=[4],
+                                num_steps=100,
+                                save_step=10)
         cls.data_aug = DataHolder(cls.config3d,
                                   data_name,
                                   label_name,
                                   record_path="toy_aug",
                                   flip=True,
                                   augmentation=True)
-        cls.data_gray = DataHolder(cls.config1d,
+        cls.data_gray = DataHolder(cls.config_gray,
                                    data_name,
                                    label_name,
                                    record_path="toy_gray",
                                    flip=True,
                                    augmentation=False,
                                    gray=True)
-        cls.data_green = DataHolder(cls.config1d,
+        cls.data_green = DataHolder(cls.config_green,
                                     data_name,
                                     label_name,
                                     record_path="toy_green",
                                     flip=True,
                                     augmentation=False,
                                     green=True)
-        cls.data_binary = DataHolder(cls.config1d,
+        cls.data_binary = DataHolder(cls.config_bin,
                                      data_name,
                                      label_name,
                                      flip=True,
@@ -139,14 +147,14 @@ class TestTrainer(unittest.TestCase):
         self.check_overfitting_valid_data(self.config3d,
                                           self.data_aug)
         for dh in self.data_list:
-            self.check_overfitting_valid_data(self.config1d,
+            self.check_overfitting_valid_data(self.config_gray,
                                               dh)
 
     def test_prediction(self):
         self.check_prediction(self.config3d,
                               self.data_aug)
         for dh in self.data_list:
-            self.check_prediction(self.config1d,
+            self.check_prediction(self.config_gray,
                                   dh)
         TestTrainer.end = True  # hack to use TearDown only here
 

@@ -5,7 +5,7 @@ import unittest
 import tensorflow as tf
 import numpy as np
 
-command2int = {"up": 0, "down": 1, "left": 2, "right": 3}
+command2int = {"up": 0, "left": 1, "right": 2}
 int2command = {i[1]: i[0] for i in command2int.items()}
 
 

@@ -25,35 +25,38 @@ class TestDataHolder(unittest.TestCase):
     """
     @classmethod
     def setUpClass(cls):
-        config = Config()
-        data_name = "toy_data.npy"
-        label_name = "toy_label.npy"
+        config3 = Config()
+        config_gray = Config()
+        config_green = Config()
+        config_bin = Config()
+        data_name = "toy_160_90_3_data.npy"
+        label_name = "toy_160_90_3_labels.npy"
 
-        cls.original_dh = DataHolder(config,
+        cls.original_dh = DataHolder(config3,
                                      data_name,
                                      label_name,
                                      record_path="toy")
-        cls.original_flip = DataHolder(config,
+        cls.original_flip = DataHolder(config3,
                                        data_name,
                                        label_name,
                                        record_path="toy_flip",
                                        flip=True)
-        cls.original_aug = DataHolder(config,
+        cls.original_aug = DataHolder(config3,
                                       data_name,
                                       label_name,
                                       record_path="toy_aug",
                                       augmentation=True)
-        cls.original_gray = DataHolder(config,
+        cls.original_gray = DataHolder(config_gray,
                                        data_name,
                                        label_name,
                                        record_path="toy_gray",
                                        gray=True)
-        cls.original_green = DataHolder(config,
+        cls.original_green = DataHolder(config_green,
                                         data_name,
                                         label_name,
                                         record_path="toy_green",
                                         green=True)
-        cls.original_binary = DataHolder(config,
+        cls.original_binary = DataHolder(config_bin,
                                          data_name,
                                          label_name,
                                          record_path="toy_bin",

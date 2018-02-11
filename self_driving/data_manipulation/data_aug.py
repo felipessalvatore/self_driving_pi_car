@@ -22,16 +22,18 @@ import vision.image_manipulation as img_mani  # noqa
 
 
 def extend_dataset_flip_axis(data,
-                             labels):
+                             labels,
+                             height=90,
+                             width=160,
+                             channels=3):
     """
     Balance and extend dataset
     by generating new images flipping the horizontal
     axis (only applicable to images labeled 'left' or 'right').
     It assumes the following codification:
         - "up": 0
-        - "down": 1
-        - "left": 2
-        - "right": 3
+        - "left": 1
+        - "right": 2
 
     :type data: numpy.ndarray
     :type labels: numpy.ndarray
@@ -42,13 +44,17 @@ def extend_dataset_flip_axis(data,
     flat_shape = data.shape[1]
     for i in range(data.shape[0]):
         orig_label = labels[i]
-        if (orig_label / 2 < 1):
+        if orig_label == 0:
             continue
-        frame, cmd = get_image_and_command(data[i], labels[i])
-        if (orig_label % 2 == 0):
-            flip_cmd = 3
-        else:
+        frame, cmd = get_image_and_command(data[i],
+                                           labels[i],
+                                           height,
+                                           width,
+                                           channels)
+        if orig_label == 1:
             flip_cmd = 2
+        else:
+            flip_cmd = 1
         flip = np.flip(frame, axis=1)
         flip = np.array(flip.reshape(flat_shape))
         all_images.append(flip)
@@ -60,7 +66,11 @@ def extend_dataset_flip_axis(data,
     return extended_images, extended_labels
 
 
-def transfor_dataset_with_one_channel(data, transformation):
+def transfor_dataset_with_one_channel(data,
+                                      transformation,
+                                      height=90,
+                                      width=160,
+                                      channels=3):
     """
     Create a new dataset by applying a function "transformation"
     available at vision.image_manipulation.
@@ -74,7 +84,10 @@ def transfor_dataset_with_one_channel(data, transformation):
     new_dataset = []
     new_shape = ()
     for i in range(data.shape[0]):
-        image = get_image(data[i])
+        image = get_image(data[i],
+                          height,
+                          width,
+                          channels)
         new_image = transformation(image)
         if new_shape == ():
             new_shape = new_image.shape
@@ -84,7 +97,10 @@ def transfor_dataset_with_one_channel(data, transformation):
     return new_dataset, new_shape
 
 
-def binarize_dataset(data):
+def binarize_dataset(data,
+                     height=90,
+                     width=160,
+                     channels=3):
     """
     Create a new dataset by applying the function binarize_image.
 
@@ -92,11 +108,17 @@ def binarize_dataset(data):
     :rtype: numpy.ndarray, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
-                                                    img_mani.binarize_image)
+                                                    img_mani.binarize_image,
+                                                    height,
+                                                    width,
+                                                    channels)
     return data, shape
 
 
-def gray_dataset(data):
+def gray_dataset(data,
+                 height=90,
+                 width=160,
+                 channels=3):
     """
     Create a new dataset by applying the function grayscale_image.
 
@@ -104,11 +126,17 @@ def gray_dataset(data):
     :rtype: numpy.ndarray, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
-                                                    img_mani.grayscale_image)
+                                                    img_mani.grayscale_image,
+                                                    height,
+                                                    width,
+                                                    channels)
     return data, shape
 
 
-def green_dataset(data):
+def green_dataset(data,
+                  height=90,
+                  width=160,
+                  channels=3):
     """
     Create a new dataset by applying the function green_channel.
 
@@ -116,7 +144,10 @@ def green_dataset(data):
     :rtype: numpy.ndarray, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
-                                                    img_mani.green_channel)
+                                                    img_mani.green_channel,
+                                                    height,
+                                                    width,
+                                                    channels)
     return data, shape
 
 

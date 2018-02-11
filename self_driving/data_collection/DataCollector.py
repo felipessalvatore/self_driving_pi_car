@@ -118,7 +118,6 @@ class BasicDiffCollector(DataCollector):
 
             elif key.is_pressed('down'):
                 self.robot.move_down()
-                self.save_image_write_dict(img, 'down')
                 time.sleep(0.05)
 
             elif key.is_pressed('left'):

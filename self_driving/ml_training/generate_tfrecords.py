@@ -62,7 +62,7 @@ def main():
     Main script to perform data search.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("-H",
+    parser.add_argument("-he",
                         "--height",
                         type=int,
                         default=90,
