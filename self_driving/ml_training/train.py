@@ -165,8 +165,8 @@ def main():
                         '--architecture',
                         type=int,
                         nargs='+',
-                        help='sizes for hidden layers and output layer, should end with "4" !, (default=[4])',  # noqa
-                        default=[4])
+                        help='sizes for hidden layers and output layer, should end with at least "3" !, (default=[3])',  # noqa
+                        default=[3])
     parser.add_argument('-ac',
                         '--activations',
                         type=str,

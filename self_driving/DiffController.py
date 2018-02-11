@@ -28,7 +28,7 @@ class DiffController():
                  width,
                  mode="pure",
                  bluetooth=False,
-                 architecture=[4],
+                 architecture=[3],
                  resize=100):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)

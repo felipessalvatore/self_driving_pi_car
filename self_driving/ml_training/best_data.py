@@ -32,12 +32,12 @@ def data_search(data_path=None,
                          or not.
     :type have_records: bool
     """
-    config_pure = Config(architecture=[4])
-    config_flip = Config(architecture=[4])
-    config_aug = Config(architecture=[4])
-    config_bin = Config(architecture=[4], channels=1)
-    config_green = Config(architecture=[4], channels=1)
-    config_gray = Config(architecture=[4], channels=1)
+    config_pure = Config(architecture=[3])
+    config_flip = Config(architecture=[3])
+    config_aug = Config(architecture=[3])
+    config_bin = Config(architecture=[3], channels=1)
+    config_green = Config(architecture=[3], channels=1)
+    config_gray = Config(architecture=[3], channels=1)
     data_pure = DataHolder(config_pure,
                            data_path=data_path,
                            label_path=label_path,
