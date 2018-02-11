@@ -23,10 +23,16 @@ class DiffController():
     :param bluetooth: param to control if the bluetooth will be used.
     :type bluetooth: bool
     """
-    def __init__(self, height, width, mode="pure", bluetooth=False, architecture=[4], resize=100):
+    def __init__(self,
+                 height,
+                 width,
+                 mode="pure",
+                 bluetooth=False,
+                 architecture=[4],
+                 resize=100):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
-        self.cam = Camera(mode=mode, debug=True, resize=resize/100.0)
+        self.cam = Camera(mode=mode, debug=True, resize=resize / 100.0)
         self.mode = mode
         if mode == "pure":
             channels = 3
@@ -49,6 +55,7 @@ class DiffController():
         :type img: np.array
         :param label_dict: dict translating label to command
         :type label_dict: dict
+        :rtype: str
         """
         command_int = int(self.trainer.predict(img)[0])
         command_int = label_dict[command_int]
@@ -62,10 +69,33 @@ class DiffController():
         :type img: np.array
         :param label_dict: dict translating label to command
         :type label_dict: dict
+        :rtype: str, np.array
         """
         prob = self.trainer.predict_prob(img)[0]
         result = np.argmax(prob, axis=0)
         result = result.astype(np.int32)
+        command_int = int(result)
+        command_int = label_dict[command_int]
+        return command_int, prob
+
+    def get_command_and_prob_stochastic(self,
+                                        img,
+                                        label_dict=int2command,
+                                        cat=4):
+        """
+        Non-deterministic way of getting
+        the command from model's prediction
+
+        :param img: image
+        :type img: np.array
+        :param label_dict: dict translating label to command
+        :type label_dict: dict
+        :param cat: number of categories
+        :type cat: int
+        :rtype: str, np.array
+        """
+        prob = self.trainer.predict_prob(img)[0]
+        result = np.random.choice(cat, p=prob)
         command_int = int(result)
         command_int = label_dict[command_int]
         return command_int, prob
