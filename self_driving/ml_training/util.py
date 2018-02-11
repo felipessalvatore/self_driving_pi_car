@@ -88,7 +88,7 @@ def accuracy_per_category(pred, label, categories):
 
 
 def get_random_architecture_and_activations(network_sizes,
-                                            categories=4,
+                                            categories=3,
                                             upper_bound=6000):
     """
     Creates a random architecture list and activations list

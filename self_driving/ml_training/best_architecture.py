@@ -57,7 +57,7 @@ def architecture_search(records,
         valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord())  # noqa
         valid_images = valid_images.astype(np.float32) / 255
         valid_pred = trainer.predict(valid_images)
-        acc_cat = accuracy_per_category(valid_pred, valid_labels, categories=4)
+        acc_cat = accuracy_per_category(valid_pred, valid_labels, categories=3)
         for i, cat_result in enumerate(acc_cat):
             name += int2command[i] + ": = {0:.6f}, ".format(cat_result)
         results.append(name)
