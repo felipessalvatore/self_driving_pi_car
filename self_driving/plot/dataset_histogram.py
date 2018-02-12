@@ -20,7 +20,7 @@ def plot_histogram(labels, path):
     axes = plt.gca()  # Get Current Axes
     axes.set_ylim([0, len(labels)])
 
-    plt.title("Label histogram of {} image dataset".format(len(labels)))
+    plt.title("Histogram of {} images".format(len(labels)))
     plt.xticks(np.arange(4), ['up', 'left', 'right'])
     plt.xlabel("Label")
     plt.ylabel("Frequency")
