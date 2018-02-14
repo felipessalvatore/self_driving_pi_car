@@ -33,11 +33,8 @@ class Camera(object):
         self.cam.set(height_param, height_size)
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.mode = mode
-<<<<<<< HEAD
         self.resize = resize
-=======
         self.debug = debug
->>>>>>> 48a8246e9ded5a8bf27cddb98ba5e5c8fafceb8e
 
     def save_image(self, path, img):
         """
@@ -71,10 +68,10 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, img = self.cam.read()
-        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
+        res = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
         if self.debug:
-            return _, img
-        return img
+            return res, img
+        return res
 
     def take_picture_gray(self):
         """
@@ -83,8 +80,8 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
-        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
-        img = grayscale_image(orig)
+        img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
+        img = grayscale_image(img)
         if self.debug:
             return img, orig
         return img
@@ -96,8 +93,8 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
-        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
-        img = binarize_image(orig)
+        img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
+        img = binarize_image(img)
         if self.debug:
             return img, orig
         return img
@@ -109,9 +106,7 @@ class Camera(object):
         :rtype: np.ndarray
         """
         _, orig = self.cam.read()
-        img = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
+        img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
         if self.debug:
             return img[1], orig
         return img[1]
-
-
