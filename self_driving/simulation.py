@@ -125,10 +125,10 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")
     parser.add_argument("-m",
-                          "--mode",
-                          type=str,
-                          default="bin",
-                          help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+                        "--mode",
+                        type=str,
+                        default="pure",
+                        help="image type: 'pure', 'bin', 'gray', 'green' --only-- (default=pure)")  # noqa
     parser.add_argument("-he",
                         "--height",
                         type=int,
@@ -185,9 +185,9 @@ def main():
         network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
     print("\nSimulating in the {} data\n".format(args.mode))
-    print("params:\n{}\n".format(config.get_status()))
+    print("params:\n{}\n".format(str(config)))
     if not os.path.exists("checkpoints"):
-        print("===Simmulation of a non trained model===")
+        print("===Simulation of a non trained model===")
     simulate_run(args.img_folder_path,
                  args.output_path,
                  args.mode,
