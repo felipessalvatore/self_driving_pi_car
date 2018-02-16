@@ -10,6 +10,7 @@ from ml_training.DataHolder import DataHolder
 from ml_training.Config import Config
 from ml_training.Trainer import Trainer
 from ml_training.DFN import DFN
+from ml_training.CNN import CNN
 from vision.image_manipulation import binarize_image, grayscale_image
 from vision.util import write_img
 
@@ -19,7 +20,8 @@ def simulate_run(folder_path,
                  mode,
                  trainer,
                  verbose,
-                 resize=100):
+                 resize=100,
+                 commands=['up', 'left', 'right']):
     """
     Function to simulate one driving using one of folder images.
 
@@ -46,7 +48,6 @@ def simulate_run(folder_path,
         image = cv2.resize(image_raw, (0, 0), fx=resize, fy=resize)
         image = image2float(image, mode)
         prob = trainer.predict_prob(image)[0]
-        commands = ['up', 'down', 'left', 'right']
         commands_prob = []
         for i, com in enumerate(commands):
             commands_prob.append(com + ":{0:.2f}".format(prob[i]))
@@ -94,12 +95,35 @@ def main():
                         nargs='+',
                         help='sizes for hidden layers and output layer, should end with "4" !, (default=[4])',  # noqa
                         default=[4])
+    parser.add_argument('-conva',
+                        '--conv_architecture',
+                        type=int,
+                        nargs='+',
+                        help='filters for conv layers (default=[32, 64])',
+                        default=[32, 64])
+    parser.add_argument('-k',
+                        '--kernel_sizes',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for conv layers (default=None - 5 for every layer)',  # noqa
+                        default=None)
+    parser.add_argument('-p',
+                        '--pool_kernel',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for pooling layers (default=None - 2 for every layer)',  # noqa
+                        default=None)
     parser.add_argument('-ac',
                         '--activations',
                         type=str,
                         nargs='+',
                         help='activations: relu, sigmoid, tanh (defaul=None)',
                         default=None)
+    parser.add_argument("-conv",
+                        "--conv",
+                        action="store_true",
+                        default=False,
+                        help="Use convolutional network (default=False)")
     parser.add_argument("-m",
                           "--mode",
                           type=str,
@@ -144,15 +168,21 @@ def main():
     else:
         activations = args.activations
 
-    config = Config(architecture=args.architecture,
-                    activations=activations,
-                    height=args.height,
+    config = Config(height=args.height,
                     width=args.width,
-                    channels=channels)
+                    channels=channels,
+                    architecture=args.architecture,
+                    activations=activations,
+                    conv_architecture=args.conv_architecture,
+                    kernel_sizes=args.kernel_sizes,
+                    pool_kernel=args.pool_kernel)
 
     data = DataHolder(config)
     graph = tf.Graph()
-    network = DFN(graph, config)
+    if args.conv:
+        network = CNN(graph, config)
+    else:
+        network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
     print("\nSimulating in the {} data\n".format(args.mode))
     print("params:\n{}\n".format(config.get_status()))

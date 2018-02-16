@@ -10,10 +10,9 @@ def write_img(img,
               lineType=2,
               position1=(15, 25),
               position2=(15, 38),
-              position3=(15, 52),
-              position4=(15, 66)):
+              position3=(15, 52)):
     """
-    Write probabilistic distribution on image (4 classes).
+    Write probabilistic distribution on image (3 classes).
 
     :param img: image
     :type img: np.array
@@ -33,8 +32,6 @@ def write_img(img,
     :type position2: tuple
     :param position3: position of the third prob
     :type position3: tuple
-    :param position4: position of the fourth prob
-    :type position4: tuple
     """
 
     cv2.putText(img, prob[0],
@@ -51,12 +48,6 @@ def write_img(img,
                 lineType)
     cv2.putText(img, prob[2],
                 position3,
-                font,
-                fontScale,
-                fontColor,
-                lineType)
-    cv2.putText(img, prob[3],
-                position4,
                 font,
                 fontScale,
                 fontColor,
