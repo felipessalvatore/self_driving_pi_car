@@ -27,7 +27,7 @@ class Camera(object):
                  width_param=3,
                  mode="pure",
                  debug=False,
-                 resize=0.5):
+                 resize=1.0):
         self.cam = cv2.VideoCapture(input_cam_device)
         self.cam.set(width_param, width_size)
         self.cam.set(height_param, height_size)
