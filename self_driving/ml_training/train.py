@@ -239,8 +239,8 @@ def main():
                         action="store_true",
                         default=False,
                         help="print training results and calculate confusion matrix (default=False)")  # noqa
-    parser.add_argument("-n",
-                        "--name",
+    parser.add_argument("-cm",
+                        "--cm_name",
                         type=str,
                         default="Confusion_Matrix",
                         help="name to save confusion matrix plot (default=Confusion_Matrix)")  # noqa
@@ -296,7 +296,7 @@ def main():
           learning_rate=args.learning_rate,
           optimizer=optimizer,
           verbose=args.verbose,
-          name=args.name,
+          name=args.cm_name,
           move=args.move,
           conv=args.conv)
 
