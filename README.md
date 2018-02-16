@@ -1,5 +1,9 @@
 # self_driving_project
 
+[![Build Status](https://travis-ci.org/felipessalvatore/self_driving_project.svg?branch=master)](https://travis-ci.org/felipessalvatore/self_driving_project)
+
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/felipessalvatore/self_driving_project/blob/master/LICENSE)
+
 Our project of self driving car
 
 To run the raspberry pi test type:
