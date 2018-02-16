@@ -57,7 +57,7 @@ def lr_search(mode,
     else:
         net_name = "DFN"
 
-    header = "\nSearching learing rate for the model {} in the {} data\n".format(net_name,  # noqa
+    header = "\nSearching learning rate for the model {} in the {} data\n".format(net_name,  # noqa
                                                                                  mode) # noqa
     print(header)
     for lr in LR:
@@ -109,9 +109,9 @@ def lr_search(mode,
                       best_result[1],
                       best_result[0],
                       best_result[2])
-    file = open("learing_rate_results.txt", "w")
+    file = open("learning_rate_results.txt", "w")
     file.write(header)
-    file.write("Results with different values for learing_rate\n")
+    file.write("Results with different values for learning rate\n")
     for result in results:
         result += "\n"
         file.write(result)
