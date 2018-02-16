@@ -9,6 +9,7 @@ from DataHolder import DataHolder
 from Config import Config
 from Trainer import Trainer
 from DFN import DFN
+from CNN import CNN
 from util import reconstruct_from_record
 from util import int2command
 
@@ -28,8 +29,12 @@ def acc(mode,
         channels,
         architecture,
         activations,
+        conv_architecture,
+        kernel_sizes,
+        pool_kernel,
         test,
-        name):
+        name,
+        conv):
     """
     Checks model's accuracy
 
@@ -53,15 +58,24 @@ def acc(mode,
                     width=width,
                     channels=channels,
                     architecture=architecture,
-                    activations=activations)
+                    activations=activations,
+                    conv_architecture=conv_architecture,
+                    kernel_sizes=kernel_sizes,
+                    pool_kernel=pool_kernel)
 
     data = DataHolder(config,
                       records=records)
 
     graph = tf.Graph()
-    network = DFN(graph, config)
+    if conv:
+        net_name = "CNN"
+        network = CNN(graph, config)
+    else:
+        net_name = "DFN"
+        network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
-    print("\nAccuracy in the {} data\n".format(mode))
+    print("\nAccuracy of the {} model in the {} data\n".format(net_name,
+                                                               mode))
     print("params:\n{}\n".format(config.get_status()))
     if not os.path.exists("checkpoints"):
         print("===Accuracy of a non trained model===")
@@ -94,7 +108,7 @@ def main():
         "gray": grayscale image, only one channel.
         "green": image with only the green channel.
     """
-    parser = argparse.ArgumentParser(description='Train a model')
+    parser = argparse.ArgumentParser(description="Checks model's accuracy")
     parser.add_argument("-m",
                         "--mode",
                         type=str,
@@ -122,6 +136,24 @@ def main():
                         nargs='+',
                         help='activations: relu, sigmoid, tanh (defaul=None)',
                         default=None)
+    parser.add_argument('-conva',
+                        '--conv_architecture',
+                        type=int,
+                        nargs='+',
+                        help='filters for conv layers (default=[32, 64])',
+                        default=[32, 64])
+    parser.add_argument('-k',
+                        '--kernel_sizes',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for conv layers (default=None - 5 for every layer)',  # noqa
+                        default=None)
+    parser.add_argument('-p',
+                        '--pool_kernel',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for pooling layers (default=None - 2 for every layer)',  # noqa
+                        default=None)
     parser.add_argument("-t",
                         "--test",
                         action="store_true",
@@ -132,6 +164,11 @@ def main():
                         type=str,
                         default="Confusion_Matrix",
                         help="name to save confusion matrix plot (default=Confusion_Matrix)")  # noqa
+    parser.add_argument("-conv",
+                        "--conv",
+                        action="store_true",
+                        default=False,
+                        help="Use convolutional network (default=False)")
     args = parser.parse_args()
     if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
         channels = 1
@@ -158,8 +195,12 @@ def main():
         channels=channels,
         architecture=args.architecture,
         activations=activations,
+        conv_architecture=args.conv_architecture,
+        kernel_sizes=args.kernel_sizes,
+        pool_kernel=args.pool_kernel,
         test=args.test,
-        name=args.name)
+        name=args.name,
+        conv=args.conv)
 
 
 if __name__ == '__main__':
