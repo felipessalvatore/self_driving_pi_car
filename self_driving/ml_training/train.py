@@ -152,7 +152,7 @@ def main():
                         default="data",
                         help="name for tfrecords (default=data)")  # noqa
     parser.add_argument("-c",
-                        "--image_channels",
+                        "--channels",
                         type=int,
                         default=3,
                         help="number of channels (default=3)")
