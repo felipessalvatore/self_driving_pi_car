@@ -77,15 +77,21 @@ class Config(object):
 
         :rtype: str
         """
+        if self.kernel_sizes is None:
+            kernel_sizes = [5] * len(self.conv_architecture)
+        if self.pool_kernel is None:
+            pool_kernel = [2] * len(self.conv_architecture)
+        if self.activations is None:
+            activations = ["relu"] * len(self.architecture)
         status = "height = {}\n".format(self.height)
         status += "width = {}\n".format(self.width)
         status += "channels = {}\n".format(self.channels)
         status += "architecture = {}\n".format(self.architecture)
-        status += "activations = {}\n".format(self.activations)
+        status += "activations = {}\n".format(activations)
         status += "batch_size = {}\n".format(self.batch_size)
         status += "conv_architecture = {}\n".format(self.conv_architecture)
-        status += "kernel_sizes = {}\n".format(self.kernel_sizes)
-        status += "pool_kernel = {}\n".format(self.pool_kernel)
+        status += "kernel_sizes = {}\n".format(kernel_sizes)
+        status += "pool_kernel = {}\n".format(pool_kernel)
         status += "batch_size = {}\n".format(self.batch_size)
         status += "epochs = {}\n".format(self.epochs)
         status += "num_steps = {}\n".format(self.num_steps)
