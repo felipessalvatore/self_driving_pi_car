@@ -27,8 +27,8 @@ class DiffCar(object):
     """
     def __init__(self,
                  turn_ratio=0,
-                 power_up=40,
-                 power_down=-40,
+                 power_up=10,
+                 power_down=-10,
                  power_left=20,
                  tacho_left=30,
                  power_right=20,
