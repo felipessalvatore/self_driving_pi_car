@@ -8,6 +8,7 @@ from ml_training.DataHolder import DataHolder
 from ml_training.Config import Config
 from ml_training.Trainer import Trainer
 from ml_training.DFN import DFN
+from ml_training.CNN import CNN
 from nxt_car.DiffCar import DiffCar
 from vision.Camera import Camera
 from ml_training.util import int2command
@@ -26,10 +27,15 @@ class DiffController():
     def __init__(self,
                  height,
                  width,
-                 mode="pure",
-                 bluetooth=False,
-                 architecture=[3],
-                 resize=100):
+                 architecture,
+                 activations,
+                 conv_architecture,
+                 kernel_sizes,
+                 pool_kernel,
+                 resize,
+                 conv,
+                 mode,
+                 bluetooth):
         assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
         self.cam = Camera(mode=mode,
@@ -43,10 +49,17 @@ class DiffController():
         config = Config(channels=channels,
                         height=height,
                         width=width,
-                        architecture=architecture)
+                        architecture=architecture,
+                        activations=activations,
+                        conv_architecture=conv_architecture,
+                        kernel_sizes=kernel_sizes,
+                        pool_kernel=pool_kernel)
         data = DataHolder(config)
         graph = tf.Graph()
-        network = DFN(graph, config)
+        if conv:
+            network = CNN(graph, config)
+        else:
+            network = DFN(graph, config)
         self.trainer = Trainer(graph, config, network, data)
 
     def get_command(self, img, label_dict=int2command):
@@ -182,7 +195,7 @@ def main():
     """
     Script to let the car drive itself.
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="drive the robot car using one trained model") # noqa
 
     parser.add_argument("-m",
                         "--mode",
@@ -215,19 +228,63 @@ def main():
                         nargs='+',
                         help='sizes for hidden layers and output layer, should end with "4" !, (default=[4])',  # noqa
                         default=[4])
+    parser.add_argument('-conva',
+                        '--conv_architecture',
+                        type=int,
+                        nargs='+',
+                        help='filters for conv layers (default=[32, 64])',
+                        default=[32, 64])
+    parser.add_argument('-k',
+                        '--kernel_sizes',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for conv layers (default=None - 5 for every layer)',  # noqa
+                        default=None)
+    parser.add_argument('-p',
+                        '--pool_kernel',
+                        type=int,
+                        nargs='+',
+                        help='kernel sizes for pooling layers (default=None - 2 for every layer)',  # noqa
+                        default=None)
+    parser.add_argument('-ac',
+                        '--activations',
+                        type=str,
+                        nargs='+',
+                        help='activations: relu, sigmoid, tanh (defaul=None)',
+                        default=None)
+    parser.add_argument("-conv",
+                        "--conv",
+                        action="store_true",
+                        default=False,
+                        help="Use convolutional network (default=False)")
     parser.add_argument('-r',
                         '--resize',
                         type=int,
                         default=100,
                         help='resize percentage, (default=100)')
-    user_args = parser.parse_args()
-    car = DiffController(user_args.height,
-                         user_args.width,
-                         user_args.mode,
-                         user_args.bluetooth,
-                         user_args.architecture,
-                         user_args.resize)
-    if user_args.debug:
+
+    args = parser.parse_args()
+    activations_dict = {"relu": tf.nn.relu,
+                        "sigmoid": tf.nn.sigmoid,
+                        "tanh": tf.nn.tanh}
+
+    if args.activations is not None:
+        activations = [activations_dict[act] for act in args.activations]
+    else:
+        activations = args.activations
+
+    car = DiffController(height=args.height,
+                         width=args.width,
+                         architecture=args.architecture,
+                         activations=activations,
+                         conv_architecture=args.conv_architecture,
+                         kernel_sizes=args.kernel_sizes,
+                         pool_kernel=args.pool_kernel,
+                         resize=args.resize,
+                         conv=args.conv,
+                         mode=args.mode,
+                         bluetooth=args.bluetooth)
+    if args.debug:
         car.drive_debug()
     else:
         car.drive()
