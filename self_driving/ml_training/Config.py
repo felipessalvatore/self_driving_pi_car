@@ -79,10 +79,16 @@ class Config(object):
         """
         if self.kernel_sizes is None:
             kernel_sizes = [5] * len(self.conv_architecture)
+        else:
+            kernel_sizes = self.kernel_sizes
         if self.pool_kernel is None:
             pool_kernel = [2] * len(self.conv_architecture)
+        else:
+            pool_kernel = self.pool_kernel
         if self.activations is None:
             activations = ["relu"] * len(self.architecture)
+        else:
+            activations = self.activations
         status = "height = {}\n".format(self.height)
         status += "width = {}\n".format(self.width)
         status += "channels = {}\n".format(self.channels)
