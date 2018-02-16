@@ -144,7 +144,7 @@ def main():
                         type=str, help='path to npy files to be saved')
     parser.add_argument('npy_name',
                         type=str, default="data", help='name of npy files (dafault="data")') # noqa
-    parser.add_argument("-H",
+    parser.add_argument("-he",
                         "--image_height",
                         type=int,
                         default=90,
