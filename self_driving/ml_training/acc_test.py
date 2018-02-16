@@ -22,7 +22,7 @@ sys.path.insert(0, parentdir)
 from plot.util import plotconfusion # noqa
 
 
-def acc(mode,
+def acc(name_tfrecords,
         records,
         height,
         width,
@@ -75,7 +75,7 @@ def acc(mode,
         network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
     print("\nAccuracy of the {} model in the {} data\n".format(net_name,
-                                                               mode))
+                                                               name_tfrecords))
     print("params:\n{}\n".format(config.get_status()))
     if not os.path.exists("checkpoints"):
         print("===Accuracy of a non trained model===")
@@ -109,11 +109,16 @@ def main():
         "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description="Checks model's accuracy")
-    parser.add_argument("-m",
-                        "--mode",
+    parser.add_argument("-n",
+                        "--name_tfrecords",
                         type=str,
-                        default="bin",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+                        default="data",
+                        help="name for tfrecords (default=data)")  # noqa
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument("-he",
                         "--height",
                         type=int,
@@ -159,8 +164,8 @@ def main():
                         action="store_true",
                         default=False,
                         help="print test results and calculate confusion matrix (default=False)")  # noqa
-    parser.add_argument("-n",
-                        "--name",
+    parser.add_argument("-cm",
+                        "--cm_name",
                         type=str,
                         default="Confusion_Matrix",
                         help="name to save confusion matrix plot (default=Confusion_Matrix)")  # noqa
@@ -170,14 +175,10 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")
     args = parser.parse_args()
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
-        channels = 1
-    else:
-        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
-        record = args.mode + record
+        record = args.name_tfrecords + record
         new_records.append(record)
 
     activations_dict = {"relu": tf.nn.relu,
@@ -188,18 +189,18 @@ def main():
     else:
         activations = args.activations
 
-    acc(mode=args.mode,
+    acc(name_tfrecords=args.name_tfrecords,
         records=new_records,
         height=args.height,
         width=args.width,
-        channels=channels,
+        channels=args.channels,
         architecture=args.architecture,
         activations=activations,
         conv_architecture=args.conv_architecture,
         kernel_sizes=args.kernel_sizes,
         pool_kernel=args.pool_kernel,
         test=args.test,
-        name=args.name,
+        name=args.cm_name,
         conv=args.conv)
 
 
