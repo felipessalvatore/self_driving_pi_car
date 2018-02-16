@@ -57,8 +57,8 @@ def lr_search(mode,
     else:
         net_name = "DFN"
 
-    header = "\nSearching {} learing rate in the {} data\n".format(net_name,
-                                                                   mode)
+    header = "\nSearching learing rate for the model {} in the {} data\n".format(net_name,  # noqa
+                                                                                 mode) # noqa
     print(header)
     for lr in LR:
         config = Config(height=height,
