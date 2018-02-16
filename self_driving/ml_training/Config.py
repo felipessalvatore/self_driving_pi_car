@@ -71,7 +71,7 @@ class Config(object):
         self.learning_rate = learning_rate
         self.optimizer = optimizer
 
-    def get_status(self):
+    def __str__(self):
         """
         Get all attributs values.
 

@@ -99,7 +99,7 @@ def lr_search(mode,
         results.append(name)
         if os.path.exists("checkpoints"):
             shutil.rmtree("checkpoints")
-        info.append(config.get_status())
+        info.append(str(config))
 
     best_result = max(list(zip(numeric_result, LR, info)))
     result_string = """In an experiment with {0} learning rate values

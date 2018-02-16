@@ -98,7 +98,7 @@ def architecture_search(mode,
         results.append(name)
         if os.path.exists("checkpoints"):
             shutil.rmtree("checkpoints")
-        info.append(config.get_status())
+        info.append(str(config))
 
     best_result = max(list(zip(numeric_result, hidden_layers, info)))
     result_string = """In an experiment with {0} architectures

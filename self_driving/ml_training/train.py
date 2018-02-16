@@ -118,7 +118,7 @@ def train(name_tfrecords,
     trainer = Trainer(graph, config, network, data)
     print("\nTraining in the {} data using one {}\n".format(name_tfrecords,
                                                             network_name))
-    print("params:\n{}\n".format(config.get_status()))
+    print("params:\n{}\n".format(str(config)))
     trainer.fit(verbose=verbose)
     if verbose:
         valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord()) # noqa

@@ -76,7 +76,7 @@ def acc(name_tfrecords,
     trainer = Trainer(graph, config, network, data)
     print("\nAccuracy of the {} model in the {} data\n".format(net_name,
                                                                name_tfrecords))
-    print("params:\n{}\n".format(config.get_status()))
+    print("params:\n{}\n".format(str(config)))
     if not os.path.exists("checkpoints"):
         print("===Accuracy of a non trained model===")
 

@@ -107,7 +107,7 @@ def optmizers_search(mode,
         results.append(name)
         if os.path.exists("checkpoints"):
             shutil.rmtree("checkpoints")
-        info.append(config.get_status())
+        info.append(str(config))
 
     best_result = max(list(zip(numeric_result, OT_name, info)))
     result_string = """In an experiment with different optmizers
