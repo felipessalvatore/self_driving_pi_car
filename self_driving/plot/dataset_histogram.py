@@ -40,8 +40,8 @@ def main():
     parser.add_argument("-n",
                         "--name",
                         type=str,
-                        default="histogram.png",
-                        help="name to save histogram plot (default=histogram.png)")  # noqa
+                        default="histogram",
+                        help="name to save histogram plot (default=histogram)")  # noqa
     args = parser.parse_args()
     labels = np.load(args.labels_path)
     plot_histogram(labels, args.name)

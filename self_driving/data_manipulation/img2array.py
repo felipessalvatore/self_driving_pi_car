@@ -136,7 +136,9 @@ def main():
     Script to transform one folder containing folders of images
     and pickles to a tuple of np.arrays
     """
-    parser = argparse.ArgumentParser()
+    description = "Transform one folder containing folders\
+    of images and pickles to a tuple of np.arrays"
+    parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument('img_folder_path',
                         type=str, help='path to image folder')
@@ -148,12 +150,12 @@ def main():
                         "--image_height",
                         type=int,
                         default=90,
-                        help="height number (default=90)")
+                        help="original height number (default=90)")
     parser.add_argument("-w",
                         "--image_width",
                         type=int,
                         default=160,
-                        help="width number (default=160)")
+                        help="original width number (default=160)")
     parser.add_argument("-c",
                         "--image_channels",
                         type=int,

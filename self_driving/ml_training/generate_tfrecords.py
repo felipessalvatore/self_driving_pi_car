@@ -59,9 +59,10 @@ def records_generator(height,
 
 def main():
     """
-    Main script to perform data search.
+    Main script to generate tfrecords from a tuple of np.arrays.
     """
-    parser = argparse.ArgumentParser()
+    description = "Generates tfrecords from a tuple of np.arrays"
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument('data_path',
                         type=str, help='path to data array')
     parser.add_argument('label_path',

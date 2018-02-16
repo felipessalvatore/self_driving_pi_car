@@ -146,11 +146,16 @@ def main():
         "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description='Train a model')
-    parser.add_argument("-m",
-                        "--mode",
+    parser.add_argument("-n",
+                        "--name_tfrecords",
                         type=str,
-                        default="bin",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+                        default="data",
+                        help="name for tfrecords (default=data)")  # noqa
+    parser.add_argument("-c",
+                        "--image_channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument("-he",
                         "--height",
                         type=int,
@@ -250,14 +255,10 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")  # noqa
     args = parser.parse_args()
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
-        channels = 1
-    else:
-        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
-        record = args.mode + record
+        record = args.name_tfrecords + record
         new_records.append(record)
 
     optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
@@ -282,7 +283,7 @@ def main():
           records=new_records,
           height=args.height,
           width=args.width,
-          channels=channels,
+          channels=args.channels,
           architecture=args.architecture,
           activations=activations,
           conv_architecture=args.conv_architecture,
