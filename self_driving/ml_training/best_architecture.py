@@ -32,7 +32,7 @@ def architecture_search(mode,
                         optimizer,
                         experiments,
                         deepest_net_size,
-                        conv=False):
+                        conv):
     """
     Script to search different architectures for a DFN,
     the result is saved on the file architecture_results.txt
