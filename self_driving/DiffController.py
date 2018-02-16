@@ -153,7 +153,7 @@ class DiffController():
                 command, prob = self.get_command_and_prob(img_flatt)
                 init = time.time() - init
                 print("foward_time = {0:.3f}".format(init))
-                commands = ['up', 'down', 'left', 'right']
+                commands = ['up', 'left', 'right']
                 commands_prob = []
                 for i, com in enumerate(commands):
                     commands_prob.append(com + ":{0:.2f}".format(prob[i]))
