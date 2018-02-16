@@ -23,7 +23,7 @@ sys.path.insert(0, parentdir)
 from plot.util import plotconfusion # noqa
 
 
-def train(mode,
+def train(name_tfrecords,
           records,
           height,
           width,
@@ -44,7 +44,7 @@ def train(mode,
           move,
           conv=False):
     """
-    Trains a model
+    Trains a namel
 
     :param height: image height
     :type heights: int
@@ -116,7 +116,7 @@ def train(mode,
         network_name = "DFN"
         network = DFN(graph, config)
     trainer = Trainer(graph, config, network, data)
-    print("\nTraining in the {} data using one {}\n".format(mode,
+    print("\nTraining in the {} data using one {}\n".format(name_tfrecords,
                                                             network_name))
     print("params:\n{}\n".format(config.get_status()))
     trainer.fit(verbose=verbose)
@@ -279,7 +279,7 @@ def main():
         activations = args.activations
     optimizer = optimizer_dict[args.optimizer]
 
-    train(mode=args.mode,
+    train(name_tfrecords=args.name_tfrecords,
           records=new_records,
           height=args.height,
           width=args.width,
