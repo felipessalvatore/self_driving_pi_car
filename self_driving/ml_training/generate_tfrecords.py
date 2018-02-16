@@ -62,6 +62,10 @@ def main():
     Main script to perform data search.
     """
     parser = argparse.ArgumentParser()
+    parser.add_argument('data_path',
+                        type=str, help='path to data array')
+    parser.add_argument('label_path',
+                        type=str, help='path to labels array')
     parser.add_argument("-he",
                         "--height",
                         type=int,
@@ -120,18 +124,6 @@ def main():
                         default=False,
                         help="flag to binarize dataset (default=False)")
 
-    parser.add_argument("-d",
-                        "--train_data",
-                        type=str,
-                        default=None,
-                        help="train data path (default=None)")
-
-    parser.add_argument("-l",
-                        "--train_label",
-                        type=str,
-                        default=None,
-                        help="label data path (default=None)")
-
     args = parser.parse_args()
     # if args.binary or args.green or args.gray:
     #     channels = 1
@@ -140,8 +132,8 @@ def main():
     records_generator(args.height,
                       args.width,
                       args.channels,
-                      args.train_data,
-                      args.train_label,
+                      args.data_path,
+                      args.label_path,
                       args.name,
                       args.flip,
                       args.augmentation,
