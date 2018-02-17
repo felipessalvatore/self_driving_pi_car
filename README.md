@@ -51,6 +51,9 @@ Before doing any kind of training you need to collect the track data. So in the 
 * [Tensorflow](https://www.tensorflow.org/)
 * [NXT-python](https://github.com/Eelviny/nxt-python)
 
+### Demo
+![Alt Text](https://media.giphy.com/media/1j8Qf5yPZXev2zfDZY/giphy.gif)
+
 ### Citation
 ```
   @misc{self_driving_project2018,
