@@ -5,59 +5,51 @@
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
-What things you need to install the software and how to install them
+The first thing you need to do is to install all the libraries for the Raspberry pi. To do so, open a terminal in Raspberry pi and run
 
 ```
-Give examples
+$ cd raspi_utils/
+$ bash install.sh
 ```
 
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
+In the computer that you will perform the training -- from now on referred as the "training computer" (protip: don't train the model in the Raspberry pi!) -- install all the requirements by runnig
 
 ```
-Give the example
+$ pip install -r requirements.txt
 ```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+There is two kind of tests: the ones from the Raspberry pi and the ones for the training computer.
+In the Raspberry pi run
 
 ```
-Give an example
+$ python setup.py test 
+```
+These tests serve to check if the conection with the NXT robot is working.
+
+And in the training computer
+```
+  $ bash test_script.sh 
+```
+These last tests check if the image manipulation functions and the tensorflow model are doing what they suppose to be doing.
+
+## Usage
+
+Before doing any kind of training you need to collect the track data. So in the Raspberry pi -- with the assembled robot -- run the data collection script:
+```
+  $ cd self_driving/data_collection/ 
+  $ python DataCollector.py -n <images_folder_name>
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 
 ## Built With
 
-* [Tensorflow](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [NXT-python](https://maven.apache.org/) - Dependency Management
+* [Tensorflow](https://www.tensorflow.org/)
+* [NXT-python](https://github.com/Eelviny/nxt-python)
 
 ### Citation
 ```
@@ -69,34 +61,5 @@ Give an example
     note = {commit xxxxxxx}
   }
 ```
-
 ### Related Work
 - Project M (https://medium.com/@project_m)
-
-
-
-
-Our project of self driving car
-
-To run the raspberry pi test type:
-
-```
-$ python setup.py test 
-```
-
-To run the tests for the dataset manipulation type:
-
-```
-$ cd /self_driving/data_manipulation/test
-$ python3 test_all.py 
-
-```
-
-
-To run the tests for the machine learning training type:
-
-```
-$ cd /self_driving/ml_trainig/test
-$ python3 test_all.py 
-
-```
