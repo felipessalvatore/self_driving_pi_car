@@ -1,7 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 import os
 import numpy as np
 import tensorflow as tf
@@ -13,8 +12,7 @@ except ImportError:
 
 class Trainer():
     """
-    Class that trains a model and uses a model to predict
-    images.
+    Class that trains and predicts.
 
     :type data_path: str
     :type label_path: str
@@ -71,14 +69,17 @@ class Trainer():
                 self.iterator_valid = get_iterator(self.tfrecords_valid,
                                                    self.batch_size,
                                                    parser_with_normalization)
+            with tf.name_scope("prediction"):
+                self.tf_prediction = self.model.get_prediction(self.input_image) # noqa
+
             with tf.name_scope("train_loss"):
                 train_images, train_labels = self.iterator_train.get_next()
                 train_images = tf.reshape(train_images,
                                           (self.batch_size, flat_size))
                 train_labels = tf.reshape(train_labels, (self.batch_size,))
                 train_logits = self.model.get_logits(train_images)
-                tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels,  # noqa
-                                                                           logits=train_logits)  # noqa
+                tf_train_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=train_labels, # noqa
+                                                                           logits=train_logits) # noqa
                 self.tf_train_loss = tf.reduce_mean(tf_train_loss)
 
             with tf.name_scope("optimization"):
@@ -90,9 +91,9 @@ class Trainer():
                 valid_images = tf.reshape(valid_images,
                                           (self.batch_size, flat_size))
                 valid_labels = tf.reshape(valid_labels, (self.batch_size,))
-                valid_logits = self.model.get_logits(valid_images, reuse=True)
-                valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels,  # noqa
-                                                                           logits=valid_logits)  # noqa
+                valid_logits = self.model.get_logits(valid_images)
+                valid_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=valid_labels, # noqa
+                                                                           logits=valid_logits) # noqa
                 self.tf_valid_loss = tf.reduce_mean(valid_loss)
 
             with tf.name_scope("valid_accuracy"):
@@ -104,10 +105,6 @@ class Trainer():
                 self.valid_accuracy = tf.reduce_mean(tf.cast(valid_prediction,
                                                              'float'),
                                                      name='valid_accuracy')
-            with tf.name_scope("prediction"):
-                tf_prediction = self.model.get_logits(self.input_image,
-                                                      reuse=True)
-                self.tf_prediction = tf.nn.softmax(tf_prediction)
 
             with tf.name_scope("saver"):
                 self.saver = tf.train.Saver()
@@ -174,8 +171,8 @@ class Trainer():
                             info = 'Epoch {0:5},'.format(epoch + 1)
                             info += ' step {0:5}:'.format(step + 1)
                             info += ' train_loss = {0:.6f} |'.format(show_loss)
-                            info += ' valid_loss = {0:.6f}\n'.format(best_valid_loss)  # noqa
-                            print(info, end='')
+                            info += ' valid_loss = {0:.6f}\n'.format(best_valid_loss) # noqa
+                            print(info, end='') # noqa
                         valid_loss = sess.run(self.tf_valid_loss)
                         if valid_loss < best_valid_loss:
                             self.saver.save(sess=sess,
@@ -211,7 +208,16 @@ class Trainer():
         :type img: np.array
         :rtype: np.array
         """
-        result = self.predict_prob(img)
-        result = np.argmax(result, axis=1)
-        result = result.astype(np.int32)
+        type_msg = "not in the correct type"
+        assert img.dtype == np.float32, type_msg
+        with tf.Session(graph=self.graph) as sess:
+            if os.listdir(self.save_dir) == []:
+                sess.run(tf.global_variables_initializer())
+            else:
+                self.saver.restore(sess=sess, save_path=self.save_path)
+            feed_dict = {self.input_image: img}
+            result = sess.run(self.tf_prediction,
+                              feed_dict=feed_dict)
+            result = np.argmax(result, axis=1)
+            result = result.astype(np.int32)
         return result

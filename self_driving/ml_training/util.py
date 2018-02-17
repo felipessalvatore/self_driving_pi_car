@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -180,7 +180,7 @@ def get_iterator(filename, batch_size, parser):
                   tf.Tensor(shape=(1,), dtyṕe=tf.int32)
     :rtype: tf.contrib.data.Iterator
     """
-    dataset = tf.contrib.data.TFRecordDataset(filename)
+    dataset = tf.data.TFRecordDataset(filename)
     dataset = dataset.map(parser)
     dataset = dataset.repeat()
     dataset = dataset.batch(batch_size)
