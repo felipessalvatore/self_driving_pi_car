@@ -6,7 +6,7 @@ from util import get_date
 import abc
 import time
 import pickle
-import bluetooth
+import argparse
 
 almost_current = os.path.abspath(inspect.getfile(inspect.currentframe()))
 currentdir = os.path.dirname(almost_current)
@@ -21,7 +21,17 @@ class DataCollector():
     __metaclass__ = abc.ABCMeta
 
     """
-    to do
+    Abstract class to collect images and commands,
+    both to the classification setting such as the
+    regression setting.
+
+    :param robot: robot class to controll the nxt car
+    :type robot: nxt_car.DiffCar
+    :param cam: camera class to take picture
+    :type cam: vision.Camera
+    :param name: name the folder in which all the pictures
+                 will be saved
+    :type name: None or str
     """
     def __init__(self, robot, cam, name=None):
         date = get_date()
@@ -42,7 +52,17 @@ class DataCollector():
 
     def save_image_write_dict(self, image, command):
         """
-        to do
+        Given one image and one command this method,
+        stores the image with name "self.count".png
+        and stores the given command in the dict
+        {name: command}.
+
+        :param image: image taked by the camera
+        :type image: np.array
+        :param command: the real command passed to the robot,
+                        it can be a class ("up", "down", etc.)
+                        or a vector ([acceleration, steering wheel angle])
+        :type command: int or np.array
         """
         name = str(self.count) + ".png"
         name = os.path.join(self.dir_name, name)
@@ -53,20 +73,35 @@ class DataCollector():
     @abc.abstractmethod
     def generate(self):
         """
-        to do
+        Method to generate the dataset.
         """
         return
 
 
 class BasicDiffCollector(DataCollector):
     """
-    to do
+    Collector class for the differential model.
+    In this case each image will be classified
+    as "up", "down", "left" and "right".
+
+    :param robot: robot class to controll the nxt car
+    :type robot: nxt_car.DiffCar
+    :param cam: camera class to take picture
+    :type cam: vision.Camera
+    :param name: name the folder in which all the pictures
+                 will be saved
+    :type name: str
     """
 
     def __init__(self, robot, cam, name):
         super(BasicDiffCollector, self).__init__(robot, cam, name)
 
     def generate(self):
+        """
+        Method to generate the dataset.
+        The car is controlled with the keyboard
+        using the arrow keys, to exit just type "q".
+        """
         while True:
             img = self.camera.take_picture_rgb()
 
@@ -83,7 +118,6 @@ class BasicDiffCollector(DataCollector):
 
             elif key.is_pressed('down'):
                 self.robot.move_down()
-                self.save_image_write_dict(img, 'down')
                 time.sleep(0.05)
 
             elif key.is_pressed('left'):
@@ -99,13 +133,27 @@ class BasicDiffCollector(DataCollector):
             pickle.dump(self.data_dict, f)
 
 
-if __name__ == '__main__':
-    name = "basic_test"
+def main():
+    """
+    Script to collect data of the Diffcar robot.
+    """
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-n",
+                        "--name",
+                        type=str,
+                        default="pista",
+                        help="folder name (default='pista')")
+    user_args = parser.parse_args()
     robot = DiffCar(bluetooth=False)
     cam = Camera()
-    dc = BasicDiffCollector(robot, cam, name)
+    dc = BasicDiffCollector(robot, cam, user_args.name)
     dc.generate()
     if robot.btCon:
         robot.disconnect(robot.sock)
     print(dc.data_dict)
-    time.sleep(0.3) # waits for keyboard thread to shutdown
+    time.sleep(0.3)  # waits
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,19 @@
+language: python
+sudo: required
+dist: trusty
+python:
+  - "2.7"
+install:
+  - pip install numpy
+  - pip install tensorflow==1.2.1
+  - pip install matplotlib
+  - pip install unittest2
+  - pip install opencv-python
+  - pip install pillow
+script: 
+  - pushd .
+  - cd self_driving/ml_training/test/
+  - python test_all.py 
+  - popd
+  - cd self_driving/ml_training/test/
+  - python test_all.py 

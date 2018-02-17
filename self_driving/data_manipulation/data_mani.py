@@ -1,135 +1,98 @@
-import argparse
-import pickle
-import os
-from scipy import misc
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import numpy as np
-
-command2int = {"up": 0, "down": 1, "left": 2, "right": 3}
-int2command = {i[1]: i[0] for i in command2int.items()}
+import tensorflow as tf
 
 
-def folder2array(folder_path,
-                 pickle_path,
-                 image_width,
-                 image_height,
-                 image_channels):
+def _bytes_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+
+def _int64_feature(value):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
+def randomize_in_place(list1, list2, init):
     """
-    Function to transform all images from the folder folder_name
-    into a tuple of np arrays.
+    Function to randomize two lists the same way.
+    Usualy this functions is used when list1 = dataset,
+    and list2 = labels.
 
-    :param
-    :type folder_path: str
-    :type
-    :rtype: (np.array,np.array
+    :type list1: list
+    :type list2: list
+    :type init: int
     """
-    all_images = []
-    all_labels = []
-    image_width = 160
-    image_height = 90
-    image_channels = 3
-    flat_shape = image_width * image_height * image_channels
-    with open(pickle_path, "rb") as f:
-        label_dict = pickle.load(f)
-    print("Trying to convert images from {} \n".format(folder_path))
-    for filename in os.listdir(folder_path):
-        key = filename[:- 4]
-        label = command2int[label_dict[key]]
-        image_path = os.path.join(folder_path, filename)
-        image = change_type_to_uint8(misc.imread(image_path))
-        image = image.reshape(flat_shape)
-        all_images.append(image)
-        all_labels.append(label)
-    all_labels = change_type_to_uint8(np.array(all_labels))
-    all_images = np.array(all_images)
-    return all_images, all_labels
+    np.random.seed(seed=init)
+    np.random.shuffle(list1)
+    np.random.seed(seed=init)
+    np.random.shuffle(list2)
 
 
-def change_type_to_uint8(image):
+def data_cut(data, labels, init=0):
     """
-    Change type to uint8 Unsigned integer (0 to 255)
+    Given the data and the labels this function shuffles them together
+    and separetes four fifths of the data (that is why we use the
+    variable ff) to be the traing data; the rest of the data
+    is divide into valid data and test data. If the size of the
+    data is odd we add one observation copy to the dataset.
 
-    :type image: np array
-    :param
-    :rtype: np array
+    :type data: np array
+    :type labels: np array
+    :type init: int
+    :rtype: None or np array
     """
-    image = image.astype('uint8')
-    return image
+    randomize_in_place(data, labels, init)
+    data_size = data.shape[0]
+    ff = int((4 / 5.0) * data_size)
+    rest = data_size - ff
+    if rest % 2 == 1:
+        new_data = data[-1]
+        new_label = labels[-1]
+        data = np.vstack([data, new_data])
+        labels = np.vstack([labels, new_label])
+        rest += 1
+    rest = int(rest / 2.0)
+    train_data, train_labels = data[0:ff], labels[0:ff]
+    valid_data, valid_labels = data[ff: ff + rest], labels[ff:ff + rest]
+    ff = ff + rest
+    test_data, test_labels = data[ff: ff + rest], labels[ff: ff + rest]
+    return train_data, train_labels, valid_data, valid_labels, test_data, test_labels  # noqa
 
 
-def create_data_set_as_np_array(folder_path,
-                                data_name="data",
-                                label_name="labels",
-                                image_width=160,
-                                image_height=90,
-                                image_channels=3):
+def create_record(record_path,
+                  data,
+                  labels,
+                  height,
+                  width,
+                  channels):
     """
-    Giving one path to a folder of folders of images,
-    this function transform all images in two arrays
-    one 'data_name' with all the flatted images
-    and other 'label_name' with all the respective labels
+    Fuction to create one tf.record using two numpy arrays.
+    The array in data_path is espected to be flat.
 
-    :type folder_name: str
-    :param
-    :type data_name: str
-    :type data_name: str
+    :param record_path: path to save the tf.record
+    :type record_path: str
+    :param data_path: path to load the data
+    :type data_path: str
+    :param label_path: path to load the labels
+    :type label_path: str
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
     """
-    assert os.path.exists(folder_path)
-    all_images = []
-    all_labels = []
-    for folder in os.listdir(folder_path):
-        folder = os.path.join(folder_path, folder)
-        if os.path.isdir(folder):
-            print(folder)
-            pickle_path = folder + "_pickle"
-            images, labels = folder2array(folder,
-                                          pickle_path,
-                                          image_width,
-                                          image_height,
-                                          image_channels)
-            all_images.append(images)
-            all_labels.append(labels)
-    all_images = np.concatenate(all_images, axis=0)
-    all_labels = np.concatenate(all_labels, axis=0)
-    print(all_images.shape, all_labels.shape)
-    np.save(data_name, all_images)
-    np.save(label_name, all_labels)
+    assert data.shape[1] == height * width * channels
+    writer = tf.python_io.TFRecordWriter(record_path)
+    for i, e in enumerate(data):
+        img_str = data[i].tostring()
+        label_str = labels[i].tostring()
+        example = tf.train.Example(features=tf.train.Features(feature={
+            'height': _int64_feature(height),
+            'width': _int64_feature(width),
+            'channels': _int64_feature(channels),
+            'image_raw': _bytes_feature(img_str),
+            'labels_raw': _bytes_feature(label_str)}))
 
-
-def main():
-    """
-    to do
-    """
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('img_folder_path',
-                        type=str, help='path to image folder')
-    parser.add_argument('data_path',
-                        type=str, help='path to data to be saved')
-    parser.add_argument('labels_path',
-                        type=str, help='path to labels to be saved')
-    parser.add_argument("-w",
-                        "--image_width",
-                        type=int,
-                        default=160,
-                        help="width number (default=160)")
-    parser.add_argument("-H",
-                        "--image_height",
-                        type=int,
-                        default=90,
-                        help="height number (default=90)")
-    parser.add_argument("-c",
-                        "--image_channels",
-                        type=int,
-                        default=3,
-                        help="number of channels (default=3)")
-    user_args = parser.parse_args()
-    create_data_set_as_np_array(user_args.img_folder_path,
-                                user_args.data_path,
-                                user_args.labels_path,
-                                user_args.image_width,
-                                user_args.image_height,
-                                user_args.image_channels)
-
-
-if __name__ == '__main__':
-    main()
+        writer.write(example.SerializeToString())
+    writer.close()
