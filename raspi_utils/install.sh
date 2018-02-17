@@ -62,6 +62,3 @@ sudo gpasswd -a root lego
 sudo udevadm control --reload-rules
 sudo reboot
 
-# Getting our repo for self-driving car!
-git clone git@github.com:felipessalvatore/self_driving_project.git
-
