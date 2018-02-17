@@ -52,7 +52,7 @@ Before doing any kind of training you need to collect the track data. So in the 
 * [NXT-python](https://github.com/Eelviny/nxt-python)
 
 ### Demo
-![Alt Text](https://media.giphy.com/media/1j8Qf5yPZXev2zfDZY/giphy.gif)
+![Alt Text](https://media.giphy.com/media/1j8Qf5yPZXev2zfDZY/giphy-downsized-large.gif)
 
 ### Citation
 ```
