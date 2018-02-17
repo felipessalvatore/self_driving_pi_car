@@ -1,4 +1,3 @@
-import bluetooth
 from nxt import bluesock
 
 NXT_ID = '00:16:53:17:EF:0A'  # MAC address NXT11
