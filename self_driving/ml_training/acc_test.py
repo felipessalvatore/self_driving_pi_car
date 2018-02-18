@@ -178,6 +178,11 @@ def main():
                         action="store_true",
                         default=False,
                         help="Use convolutional network (default=False)")
+    parser.add_argument("-lr",
+                        "--learning_rate",
+                        type=float,
+                        default=0.02,
+                        help="learning rate (default=0.02)")
     opt_list = """optimizers: GradientDescent,
                               Adadelta,
                               Adagrad,
