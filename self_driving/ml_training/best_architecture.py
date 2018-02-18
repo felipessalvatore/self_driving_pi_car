@@ -16,7 +16,7 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command, get_random_architecture_and_activations
 
 
-def architecture_search(mode,
+def architecture_search(name_tfrecords,
                         records,
                         height,
                         width,
@@ -57,7 +57,7 @@ def architecture_search(mode,
         net_name = "DFN"
 
     header = "\nSearching {} architecture in the {} data\n".format(net_name,
-                                                                   mode)
+                                                                   name_tfrecords)
     print(header)
     for arch, act in zip(hidden_layers, activations):
         config = Config(height=height,
@@ -138,6 +138,16 @@ def main():
     "deep" is the deep of the model.
     """
     parser = argparse.ArgumentParser(description='Perform architecture search')
+    parser.add_argument("-n",
+                        "--name_tfrecords",
+                        type=str,
+                        default="data",
+                        help="name for tfrecords (default=data)")  # noqa
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument("-m",
                         "--mode",
                         type=str,
@@ -225,14 +235,10 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")
     args = parser.parse_args()
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
-        channels = 1
-    else:
-        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
-        record = args.mode + record
+        record = args.name_tfrecords + record
         new_records.append(record)
 
     optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
@@ -244,7 +250,7 @@ def main():
                       "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
                       "RMSProp":tf.train.RMSPropOptimizer} # noqa
     optimizer = optimizer_dict[args.optimizer]
-    architecture_search(mode=args.mode,
+    architecture_search(name_tfrecords=args.name_tfrecords,
                         records=new_records,
                         height=args.height,
                         width=args.width,
