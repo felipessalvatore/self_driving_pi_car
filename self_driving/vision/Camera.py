@@ -6,10 +6,10 @@ class Camera(object):
     """
     Class to take pictures.
 
-    :param height_size: camera's image height
-    :type height_size: int
     :param width_size: camera's image width
     :type width_size: int
+    :param height_size: camera's image height
+    :type height_size: int
     :param input_cam_device: param to control camera's input
     :type input_cam_device: int
     :param height_param: param to set height on camera
@@ -18,6 +18,10 @@ class Camera(object):
     :type width_param: int
     :param mode: param to control type of image
     :type mode: str
+    :param debug: param to enter debug mode
+    :type debug: bool
+    :param resize: param to control the image resizing
+    :type resize: float
     """
     def __init__(self,
                  width_size=160,
@@ -31,7 +35,7 @@ class Camera(object):
         self.cam = cv2.VideoCapture(input_cam_device)
         self.cam.set(width_param, width_size)
         self.cam.set(height_param, height_size)
-        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
+        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray"  # noqa
         self.mode = mode
         self.resize = resize
         self.debug = debug
@@ -65,7 +69,8 @@ class Camera(object):
         """
         Take picture with no transformation.
 
-        :rtype: np.ndarray
+        :return: resized image
+        :rtype: np.ndarray, np.ndarray
         """
         _, img = self.cam.read()
         res = cv2.resize(img, (0, 0), fx=self.resize, fy=self.resize)
@@ -77,7 +82,8 @@ class Camera(object):
         """
         Take grayscale picture.
 
-        :rtype: np.ndarray
+        :return: gray and resized image
+        :rtype: np.ndarray, np.ndarray
         """
         _, orig = self.cam.read()
         img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
@@ -90,7 +96,8 @@ class Camera(object):
         """
         Take binarized picture.
 
-        :rtype: np.ndarray
+        :return: binary and resized image
+        :rtype: np.ndarray, np.ndarray
         """
         _, orig = self.cam.read()
         img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
@@ -103,7 +110,8 @@ class Camera(object):
         """
         Take picture with only the green channel.
 
-        :rtype: np.ndarray
+        :return: green and resized image
+        :rtype: np.ndarray, np.ndarray
         """
         _, orig = self.cam.read()
         img = cv2.resize(orig, (0, 0), fx=self.resize, fy=self.resize)
