@@ -3,7 +3,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa
 import numpy as np  # noqa
 from pandas_ml import ConfusionMatrix  # noqa
-import itertools # noqa
+import itertools  # noqa
 
 
 def plot_confusion_matrix(cm,
@@ -19,14 +19,16 @@ def plot_confusion_matrix(cm,
 
     https://matplotlib.org/1.3.1/examples/color/colormaps_reference.html
 
-    :param truth: true labels
-    :type truth: np array
-    :param predictions: model predictions
-    :type predictions: np array
+    :param cm: confusion matrix
+    :type cm: np array
+    :param classes: number of classes
+    :type classes: int
+    :param title: image title
+    :type title: str
+    :param cmap: plt color map
+    :type cmap: plt.cm
     :param path: path to save image
     :type path: str
-    :param label_dict: dict to transform int to str
-    :type label_dict: dict
     """
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
@@ -64,6 +66,8 @@ def plotconfusion(truth, predictions, path, label_dict, classes):
     :type path: str
     :param label_dict: dict to transform int to str
     :type label_dict: dict
+    :param classes: number of classes
+    :type classes: int
     """
     acc = np.array(truth) == np.array(predictions)
     size = float(acc.shape[0])
@@ -80,9 +84,9 @@ def plotconfusion(truth, predictions, path, label_dict, classes):
     sizes_per_cat = sizes_per_cat.astype(np.float32) ** -1
     recall = np.multiply(cm_diag, sizes_per_cat)
     print("\nRecall:{}".format(recall))
-    print("\nRecall stats: mean = {0:.6f}, std = {1:.6f}\n".format(np.mean(recall), # noqa
-                                                                    np.std(recall))) # noqa
-    title = "Confusion matrix of {0} examples\n accuracy = {1:.6f}".format(int(size), # noqa
+    print("\nRecall stats: mean = {0:.6f}, std = {1:.6f}\n".format(np.mean(recall),  # noqa
+                                                                    np.std(recall)))  # noqa
+    title = "Confusion matrix of {0} examples\n accuracy = {1:.6f}".format(int(size),  # noqa
                                                                            acc)
     plot_confusion_matrix(cm_array, classes, title=title, path=path)
     cm.print_stats()

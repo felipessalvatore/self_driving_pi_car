@@ -34,7 +34,11 @@ def plot_histogram(labels, path):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    """
+    Plot label's histogram
+    """
+    description = "plot label's histogram"
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument('labels_path',
                         type=str, help='path to labels')
     parser.add_argument("-n",
