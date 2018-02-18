@@ -16,7 +16,7 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command
 
 
-def optmizers_search(mode,
+def optmizers_search(name_tfrecords,
                      records,
                      height,
                      width,
@@ -67,7 +67,7 @@ def optmizers_search(mode,
         net_name = "DFN"
 
     header = "\nSearching optimizer for the {} model in the {} data\n".format(net_name, # noqa
-                                                                              mode) # noqa
+                                                                              name_tfrecords) # noqa
     print(header)
 
     for name, opt in zip(OT_name, OT):
@@ -142,11 +142,11 @@ def main():
         "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description='Perform optmizer search')
-    parser.add_argument("-m",
-                        "--mode",
+    parser.add_argument("-n",
+                        "--name_tfrecords",
                         type=str,
-                        default="pure",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+                        default="data",
+                        help="name for tfrecords (default=data)")  # noqa
     parser.add_argument('-a',
                         '--architecture',
                         type=int,
@@ -169,6 +169,11 @@ def main():
                         type=int,
                         default=160,
                         help="image width (default=160)")
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument("-lr",
                         "--learning_rate",
                         type=float,
@@ -218,14 +223,10 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")
     args = parser.parse_args()
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
-        channels = 1
-    else:
-        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
-        record = args.mode + record
+        record = args.name_tfrecords + record
         new_records.append(record)
 
     activations_dict = {"relu": tf.nn.relu,
@@ -235,11 +236,11 @@ def main():
         activations = [activations_dict[act] for act in args.activations]
     else:
         activations = args.activations
-    optmizers_search(mode=args.mode,
+    optmizers_search(name_tfrecords=args.name_tfrecords,
                      records=new_records,
                      height=args.height,
                      width=args.width,
-                     channels=channels,
+                     channels=args.channels,
                      architecture=args.architecture,
                      activations=activations,
                      conv_architecture=args.conv_architecture,

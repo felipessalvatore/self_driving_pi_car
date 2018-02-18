@@ -143,16 +143,6 @@ def main():
                         type=str,
                         default="data",
                         help="name for tfrecords (default=data)")  # noqa
-    parser.add_argument("-c",
-                        "--channels",
-                        type=int,
-                        default=3,
-                        help="number of channels (default=3)")
-    parser.add_argument("-m",
-                        "--mode",
-                        type=str,
-                        default="pure",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
     parser.add_argument("-ex",
                         "--experiments",
                         type=int,
@@ -173,6 +163,11 @@ def main():
                         type=int,
                         default=160,
                         help="image width (default=160)")
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument('-conva',
                         '--conv_architecture',
                         type=int,
@@ -254,7 +249,7 @@ def main():
                         records=new_records,
                         height=args.height,
                         width=args.width,
-                        channels=channels,
+                        channels=args.channels,
                         experiments=args.experiments,
                         deepest_net_size=args.deep,
                         conv_architecture=args.conv_architecture,
