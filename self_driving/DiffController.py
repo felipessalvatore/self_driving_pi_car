@@ -35,11 +35,12 @@ class DiffController():
                  resize,
                  conv,
                  mode,
-                 bluetooth):
-        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
+                 bluetooth,
+                 debug):
+        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray"  # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
         self.cam = Camera(mode=mode,
-                          debug=True,
+                          debug=debug,
                           resize=resize / 100.0)
         self.mode = mode
         if mode == "pure":
@@ -115,7 +116,7 @@ class DiffController():
         """
         last_command = None
         while True:
-            img, _ = self.cam.take_picture()
+            img = self.cam.take_picture()
 
             if key.is_pressed('q'):
                 print('Exiting...')
@@ -283,7 +284,8 @@ def main():
                          resize=args.resize,
                          conv=args.conv,
                          mode=args.mode,
-                         bluetooth=args.bluetooth)
+                         bluetooth=args.bluetooth,
+                         debug=args.debug)
     if args.debug:
         car.drive_debug()
     else:
