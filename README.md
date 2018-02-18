@@ -5,7 +5,7 @@
 
 
 <p align = 'center'>
-<img src = 'images/track.png' height = '2783px'>
+<img src = 'images/track.png' height = '270px'>
 </p>
 <p align = 'center'>
 Robot driving on a track
@@ -61,7 +61,7 @@ Before doing any kind of training you need to collect the track data. So in the 
 * [NXT-python](https://github.com/Eelviny/nxt-python)
 
 ### Demo
-![Alt Text](https://media.giphy.com/media/1j8Qf5yPZXev2zfDZY/giphy-downsized-large.gif)
+![alt text](images/run_readme.gif)
 
 ### Citation
 ```
