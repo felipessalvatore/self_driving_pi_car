@@ -29,6 +29,8 @@ def acc(name_tfrecords,
         channels,
         architecture,
         activations,
+        learning_rate,
+        optimizer,
         conv_architecture,
         kernel_sizes,
         pool_kernel,
@@ -61,7 +63,9 @@ def acc(name_tfrecords,
                     activations=activations,
                     conv_architecture=conv_architecture,
                     kernel_sizes=kernel_sizes,
-                    pool_kernel=pool_kernel)
+                    pool_kernel=pool_kernel,
+                    learning_rate=learning_rate,
+                    optimizer=optimizer)
 
     data = DataHolder(config,
                       records=records)
@@ -174,6 +178,19 @@ def main():
                         action="store_true",
                         default=False,
                         help="Use convolutional network (default=False)")
+    opt_list = """optimizers: GradientDescent,
+                              Adadelta,
+                              Adagrad,
+                              Adam,
+                              Ftrl,
+                              ProximalGradientDescent,
+                              ProximalAdagrad,
+                              RMSProp"""
+    parser.add_argument("-o",
+                        "--optimizer",
+                        type=str,
+                        default="GradientDescent",
+                        help=opt_list + "(default=GradientDescent)")
     args = parser.parse_args()
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
@@ -196,6 +213,8 @@ def main():
         channels=args.channels,
         architecture=args.architecture,
         activations=activations,
+        learning_rate=args.learning_rate,
+        optimizer=optimizer,
         conv_architecture=args.conv_architecture,
         kernel_sizes=args.kernel_sizes,
         pool_kernel=args.pool_kernel,
