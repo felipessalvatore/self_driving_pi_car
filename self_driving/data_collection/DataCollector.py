@@ -13,8 +13,8 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from nxt_car.DiffCar import DiffCar # noqa
-from vision.Camera import Camera # noqa
+from nxt_car.DiffCar import DiffCar  # noqa
+from vision.Camera import Camera  # noqa
 
 
 class DataCollector():
@@ -25,9 +25,9 @@ class DataCollector():
     both to the classification setting such as the
     regression setting.
 
-    :param robot: robot class to controll the nxt car
+    :param robot: robot class to control the nxt car
     :type robot: nxt_car.DiffCar
-    :param cam: camera class to take picture
+    :param cam: camera class to take pictures
     :type cam: vision.Camera
     :param name: name the folder in which all the pictures
                  will be saved
