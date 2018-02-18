@@ -16,55 +16,64 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command
 
 
-def lr_search(name_tfrecords,
-              records,
-              height,
-              width,
-              channels,
-              architecture,
-              activations,
-              conv_architecture,
-              kernel_sizes,
-              pool_kernel,
-              batch_size,
-              epochs,
-              num_steps,
-              save_step,
-              optimizer,
-              experiments,
-              conv,
-              divisor):
+def optmizers_search(name_tfrecords,
+                     records,
+                     height,
+                     width,
+                     channels,
+                     architecture,
+                     activations,
+                     conv_architecture,
+                     kernel_sizes,
+                     pool_kernel,
+                     batch_size,
+                     epochs,
+                     num_steps,
+                     save_step,
+                     learning_rate,
+                     conv):
     """
-    Script to run different experiments
-    to search a learning rate value,
-    the result is saved on the file learning_rate_results.txt
+    Script to run optmizers search,
+    the result is saved on the file optmizers_results.txt
 
-    :param experiments: number of experiments to be made
-    :type experiments: int
     :param channels: image channels
     :type channels: int
     :param records: list of paths to tf_records
     :type records: none or list of str
     """
-    LR = np.random.random_sample([experiments]) / divisor
-    LR.sort()
+    OT = [tf.train.GradientDescentOptimizer,
+          tf.train.AdadeltaOptimizer,
+          tf.train.AdagradOptimizer,
+          tf.train.AdamOptimizer,
+          tf.train.FtrlOptimizer,
+          tf.train.ProximalGradientDescentOptimizer,
+          tf.train.ProximalAdagradOptimizer,
+          tf.train.RMSPropOptimizer]
+
+    OT_name = ["GradientDescentOptimizer",
+               "AdadeltaOptimizer",
+               "AdagradOptimizer",
+               "AdamOptimizer",
+               "FtrlOptimizer",
+               "ProximalGradientDescentOptimizer",
+               "ProximalAdagradOptimizer",
+               "RMSPropOptimizer"]
     numeric_result = []
     results = []
     info = []
-    LR = list(LR)
     if conv:
         net_name = "CNN"
     else:
         net_name = "DFN"
 
-    header = "\nSearching learning rate for the model {} in the {} data\n".format(net_name,  # noqa
-                                                                                  name_tfrecords) # noqa
+    header = "\nSearching optimizer for the {} model in the {} data\n".format(net_name, # noqa
+                                                                              name_tfrecords) # noqa
     print(header)
-    for lr in LR:
+
+    for name, opt in zip(OT_name, OT):
         config = Config(height=height,
                         width=width,
                         channels=channels,
-                        learning_rate=lr,
                         architecture=architecture,
                         activations=activations,
                         conv_architecture=conv_architecture,
@@ -74,11 +83,10 @@ def lr_search(name_tfrecords,
                         epochs=epochs,
                         num_steps=num_steps,
                         save_step=save_step,
-                        optimizer=optimizer)
-
+                        learning_rate=learning_rate,
+                        optimizer=opt)
         data = DataHolder(config,
                           records=records)
-        name = "lr = {0:.6f}".format(lr)
         print(name + ":\n")
         graph = tf.Graph()
         if conv:
@@ -101,17 +109,16 @@ def lr_search(name_tfrecords,
             shutil.rmtree("checkpoints")
         info.append(str(config))
 
-    best_result = max(list(zip(numeric_result, LR, info)))
-    result_string = """In an experiment with {0} learning rate values
-    the best one is {1} with valid accuracy of {2}.
+    best_result = max(list(zip(numeric_result, OT_name, info)))
+    result_string = """In an experiment with different optmizers
+    the best one is {0} with valid accuracy of {1}.
     \nThe training uses the following params:
-    \n{3}\n""".format(experiments,
-                      best_result[1],
+    \n{2}\n""".format(best_result[1],
                       best_result[0],
                       best_result[2])
-    file = open("learning_rate_results.txt", "w")
+    file = open("optmizers_results.txt", "w")
     file.write(header)
-    file.write("Results with different values for learning rate\n")
+    file.write("Results for different optmizers\n")
     for result in results:
         result += "\n"
         file.write(result)
@@ -122,7 +129,7 @@ def lr_search(name_tfrecords,
 
 def main():
     """
-    Main script to perform learnig rate search.
+    Main script to perform optmizer search.
 
     "mode" is the argument to choose which kind of data will be used:
         "pure": rgb image with no manipulation.
@@ -133,20 +140,13 @@ def main():
         "bin": binary image, only one channel.
         "gray": grayscale image, only one channel.
         "green": image with only the green channel.
-
-    "experiment" is the number of experiments to be done.
     """
-    parser = argparse.ArgumentParser(description='Perform learnig rate search')
+    parser = argparse.ArgumentParser(description='Perform optmizer search')
     parser.add_argument("-n",
                         "--name_tfrecords",
                         type=str,
                         default="data",
                         help="name for tfrecords (default=data)")  # noqa
-    parser.add_argument("-ex",
-                        "--experiments",
-                        type=int,
-                        default=10,
-                        help="number of experiments")
     parser.add_argument('-a',
                         '--architecture',
                         type=int,
@@ -174,6 +174,11 @@ def main():
                         type=int,
                         default=3,
                         help="number of channels (default=3)")
+    parser.add_argument("-lr",
+                        "--learning_rate",
+                        type=float,
+                        default=0.02,
+                        help="learning rate (default=0.02)")
     parser.add_argument('-conva',
                         '--conv_architecture',
                         type=int,
@@ -212,44 +217,17 @@ def main():
                         type=int,
                         default=100,
                         help="number of steps to save variables (default=100)")
-    opt_list = """optimizers: GradientDescent,
-                              Adadelta,
-                              Adagrad,
-                              Adam,
-                              Ftrl,
-                              ProximalGradientDescent,
-                              ProximalAdagrad,
-                              RMSProp"""
-    parser.add_argument("-o",
-                        "--optimizer",
-                        type=str,
-                        default="GradientDescent",
-                        help=opt_list + "(default=GradientDescent)")
     parser.add_argument("-conv",
                         "--conv",
                         action="store_true",
                         default=False,
                         help="Use convolutional network (default=False)")
-    parser.add_argument("-di",
-                        "--divisor",
-                        type=float,
-                        default=100.0,
-                        help="value to divide the learning rate array (default=100.0)")  # noqa
     args = parser.parse_args()
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
         record = args.name_tfrecords + record
         new_records.append(record)
-
-    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
-                      "Adadelta": tf.train.AdadeltaOptimizer,
-                      "Adagrad": tf.train.AdagradOptimizer,
-                      "Adam": tf.train.AdamOptimizer,
-                      "Ftrl": tf.train.FtrlOptimizer,
-                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
-                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
-                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
 
     activations_dict = {"relu": tf.nn.relu,
                         "sigmoid": tf.nn.sigmoid,
@@ -258,26 +236,22 @@ def main():
         activations = [activations_dict[act] for act in args.activations]
     else:
         activations = args.activations
-    optimizer = optimizer_dict[args.optimizer]
-
-    lr_search(name_tfrecords=args.name_tfrecords,
-              records=new_records,
-              height=args.height,
-              width=args.width,
-              channels=args.channels,
-              experiments=args.experiments,
-              architecture=args.architecture,
-              activations=activations,
-              conv_architecture=args.conv_architecture,
-              kernel_sizes=args.kernel_sizes,
-              pool_kernel=args.pool_kernel,
-              batch_size=args.batch_size,
-              epochs=args.epochs,
-              num_steps=args.num_steps,
-              save_step=args.save_step,
-              optimizer=optimizer,
-              conv=args.conv,
-              divisor=args.divisor)
+    optmizers_search(name_tfrecords=args.name_tfrecords,
+                     records=new_records,
+                     height=args.height,
+                     width=args.width,
+                     channels=args.channels,
+                     architecture=args.architecture,
+                     activations=activations,
+                     conv_architecture=args.conv_architecture,
+                     kernel_sizes=args.kernel_sizes,
+                     pool_kernel=args.pool_kernel,
+                     batch_size=args.batch_size,
+                     epochs=args.epochs,
+                     learning_rate=args.learning_rate,
+                     num_steps=args.num_steps,
+                     save_step=args.save_step,
+                     conv=args.conv)
 
 
 if __name__ == "__main__":
