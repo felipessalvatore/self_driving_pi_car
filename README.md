@@ -54,7 +54,7 @@ Compress `<images_folder_name>` directory and export it from Raspberry Pi to oth
 ```
 
 **Attention**
-Please continue following the instructions in the computer that will be used for training.
+Please continue following the instructions in the computer that will be use for training.
 
 ### Generating npy and tfrecords
 
@@ -67,7 +67,7 @@ Before generating tfrecords, you need to transform the untar `<images_folder_nam
 To generate tfrecords from `*.npy` and augment or manipulate (e.g. binarize) the data, run:
  ```
   $ cd ../ml_training/ 
-  $ python generate_tfrecords.py <npy_data_path> <npy_labels_path> -n <name_tfrecords> <aditional optional parameters to perform image manipulation>
+  $ python generate_tfrecords.py <npy_data_path> <npy_labels_path> -n <name_tfrecords> 
 ```
 
 Resulting in `<name_tfrecords>_train.tfrecords`, `<name_tfrecords>_test.tfrecords` and `<name_tfrecords>_valid.tfrecords` files.
