@@ -211,6 +211,16 @@ def main():
     else:
         activations = args.activations
 
+    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
+                      "Adadelta": tf.train.AdadeltaOptimizer,
+                      "Adagrad": tf.train.AdagradOptimizer,
+                      "Adam": tf.train.AdamOptimizer,
+                      "Ftrl": tf.train.FtrlOptimizer,
+                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
+                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
+                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
+    optimizer = optimizer_dict[args.optimizer]
+
     acc(name_tfrecords=args.name_tfrecords,
         records=new_records,
         height=args.height,
