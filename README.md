@@ -3,9 +3,18 @@
 [![Build Status](https://travis-ci.org/felipessalvatore/self_driving_project.svg?branch=master)](https://travis-ci.org/felipessalvatore/self_driving_project)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/felipessalvatore/self_driving_project/blob/master/LICENSE)
 
+
+<p align = 'center'>
+<img src = 'images/track.png' height = '2783px'>
+</p>
+<p align = 'center'>
+Robot driving on a track
+</p>
+
+
 ## Getting Started
 
-### Prerequisites
+### Install
 
 The first thing you need to do is to install all the libraries for the Raspberry pi. To do so, open a terminal in Raspberry pi and run
 
