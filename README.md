@@ -1,10 +1,13 @@
-# Self Driving Raspberry-NXT car 
+# Self-Driving Pi Car 
 
 [![Build Status](https://travis-ci.org/felipessalvatore/self_driving_project.svg?branch=master)](https://travis-ci.org/felipessalvatore/self_driving_project)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/felipessalvatore/self_driving_project/blob/master/LICENSE)
 
 ## Introduction
-short info about the project and team members (table of contents with hyperlinks maybe?)
+
+Self-Driving Pi Car is a deep neural network based self-driving car. It combines the Lego Mindstorms NXT robot with the computational power of a Raspberry Pi 3.
+
+This repository was created by [Paula Moraes](https://github.com/paulaksm) and [Felipe Salvatore](https://github.com/felipessalvatore).
 
 <p align = 'center'>
 <img src = 'images/track.png' height = '270px'>
@@ -13,19 +16,20 @@ short info about the project and team members (table of contents with hyperlinks
 Robot driving on a track
 </p>
 
+You can read more about the project on Medium <link> </link>
 
 ## Getting Started
 
 ### Install
 
-The first thing you need to do is to install all the libraries for the Raspberry Pi. To do so, open a terminal in Raspberry Pi and run
+The first thing you need to do is to install all the libraries for the Raspberry Pi. To do so, open a terminal in Raspberry Pi and run:
 
 ```
 $ cd raspi_utils/
 $ bash install.sh
 ```
 
-In the computer that you will perform the training -- from now on referred as the "training computer" (protip: don't train the model in the Raspberry pi!) -- install all the requirements by runnig
+In the computer that you will perform the training -- protip: don't train the model in the Raspberry Pi! -- install all the requirements by runnig:
 
 ```
 $ pip install -r requirements.txt
@@ -33,10 +37,9 @@ $ pip install -r requirements.txt
 
 ## Usage
 
-**Attention**
-In the Master branch all python code is written for Python 2. If you would like to run this project in Python3, please switch to the Python3 branch of this repository.
+**Attention:**
+in the master branch all python code is written for Python 2. If you would like to run this project in Python 3, please switch to the python3 branch of this repository.
 
-"Don't use Windows..."
 
 ### Collecting data
 
@@ -56,8 +59,8 @@ Compress `<images_folder_name>` directory and export it from Raspberry Pi to oth
 ```
 
 
-**Attention**
-Please continue following the instructions in the computer that will be use for training.
+**Attention:**
+please continue following the instructions in the computer that will be use for training.
 
 
 ### Generating npy and tfrecords
@@ -80,8 +83,8 @@ Resulting in `<name_tfrecords>_train.tfrecords`, `<name_tfrecords>_test.tfrecord
 
 ### Hyperparameters optimization
 
-**Attention**
-All code in this section can be runned on both Python 2 and 3 with TensorFlow 1.2.1 (and above) and with GPU support, if possible.
+**Attention:**
+all code in this section can be runned on both Python 2 and 3 with TensorFlow 1.2.1 (and above) and with GPU support, if possible.
 
 Now it's time to test different architectures, learning rates and optimizers, in the hopes of improving accuracy. 
 
@@ -112,8 +115,8 @@ Running the following script will creat `optimizer_results.txt` file with the re
 
 ### Training the model 
 
-**Attention**
-Back to Python 2
+**Attention:**
+back to Python 2
 
 After searching for an appropriate combination of hyperparameters, you must train the model running this script with additional arguments relative to the model:
 
@@ -142,12 +145,14 @@ Before going live, it's possible to simulate the model in action with track imag
   $ python simulation.py <images_folder_path> <output_images_folder_path>
 ```
 
+Example:
+![alt text](images/run_readme.gif)
 
 
 ### Self driving 
 
-**Attention**
-This section must be run on Raspberry Pi.
+**Attention:**
+this section must be run on Raspberry Pi.
 
 After training the model and loading its `checkpoints` to Raspberry Pi, there will be two modes available: **regular** and **debug**. 
 
@@ -188,8 +193,6 @@ These last tests check if the image manipulation functions and the tensorflow mo
 * [Tensorflow](https://www.tensorflow.org/)
 * [NXT-Python](https://github.com/Eelviny/nxt-python)
 
-### Demo
-![alt text](images/run_readme.gif)
 
 ### Citation
 ```
@@ -201,5 +204,3 @@ These last tests check if the image manipulation functions and the tensorflow mo
     note = {commit xxxxxxx}
   }
 ```
-### Related Work
-- Project M (https://medium.com/@project_m)
