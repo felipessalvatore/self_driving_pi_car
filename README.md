@@ -5,7 +5,7 @@
 
 ## Introduction
 
-Self-Driving Pi Car is a deep neural network based self-driving car. It combines the Lego Mindstorms NXT robot with the computational power of a Raspberry Pi 3.
+Self-Driving Pi Car is a deep neural network based self-driving car, that combines Lego Mindstorms NXT with the computational power of a Raspberry Pi 3.
 
 This repository was created by [Paula Moraes](https://github.com/paulaksm) and [Felipe Salvatore](https://github.com/felipessalvatore).
 
@@ -16,7 +16,7 @@ This repository was created by [Paula Moraes](https://github.com/paulaksm) and [
 Robot driving on a track
 </p>
 
-You can read more about the project on Medium <link> </link>
+You can read more about the project on Medium <link> link here </link>
 
 ## Getting Started
 
@@ -91,7 +91,7 @@ Now it's time to test different architectures, learning rates and optimizers, in
 
 #### Best architecture search
 
-Running the following script will creat `architecture_results.txt` file with the results for a given configuration passed through optional arguments.
+Running the following script will create `architecture_results.txt` file with the results for a given configuration passed through optional arguments.
  ```
   $ python best_architecture.py -n <name_tfrecords>
 ```
@@ -99,7 +99,7 @@ Running the following script will creat `architecture_results.txt` file with the
 
 #### Best learning rate search
 
-Running the following script will creat `learning_rate_results.txt` file with the results for a given configuration passed through optional arguments.
+Running the following script will create `learning_rate_results.txt` file with the results for a given configuration passed through optional arguments.
  ```
   $ python best_learning_rate.py -n <name_tfrecords>
 ```
@@ -107,7 +107,7 @@ Running the following script will creat `learning_rate_results.txt` file with th
 
 #### Best optimizer search
 
-Running the following script will creat `optimizer_results.txt` file with the results for a given configuration passed through optional arguments.
+Running the following script will create `optimizer_results.txt` file with the results for a given configuration passed through optional arguments.
  ```
   $ python best_optimizer.py -n <name_tfrecords>
 ```
