@@ -146,7 +146,13 @@ Before going live, it's possible to simulate the model in action with track imag
 ```
 
 Example:
-![alt text](images/run_readme.gif)
+<p align = 'left'>
+<img src = 'images/run_readme.gif'>
+</p>
+<p align = 'left'>
+Robot driving on a track
+</p>
+<!-- ![alt text](images/run_readme.gif) -->
 
 
 ### Self driving 
