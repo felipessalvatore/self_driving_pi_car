@@ -19,7 +19,7 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from plot.util import plotconfusion # noqa
+from plot.util import plotconfusion  # noqa
 
 
 def acc(name_tfrecords,
@@ -38,6 +38,10 @@ def acc(name_tfrecords,
     """
     Checks model's accuracy
 
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
+    :type records: list of str
     :param height: image height
     :type heights: int
     :param width: image width
@@ -48,10 +52,19 @@ def acc(name_tfrecords,
     :type architecture: list of int
     :param activations: list of different tf functions
     :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
     :param test: param to control if the test accuracy will be printed.
     :type test: bool
     :param name: name to save the confusion matrix plot.
     :type name: str
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     """
 
     config = Config(height=height,
@@ -80,33 +93,31 @@ def acc(name_tfrecords,
     if not os.path.exists("checkpoints"):
         print("===Accuracy of a non trained model===")
 
-    valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord(), bound=10000) # noqa
+    valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord(), bound=10000)  # noqa
     valid_images = valid_images.astype(np.float32) / 255
     valid_pred = trainer.predict(valid_images)
     valid_labels = valid_labels.reshape((valid_labels.shape[0],))
-    plotconfusion(valid_labels, valid_pred, name + "_valid.png", int2command, classes=["left", "right", "up"]) # noqa
+    plotconfusion(valid_labels,
+                  valid_pred,
+                  name + "_valid.png",
+                  int2command,
+                  classes=["left", "right", "up"])
 
     if test:
-        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord(), bound=10000) # noqa
+        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord(), bound=10000)  # noqa
         test_images = test_images.astype(np.float32) / 255
         test_pred = trainer.predict(test_images)
         test_labels = test_labels.reshape((test_labels.shape[0],))
-        plotconfusion(test_labels, test_pred, name + "_test.png", int2command, classes=["left", "right", "up"]) # noqa
+        plotconfusion(test_labels,
+                      test_pred,
+                      name + "_test.png",
+                      int2command,
+                      classes=["left", "right", "up"])
 
 
 def main():
     """
     Main script to check model's accuracy using one kind of data.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description="Checks model's accuracy")
     parser.add_argument("-n",

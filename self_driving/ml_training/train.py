@@ -20,7 +20,7 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from plot.util import plotconfusion # noqa
+from plot.util import plotconfusion  # noqa
 
 
 def train(name_tfrecords,
@@ -44,8 +44,12 @@ def train(name_tfrecords,
           move,
           conv=False):
     """
-    Trains a namel
+    Trains a model
 
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
+    :type records: list of str
     :param height: image height
     :type heights: int
     :param width: image width
@@ -56,6 +60,12 @@ def train(name_tfrecords,
     :type architecture: list of int
     :param activations: list of different tf functions
     :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
     :param batch_size: batch size for training
     :type batch_size: int
     :param epochs: number of epochs
@@ -85,6 +95,9 @@ def train(name_tfrecords,
     :param move: param to control if the checkpoints path
                  will be moved to the parent folder.
     :type move: bool
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     """
 
     if os.path.exists("checkpoints"):
@@ -121,11 +134,15 @@ def train(name_tfrecords,
     print("params:\n{}\n".format(str(config)))
     trainer.fit(verbose=verbose)
     if verbose:
-        valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord()) # noqa
+        valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord())  # noqa
         valid_images = valid_images.astype(np.float32) / 255
         valid_pred = trainer.predict(valid_images)
         valid_labels = valid_labels.reshape((valid_labels.shape[0],))
-        plotconfusion(valid_labels, valid_pred, name + ".png", int2command, classes=["left", "right", "up"]) # noqa
+        plotconfusion(valid_labels,
+                      valid_pred,
+                      name + ".png",
+                      int2command,
+                      classes=["left", "right", "up"])
     if move:
         dst = os.path.join(parentdir, "checkpoints")
         shutil.move("checkpoints", dst)
@@ -134,16 +151,6 @@ def train(name_tfrecords,
 def main():
     """
     Main script to train one model using one kind of data.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description='Train a model')
     parser.add_argument("-n",
@@ -261,14 +268,14 @@ def main():
         record = args.name_tfrecords + record
         new_records.append(record)
 
-    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
+    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer,  # noqa
                       "Adadelta": tf.train.AdadeltaOptimizer,
                       "Adagrad": tf.train.AdagradOptimizer,
                       "Adam": tf.train.AdamOptimizer,
                       "Ftrl": tf.train.FtrlOptimizer,
-                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
-                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
-                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
+                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer,  # noqa
+                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer,  # noqa
+                      "RMSProp": tf.train.RMSPropOptimizer}  # noqa
 
     activations_dict = {"relu": tf.nn.relu,
                         "sigmoid": tf.nn.sigmoid,

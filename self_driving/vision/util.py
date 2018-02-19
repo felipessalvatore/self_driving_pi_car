@@ -12,7 +12,8 @@ def write_img(img,
               position2=(15, 38),
               position3=(15, 52)):
     """
-    Write probabilistic distribution on image (3 classes).
+    Write probabilistic distribution on an image.
+    This function is hard-coded for 3 classes only.
 
     :param img: image
     :type img: np.array

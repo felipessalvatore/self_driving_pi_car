@@ -35,6 +35,10 @@ def simulate_run(folder_path,
     :type trainer: ml_training.Trainer
     :param verbose: param to control print
     :type verbose: bool
+    :param resize: param to control the image's resize ratio
+    :type resize: int
+    :param commands: list of commands in sting format
+    :type commands: list of str
     """
     if verbose:
         print("Trying to run simulator in images from {} \n".format(folder_path))  # noqa
@@ -61,6 +65,9 @@ def image2float(img, mode="pure"):
 
     :param img: image
     :type img: np.array
+    :param mode: param to contro the image's form
+    :type mode: str
+    :return: image
     :rtype: np.array
     """
     if mode == "pure":
@@ -143,7 +150,7 @@ def main():
                         "--resize",
                         type=int,
                         default=100,
-                        help="percentage to resize images in dataset (default=100)") # noqa
+                        help="percentage to resize images in dataset (default=100)")  # noqa
     parser.add_argument("-v",
                         "--verbose",
                         action="store_true",

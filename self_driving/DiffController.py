@@ -19,10 +19,33 @@ class DiffController():
     """
     Class that controls the Diffcar robot using one DFN.
 
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :param architecture: network architecture
+    :type architecture: list of int
+    :param activations: list of different tf functions
+    :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
+    :param resize: param to control the image's resize ratio
+    :type resize: int
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     :param mode: param to control type of image
     :type mode: str
     :param bluetooth: param to control if the bluetooth will be used.
     :type bluetooth: bool
+    :param debug: param to enter debug mode
+    :type debug: bool
     """
     def __init__(self,
                  height,
@@ -35,11 +58,12 @@ class DiffController():
                  resize,
                  conv,
                  mode,
-                 bluetooth):
-        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray" # noqa
+                 bluetooth,
+                 debug):
+        assert mode == "pure" or mode == "green" or mode == "bin" or mode == "gray"  # noqa
         self.robot = DiffCar(bluetooth=bluetooth)
         self.cam = Camera(mode=mode,
-                          debug=True,
+                          debug=debug,
                           resize=resize / 100.0)
         self.mode = mode
         if mode == "pure":
@@ -70,6 +94,8 @@ class DiffController():
         :type img: np.array
         :param label_dict: dict translating label to command
         :type label_dict: dict
+        :return: command
+        :rtype: int
         """
         command_int = int(self.trainer.predict(img)[0])
         command_int = label_dict[command_int]
@@ -83,6 +109,8 @@ class DiffController():
         :type img: np.array
         :param label_dict: dict translating label to command
         :type label_dict: dict
+        :return: command, probability
+        :rtype: int, np.array
         """
         prob = self.trainer.predict_prob(img)[0]
         result = np.argmax(prob, axis=0)
@@ -98,6 +126,7 @@ class DiffController():
 
         :param img: image
         :type img: np.array
+        :return: image
         :rtype: np.array
         """
         if self.mode == "pure":
@@ -111,11 +140,11 @@ class DiffController():
 
     def drive(self):
         """
-        Drive car until the key "q" is pressed.
+        The car drives itself until the key "q" is pressed.
         """
         last_command = None
         while True:
-            img, _ = self.cam.take_picture()
+            img = self.cam.take_picture()
 
             if key.is_pressed('q'):
                 print('Exiting...')
@@ -142,9 +171,9 @@ class DiffController():
 
     def drive_debug(self):
         """
-        Drive car until the key "q" is pressed.
-        images are stored in the folder "debug_run"
-        to check the model performance.
+        The car drives itself until the key "q" is pressed.
+        All captured images are stored in the folder "debug_run"
+        to check the model's performance.
         """
         if not os.path.exists("debug_run"):
             os.makedirs("debug_run")
@@ -193,9 +222,9 @@ class DiffController():
 
 def main():
     """
-    Script to let the car drive itself.
+    Drive the robot car using one trained model
     """
-    parser = argparse.ArgumentParser(description="drive the robot car using one trained model") # noqa
+    parser = argparse.ArgumentParser(description="Drive the robot car using one trained model")  # noqa
 
     parser.add_argument("-m",
                         "--mode",
@@ -211,7 +240,7 @@ def main():
                         "--debug",
                         action="store_true",
                         default=False,
-                        help="debug (default=False)")  # noqa
+                        help="debug (default=False)")
     parser.add_argument("-he",
                         "--height",
                         type=int,
@@ -283,7 +312,8 @@ def main():
                          resize=args.resize,
                          conv=args.conv,
                          mode=args.mode,
-                         bluetooth=args.bluetooth)
+                         bluetooth=args.bluetooth,
+                         debug=args.debug)
     if args.debug:
         car.drive_debug()
     else:

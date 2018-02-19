@@ -6,7 +6,7 @@ import tensorflow as tf
 
 class DFN():
     """
-    A general Deep feedforward network
+    A general Deep Feedforward Network (DFN)
 
     :param graph: computation graph
     :type graph: tf.Graph
@@ -63,6 +63,7 @@ class DFN():
         :param img_input: input image
         :type img_input: tf.Tensor(shape=(None,height*width*channels),
                                           dype=tf.float32)
+        :return: logits
         :rtype: tf.Tensor(shape=(None, categories),
                           dype=tf.float32)
         """

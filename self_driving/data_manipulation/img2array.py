@@ -32,8 +32,10 @@ def folder2array(folder_path,
     :type channels: int
     :param resize: percentage to scale the image
     :type resize: int
-
-    :rtype: (np.array,np.array,np.array)
+    :param verbose: param to control the print function
+    :type verbose: bool
+    :return: data, labels, shape
+    :rtype: np.array, np.array, tuple
     """
     all_images = []
     all_labels = []
@@ -68,8 +70,9 @@ def change_type_to_uint8(image):
     """
     Change type to uint8 Unsigned integer (0 to 255)
 
-    :param image: image as an np.array
+    :param image: image
     :type image: np.array
+    :return: image
     :rtype: np.array
     """
     image = image.astype('uint8')
@@ -107,7 +110,7 @@ def create_data_set_as_np_array(folder_path,
     :param resize: percentage to scale the image
     :type resize: int
     :param verbose: param to print path information
-    :type verbose: boolean
+    :type verbose: bool
     """
     assert os.path.exists(folder_path)
     all_images = []
@@ -145,7 +148,7 @@ def main():
     parser.add_argument('npy_folder_path',
                         type=str, help='path to npy files to be saved')
     parser.add_argument('npy_name',
-                        type=str, default="data", help='name of npy files (dafault="data")') # noqa
+                        type=str, nargs='?', default="data", help='name of npy files (default="data")')  # noqa
     parser.add_argument("-he",
                         "--image_height",
                         type=int,
@@ -165,7 +168,7 @@ def main():
                         "--resize",
                         type=int,
                         default=100,
-                        help="percentage to resize images in dataset (default=100)") # noqa
+                        help="percentage to resize images in dataset (default=100)")  # noqa
     user_args = parser.parse_args()
     create_data_set_as_np_array(user_args.img_folder_path,
                                 user_args.npy_folder_path,

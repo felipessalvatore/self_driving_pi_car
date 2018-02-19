@@ -14,9 +14,15 @@ class Config(object):
     :type width: int
     :param channels: image channels
     :type channels: int
-    :param architecture: network architecture
+    :param architecture: network dense architecture
     :type architecture: list of int
     :param activations: list of different tf functions
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
     :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
     :param batch_size: batch size for training
     :type batch_size: int
@@ -75,6 +81,7 @@ class Config(object):
         """
         Get all attributs values.
 
+        :return: all hyperparams as a string
         :rtype: str
         """
         if self.kernel_sizes is None:

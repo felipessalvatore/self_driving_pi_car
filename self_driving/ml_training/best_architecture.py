@@ -6,7 +6,6 @@ import os
 import numpy as np
 import shutil
 import argparse
-
 from DataHolder import DataHolder
 from Config import Config
 from Trainer import Trainer
@@ -16,7 +15,7 @@ from util import reconstruct_from_record, accuracy_per_category
 from util import int2command, get_random_architecture_and_activations
 
 
-def architecture_search(mode,
+def architecture_search(name_tfrecords,
                         records,
                         height,
                         width,
@@ -37,14 +36,50 @@ def architecture_search(mode,
     Script to search different architectures for a DFN,
     the result is saved on the file architecture_results.txt
 
-    :param records: list of paths to train, valid and test tf.records
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
     :type records: list of str
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
+    :param batch_size: batch size for training
+    :type batch_size: int
+    :param epochs: number of epochs
+    :type epochs: int
+    :param num_steps: number of iterations for each epoch
+    :type num_steps: int
+    :param save_step: when step % save_step == 0, the model
+                      parameters are saved.
+    :type save_step: int
+    :param learning_rate: learning rate for the optimizer
+    :type learning_rate: float
+    :param optimizer: a optimizer from tensorflow.
+    :type optimizer: tf.train.GradientDescentOptimizer,
+                     tf.train.AdadeltaOptimizer,
+                     tf.train.AdagradOptimizer,
+                     tf.train.AdagradDAOptimizer,
+                     tf.train.AdamOptimizer,
+                     tf.train.FtrlOptimizer,
+                     tf.train.ProximalGradientDescentOptimizer,
+                     tf.train.ProximalAdagradOptimizer,
+                     tf.train.RMSPropOptimizer
     :param experiments: number of experiments to be made
     :type experiments: int
     :param deepest_net_size: size of the deepest network
     :type deepest_net_size: int
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     """
     sizes = np.random.randint(1, deepest_net_size, experiments)
     hidden_layers, activations = get_random_architecture_and_activations(network_sizes=sizes)  # noqa
@@ -57,7 +92,7 @@ def architecture_search(mode,
         net_name = "DFN"
 
     header = "\nSearching {} architecture in the {} data\n".format(net_name,
-                                                                   mode)
+                                                                   name_tfrecords)  # noqa
     print(header)
     for arch, act in zip(hidden_layers, activations):
         config = Config(height=height,
@@ -122,27 +157,13 @@ def architecture_search(mode,
 def main():
     """
     Main script to perform architecture search.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
-
-    "experiment" is the number of experiments to be done.
-
-    "deep" is the deep of the model.
     """
     parser = argparse.ArgumentParser(description='Perform architecture search')
-    parser.add_argument("-m",
-                        "--mode",
+    parser.add_argument("-n",
+                        "--name_tfrecords",
                         type=str,
-                        default="pure",
-                        help="mode for data: pure, flip, aug, bin, gray, green (default=pure)")  # noqa
+                        default="data",
+                        help="name for tfrecords (default=data)")  # noqa
     parser.add_argument("-ex",
                         "--experiments",
                         type=int,
@@ -163,6 +184,11 @@ def main():
                         type=int,
                         default=160,
                         help="image width (default=160)")
+    parser.add_argument("-c",
+                        "--channels",
+                        type=int,
+                        default=3,
+                        help="number of channels (default=3)")
     parser.add_argument('-conva',
                         '--conv_architecture',
                         type=int,
@@ -225,30 +251,26 @@ def main():
                         default=False,
                         help="Use convolutional network (default=False)")
     args = parser.parse_args()
-    if args.mode == "bin" or args.mode == "gray" or args.mode == "green":
-        channels = 1
-    else:
-        channels = 3
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
     for record in records:
-        record = args.mode + record
+        record = args.name_tfrecords + record
         new_records.append(record)
 
-    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
+    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer,  # noqa
                       "Adadelta": tf.train.AdadeltaOptimizer,
                       "Adagrad": tf.train.AdagradOptimizer,
                       "Adam": tf.train.AdamOptimizer,
                       "Ftrl": tf.train.FtrlOptimizer,
-                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
-                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
-                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
+                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer,  # noqa
+                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer,  # noqa
+                      "RMSProp": tf.train.RMSPropOptimizer}  # noqa
     optimizer = optimizer_dict[args.optimizer]
-    architecture_search(mode=args.mode,
+    architecture_search(name_tfrecords=args.name_tfrecords,
                         records=new_records,
                         height=args.height,
                         width=args.width,
-                        channels=channels,
+                        channels=args.channels,
                         experiments=args.experiments,
                         deepest_net_size=args.deep,
                         conv_architecture=args.conv_architecture,

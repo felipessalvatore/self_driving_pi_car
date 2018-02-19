@@ -7,7 +7,7 @@ from tensorflow.python.layers import pooling
 
 class CNN():
     """
-    A general Convolutional neural network
+    A general Convolutional Neural Network (CNN)
 
     :param graph: computation graph
     :type graph: tf.Graph
@@ -90,6 +90,7 @@ class CNN():
         :param img_input: input image
         :type img_input: tf.Tensor(shape=(None,height*width*channels),
                                           dype=tf.float32)
+        :return: logits
         :rtype: tf.Tensor(shape=(None, categories),
                           dype=tf.float32)
         """
