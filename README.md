@@ -149,13 +149,9 @@ Example:
 <p align = 'left'>
 <img src = 'images/run_readme.gif'>
 </p>
-<p align = 'left'>
-Robot driving on a track
-</p>
-<!-- ![alt text](images/run_readme.gif) -->
 
 
-### Self driving 
+### Self-driving 
 
 **Attention:**
 this section must be run on Raspberry Pi.
