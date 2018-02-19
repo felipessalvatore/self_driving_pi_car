@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import numpy as np
 import tensorflow as tf
 
@@ -18,8 +19,11 @@ def randomize_in_place(list1, list2, init):
     Usualy this functions is used when list1 = dataset,
     and list2 = labels.
 
-    :type list1: list
-    :type list2: list
+    :param list1: list
+    :type list1: list or np.array
+    :param list2: list
+    :type list2: list or np.array
+    :param init: seed
     :type init: int
     """
     np.random.seed(seed=init)
@@ -36,10 +40,14 @@ def data_cut(data, labels, init=0):
     is divide into valid data and test data. If the size of the
     data is odd we add one observation copy to the dataset.
 
-    :type data: np array
-    :type labels: np array
+    :param data: dataset
+    :type data: np.array
+    :param labels: labels
+    :type labels: np.array
+    :param init: seed
     :type init: int
-    :rtype: None or np array
+    :return: train, test and valid dataset and labels
+    :rtype: np.array, np.array, np.array, np.array, np.array, np.array
     """
     randomize_in_place(data, labels, init)
     data_size = data.shape[0]
@@ -67,14 +75,14 @@ def create_record(record_path,
                   channels):
     """
     Fuction to create one tf.record using two numpy arrays.
-    The array in data_path is espected to be flat.
+    The array in data is expected to be flat.
 
     :param record_path: path to save the tf.record
     :type record_path: str
-    :param data_path: path to load the data
-    :type data_path: str
-    :param label_path: path to load the labels
-    :type label_path: str
+    :param data: dataset
+    :type data: np.array
+    :param label: labels
+    :type label: np.array
     :param height: image height
     :type height: int
     :param width: image width

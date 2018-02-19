@@ -31,7 +31,9 @@ def get_image_and_command(data_index,
     from data_index and get it's label
     in label_index (e.g. 'right')
 
+    :param data_index: index on the dataset array
     :type data_index: numpy.ndarray
+    :param label_index: index on the labels array
     :type label_index: numpy.ndarray
     :param height: image height
     :type heights: int
@@ -39,6 +41,7 @@ def get_image_and_command(data_index,
     :type width: int
     :param channels: image channels
     :type channels: int
+    :return: image, command
     :rtype: numpy.ndarray, str
     """
     img_array = data_index.reshape((height, width, channels))
@@ -55,14 +58,16 @@ def get_image(data_index,
     90(height), 160(width), 3(channels)
     from data_index
 
+    :param data_index: index on the dataset array
     :type data_index: numpy.ndarray
-    :rtype: numpy.ndarray
     :param height: image height
     :type heights: int
     :param width: image width
     :type width: int
     :param channels: image channels
     :type channels: int
+    :return: image
+    :rtype: numpy.ndarray
     """
     return data_index.reshape((height, width, channels))
 
@@ -72,7 +77,9 @@ def get_flat_shape(image):
     Multiply each shape
     component of image (tuple of array dimensions)
 
+    :param image: image
     :type image: numpy.ndarray
+    :return: image's flat shape
     :rtype: int
     """
     flat = 1
@@ -86,7 +93,9 @@ def shape2filename(data_shape):
     Get each shape component and return a string
     formatted to 'height_width_channels_'
 
-    :type data_shape: numpy.ndarray
+    :param data_shape: dataset shape
+    :type data_shape: tuple
+    :return: shape as string
     :rtype: str
     """
     name = ""
@@ -102,8 +111,11 @@ def load_dataset(data_path,
     arrays from data_path and
     label arrays from labels_path
 
+    :param data_path: path to dataset
     :type data_path: str (.npy file)
+    :param labels_path: path to labels
     :type labels_path: str (.npy file)
+    :return: dataset, labels
     :rtype: numpy.ndarray, numpy.ndarray
     """
     data = np.load(data_path)
@@ -119,12 +131,16 @@ def save_dataset(data,
     """
     Save data and labels in a directory as a numpy array binary file (NPY)
 
+    :param data: dataset
     :type data: numpy.ndarray
+    :param labels: labels
     :type labels: numpy.ndarray
+    :param folder_path: path to save dataset and labels
     :type folder_path: str
-    :type data_shape: tuple of numpy array dimensions
+    :param data_shape: shape of numpy array dimensions
+    :type data_shape: tuple
+    :param name: name to save data and labels
     :type name: str
-    :rtype:
     """
     shape = shape2filename(data_shape)
     data_name = "{}_{}data.npy".format(name, shape)

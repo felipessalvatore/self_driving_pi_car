@@ -12,7 +12,7 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from util import run_test # noqa
+from util import run_test  # noqa
 
 
 def main():

@@ -30,14 +30,23 @@ def extend_dataset_flip_axis(data,
     Balance and extend dataset
     by generating new images flipping the horizontal
     axis (only applicable to images labeled 'left' or 'right').
-    It assumes the following codification:
+    This function is hard-coded, it assumes the following codification:
         - "up": 0
         - "left": 1
         - "right": 2
 
-    :type data: numpy.ndarray
-    :type labels: numpy.ndarray
-    :rtype: numpy.ndarray, numpy.ndarray
+    :param data: dataset
+    :type data: np.array
+    :param label: labels
+    :type label: np.array
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :return: extended images, extended labels
+    :rtype: np.array, np.array
     """
     all_images = []
     all_labels = []
@@ -77,9 +86,18 @@ def transfor_dataset_with_one_channel(data,
     Returns a new dataset and the new shape of its contents.
     The new shape will have only height and width.
 
-    :type transformation: numpy.ndarray -> numpy.ndarray
-    :type data: numpy.ndarray
-    :rtype: numpy.ndarray, tuple
+    :param transformation: function
+    :type transformation: np.array -> np.array
+    :param data: dataset
+    :type data: np.array
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :return: transformed dataset, shape
+    :rtype: np.array, tuple
     """
     new_dataset = []
     new_shape = ()
@@ -104,8 +122,16 @@ def binarize_dataset(data,
     """
     Create a new dataset by applying the function binarize_image.
 
-    :type data: numpy.ndarray
-    :rtype: numpy.ndarray, tuple
+    :param data: dataset
+    :type data: np.array
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :return: transformed dataset, shape
+    :rtype: np.array, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
                                                     img_mani.binarize_image,
@@ -122,8 +148,16 @@ def gray_dataset(data,
     """
     Create a new dataset by applying the function grayscale_image.
 
-    :type data: numpy.ndarray
-    :rtype: numpy.ndarray, tuple
+    :param data: dataset
+    :type data: np.array
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :return: transformed dataset, shape
+    :rtype: np.array, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
                                                     img_mani.grayscale_image,
@@ -140,8 +174,16 @@ def green_dataset(data,
     """
     Create a new dataset by applying the function green_channel.
 
-    :type data: numpy.ndarray
-    :rtype: numpy.ndarray, tuple
+    :param data: dataset
+    :type data: np.array
+    :param height: image height
+    :type height: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
+    :return: transformed dataset, shape
+    :rtype: np.array, tuple
     """
     data, shape = transfor_dataset_with_one_channel(data,
                                                     img_mani.green_channel,
@@ -156,15 +198,18 @@ def dataset_augmentation(data, labels, height=90, width=160, channels=3):
     Augment a dataset by inserting a vertical random shadow and
     by bluring with a Gaussian convolution
 
-    :type data: numpy.ndarray
-    :type labels: numpy.ndarray
+    :param data: dataset
+    :type data: np.array
+    :param labels: labels
+    :type labels: np.array
     :param width: image width
     :type width: int
     :param height: image height
     :type heights: int
     :param channels: image channels
     :type channels: int
-    :rtype: numpy.ndarray, numpy.ndarray
+    :return: extended images, extended labels
+    :rtype: np.array, np.array
     """
     all_images = []
     all_labels = []
@@ -190,7 +235,6 @@ def dataset_augmentation(data, labels, height=90, width=160, channels=3):
 
 def main():
     parser = argparse.ArgumentParser()
-
     parser.add_argument('data_path',
                         type=str, help='path to current data')
     parser.add_argument('labels_path',
