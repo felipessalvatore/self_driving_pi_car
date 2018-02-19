@@ -52,14 +52,14 @@ def acc(name_tfrecords,
     :type architecture: list of int
     :param activations: list of different tf functions
     :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
-    :param test: param to control if the test accuracy will be printed.
-    :type test: bool
     :param conv_architecture: convolutional architecture
     :type conv_architecture: list of int
     :param kernel_sizes: filter sizes
     :type kernel_sizes: list of int
     :param pool_kernel: pooling filter sizes
     :type pool_kernel: list of int
+    :param test: param to control if the test accuracy will be printed.
+    :type test: bool
     :param name: name to save the confusion matrix plot.
     :type name: str
     :param conv: param to control if the model will be a CNN
