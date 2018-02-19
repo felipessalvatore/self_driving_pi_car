@@ -46,6 +46,8 @@ Before doing any kind of training you need to collect the track data. So in the 
   $ python DataCollector.py -n <images_folder_name>
 ```
 
+Pressing `q` will stop execution and save all images and pickle file.
+
 Inside the folder `<images_folder_name>` there will be subdirectories organized by timestamps similar to `2018-02-17-23-27-02` with the collected `*.png` images. All the associated labels are saved in a pickle file `2018-02-17-23-27-02_pickle` in `<images_folder_name>`.
 
 Compress `<images_folder_name>` directory and export it from Raspberry Pi to other computer (using scp command, cloud, email, etc).
@@ -53,8 +55,10 @@ Compress `<images_folder_name>` directory and export it from Raspberry Pi to oth
   $ tar cvf <images_folder_name>.tar <images_folder_name>
 ```
 
+
 **Attention**
 Please continue following the instructions in the computer that will be use for training.
+
 
 ### Generating npy and tfrecords
 
@@ -72,12 +76,15 @@ To generate tfrecords from `*.npy` and augment or manipulate (e.g. binarize) the
 
 Resulting in `<name_tfrecords>_train.tfrecords`, `<name_tfrecords>_test.tfrecords` and `<name_tfrecords>_valid.tfrecords` files.
 
+
+
 ### Hyperparameters optimization
 
 **Attention**
 All code in this section can be runned on both Python 2 and 3 with TensorFlow 1.2.1 (and above) and with GPU support, if possible.
 
 Now it's time to test different architectures, learning rates and optimizers, in the hopes of improving accuracy. 
+
 
 #### Best architecture search
 
@@ -86,12 +93,14 @@ Running the following script will creat `architecture_results.txt` file with the
   $ python best_architecture.py -n <name_tfrecords>
 ```
 
+
 #### Best learning rate search
 
 Running the following script will creat `learning_rate_results.txt` file with the results for a given configuration passed through optional arguments.
  ```
   $ python best_learning_rate.py -n <name_tfrecords>
 ```
+
 
 #### Best optimizer search
 
@@ -100,7 +109,8 @@ Running the following script will creat `optimizer_results.txt` file with the re
   $ python best_optimizer.py -n <name_tfrecords>
 ```
 
-### Training the model (FINALLY)
+
+### Training the model 
 
 **Attention**
 Back to Python 2
@@ -113,13 +123,46 @@ After searching for an appropriate combination of hyperparameters, you must trai
 
 The result will be a `checkpoints` directory with all files needed to deploy the model.
 
-Having a checkpoints directory .....
 
 #### Accuracy test
 
+You can test for accuracy with the script:
+
+```
+  $ python acc_test.py -n <name_tfrecords>
+```
+
+
 #### Simulation
 
-### Self driving
+Before going live, it's possible to simulate the model in action with track images. This simulation script uses `checkpoints` and `<images_folder_path>` to generate new images, saved on `<output_images_folder_path>`, with a stamp of the probabilities for each class.
+
+```
+  $ cd ../
+  $ python simulation.py <images_folder_path> <output_images_folder_path>
+```
+
+
+
+### Self driving 
+
+**Attention**
+This section must be run on Raspberry Pi.
+
+After training the model and loading its `checkpoints` to Raspberry Pi, there will be two modes available: **regular** and **debug**. 
+
+On ___regular mode___, the car will take an action based on the model's prediction given an image took by the camera. Pressing `q` will stop the execution:
+
+```
+$ python DiffController.py 
+```
+
+The __debug mode__ works in the same way as regular, but also creates a `debug-run` directory containing all images taken during execution with a stamp of the probabilities for each class. Pressing `q` will stop the execution:
+
+```
+$ python DiffController.py -d
+```
+
 
 
 ### Running the tests
