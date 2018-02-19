@@ -19,7 +19,7 @@ currentdir = os.path.dirname(almost_current)
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from plot.util import plotconfusion # noqa
+from plot.util import plotconfusion  # noqa
 
 
 def acc(name_tfrecords,
@@ -29,8 +29,6 @@ def acc(name_tfrecords,
         channels,
         architecture,
         activations,
-        learning_rate,
-        optimizer,
         conv_architecture,
         kernel_sizes,
         pool_kernel,
@@ -40,6 +38,10 @@ def acc(name_tfrecords,
     """
     Checks model's accuracy
 
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
+    :type records: list of str
     :param height: image height
     :type heights: int
     :param width: image width
@@ -52,8 +54,17 @@ def acc(name_tfrecords,
     :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
     :param test: param to control if the test accuracy will be printed.
     :type test: bool
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
     :param name: name to save the confusion matrix plot.
     :type name: str
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     """
 
     config = Config(height=height,
@@ -63,9 +74,7 @@ def acc(name_tfrecords,
                     activations=activations,
                     conv_architecture=conv_architecture,
                     kernel_sizes=kernel_sizes,
-                    pool_kernel=pool_kernel,
-                    learning_rate=learning_rate,
-                    optimizer=optimizer)
+                    pool_kernel=pool_kernel)
 
     data = DataHolder(config,
                       records=records)
@@ -84,33 +93,31 @@ def acc(name_tfrecords,
     if not os.path.exists("checkpoints"):
         print("===Accuracy of a non trained model===")
 
-    valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord(), bound=10000) # noqa
+    valid_images, valid_labels, _ = reconstruct_from_record(data.get_valid_tfrecord(), bound=10000)  # noqa
     valid_images = valid_images.astype(np.float32) / 255
     valid_pred = trainer.predict(valid_images)
     valid_labels = valid_labels.reshape((valid_labels.shape[0],))
-    plotconfusion(valid_labels, valid_pred, name + "_valid.png", int2command, classes=["left", "right", "up"]) # noqa
+    plotconfusion(valid_labels,
+                  valid_pred,
+                  name + "_valid.png",
+                  int2command,
+                  classes=["left", "right", "up"])
 
     if test:
-        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord(), bound=10000) # noqa
+        test_images, test_labels, _ = reconstruct_from_record(data.get_test_tfrecord(), bound=10000)  # noqa
         test_images = test_images.astype(np.float32) / 255
         test_pred = trainer.predict(test_images)
         test_labels = test_labels.reshape((test_labels.shape[0],))
-        plotconfusion(test_labels, test_pred, name + "_test.png", int2command, classes=["left", "right", "up"]) # noqa
+        plotconfusion(test_labels,
+                      test_pred,
+                      name + "_test.png",
+                      int2command,
+                      classes=["left", "right", "up"])
 
 
 def main():
     """
     Main script to check model's accuracy using one kind of data.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description="Checks model's accuracy")
     parser.add_argument("-n",
@@ -178,24 +185,6 @@ def main():
                         action="store_true",
                         default=False,
                         help="Use convolutional network (default=False)")
-    parser.add_argument("-lr",
-                        "--learning_rate",
-                        type=float,
-                        default=0.02,
-                        help="learning rate (default=0.02)")
-    opt_list = """optimizers: GradientDescent,
-                              Adadelta,
-                              Adagrad,
-                              Adam,
-                              Ftrl,
-                              ProximalGradientDescent,
-                              ProximalAdagrad,
-                              RMSProp"""
-    parser.add_argument("-o",
-                        "--optimizer",
-                        type=str,
-                        default="GradientDescent",
-                        help=opt_list + "(default=GradientDescent)")
     args = parser.parse_args()
     records = ["_train.tfrecords", "_valid.tfrecords", "_test.tfrecords"]
     new_records = []
@@ -211,16 +200,6 @@ def main():
     else:
         activations = args.activations
 
-    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
-                      "Adadelta": tf.train.AdadeltaOptimizer,
-                      "Adagrad": tf.train.AdagradOptimizer,
-                      "Adam": tf.train.AdamOptimizer,
-                      "Ftrl": tf.train.FtrlOptimizer,
-                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
-                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
-                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
-    optimizer = optimizer_dict[args.optimizer]
-
     acc(name_tfrecords=args.name_tfrecords,
         records=new_records,
         height=args.height,
@@ -228,8 +207,6 @@ def main():
         channels=args.channels,
         architecture=args.architecture,
         activations=activations,
-        learning_rate=args.learning_rate,
-        optimizer=optimizer,
         conv_architecture=args.conv_architecture,
         kernel_sizes=args.kernel_sizes,
         pool_kernel=args.pool_kernel,
