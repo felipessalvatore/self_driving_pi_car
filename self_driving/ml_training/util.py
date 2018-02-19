@@ -29,7 +29,8 @@ def reconstruct_from_record(record_path, bound=1000):
     :type record_path: str
     :param bound: number of examples to be read
     :type bound: int
-    :rtype: np.array, np.array
+    :return: images, labels, shape
+    :rtype: np.array, np.array, tuple
     """
     reconstructed_images = []
     reconstructed_labels = []
@@ -70,6 +71,9 @@ def accuracy_per_category(pred, label, categories):
     :type pred: np.array
     :param label: true labels
     :type label: np.array
+    :param categories: number of categories
+    :type categories: int
+    :return: accuracy's list
     :rtype: list of float
     """
     pred, label = list(pred), list(label)
@@ -96,12 +100,11 @@ def get_random_architecture_and_activations(network_sizes,
 
     :param network_sizes: list of network's size
     :type network_sizes: list of int
-    :param height: image height
-    :type heights: int
-    :param width: image width
-    :type width: int
-    :param channels: image channels
-    :type channels: int
+    :param categories: number of categories
+    :type categories: int
+    :param upper_bound: max number of nodes per layer
+    :type upper_bound: int
+    :return: list of hidden layer sizes, list of activation functions
     :rtype: list of int, list of function tensorflow
     """
     activations_dict = {0: tf.nn.relu,
@@ -141,6 +144,7 @@ def parser_with_normalization(tfrecord):
 
     :param tfrecord: a single binary serialized
     :type tfrecord: tf.Tensor(shape=(), dype=tf.string)
+    :return: image, label
     :rtype: tf.Tensor(shape=(1, height*width*channels),
                       dtype=tf.float32),
             tf.Tensor(shape=(1,), dtyṕe=tf.int32)
@@ -178,6 +182,7 @@ def get_iterator(filename, batch_size, parser):
                   tf.Tensor(shape=(1, height*width*channels),
                       dtype=tf.float32),
                   tf.Tensor(shape=(1,), dtyṕe=tf.int32)
+    :return: data iterator
     :rtype: tf.contrib.data.Iterator
     """
     dataset = tf.contrib.data.TFRecordDataset(filename)

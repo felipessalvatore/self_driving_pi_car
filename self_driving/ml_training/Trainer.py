@@ -16,14 +16,22 @@ class Trainer():
     Class that trains a model and uses a model to predict
     images.
 
-    :type data_path: str
-    :type label_path: str
-    :type record_path: str
-    :type flip: boolean
-    :type binarize: boolean
-    :type gray: boolean
-    :type green: boolean
-    :type augmentation: boolean
+    :param graph: computation graph
+    :type graph: tf.Graph
+    :param config:  config class holding info about the
+                    number of hidden layers (size of the list)
+                    and the number of neurons in each
+                    layer (number in the list), and
+                    the different activation functions.
+
+    :type config: Config
+    :param model: deep learning model
+    :type model: DFN or CNN
+    :param dataholder: dataholder class containing all
+                      the data information
+    :type dataholder: DataHolder
+    :param save_dir: folder's name to save model's params
+    :type save_dir: str
     """
     def __init__(self,
                  graph,
@@ -123,6 +131,7 @@ class Trainer():
         :type accuracy_tensor: tf.Tensor(shape=(), dype=tf.float32)
         :param iterations: number of iterations
         :type iterations: int
+        :return: accuracy on a dataset
         :rtype: float
         """
         with tf.Session(graph=self.graph) as sess:
@@ -144,6 +153,7 @@ class Trainer():
 
         :param iterations: number of iterations
         :type iterations: int
+        :return: accuracy on the valid dataset
         :rtype: float
         """
         return self.get_accuracy(self.iterator_valid.initializer,
@@ -156,7 +166,6 @@ class Trainer():
 
         :param verbose: param to control printing
         :type verbose: bool
-        :rtype: float
         """
         best_valid_loss = float("inf")
         with tf.Session(graph=self.graph) as sess:
@@ -188,6 +197,7 @@ class Trainer():
 
         :param img: image
         :type img: np.array
+        :return: batch of probabilities
         :rtype: np.array
         """
         type_msg = "not in the correct type"
@@ -209,6 +219,7 @@ class Trainer():
 
         :param img: image
         :type img: np.array
+        :return: batch of predictions
         :rtype: np.array
         """
         result = self.predict_prob(img)

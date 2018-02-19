@@ -17,8 +17,12 @@ def records_generator(height,
     """
     Generates tfrecords.
 
-    :param config: config class with all hyper param information
-    :type config: Config
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
+    :param channels: image channels
+    :type channels: int
     :param data_path: path to load data np.array
     :type data_path: str
     :param record_path: path to load labels np.array
@@ -126,10 +130,6 @@ def main():
                         help="flag to binarize dataset (default=False)")
 
     args = parser.parse_args()
-    # if args.binary or args.green or args.gray:
-    #     channels = 1
-    # else:
-    #     channels = 3
     records_generator(args.height,
                       args.width,
                       args.channels,

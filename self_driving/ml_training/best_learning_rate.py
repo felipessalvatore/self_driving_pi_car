@@ -6,7 +6,6 @@ import os
 import numpy as np
 import shutil
 import argparse
-
 from DataHolder import DataHolder
 from Config import Config
 from Trainer import Trainer
@@ -39,12 +38,52 @@ def lr_search(name_tfrecords,
     to search a learning rate value,
     the result is saved on the file learning_rate_results.txt
 
-    :param experiments: number of experiments to be made
-    :type experiments: int
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
+    :type records: list of str
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
-    :param records: list of paths to tf_records
-    :type records: none or list of str
+    :param architecture: network architecture
+    :type architecture: list of int
+    :param activations: list of different tf functions
+    :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
+    :param batch_size: batch size for training
+    :type batch_size: int
+    :param epochs: number of epochs
+    :type epochs: int
+    :param num_steps: number of iterations for each epoch
+    :type num_steps: int
+    :param save_step: when step % save_step == 0, the model
+                      parameters are saved.
+    :type save_step: int
+    :param optimizer: a optimizer from tensorflow.
+    :type optimizer: tf.train.GradientDescentOptimizer,
+                     tf.train.AdadeltaOptimizer,
+                     tf.train.AdagradOptimizer,
+                     tf.train.AdagradDAOptimizer,
+                     tf.train.AdamOptimizer,
+                     tf.train.FtrlOptimizer,
+                     tf.train.ProximalGradientDescentOptimizer,
+                     tf.train.ProximalAdagradOptimizer,
+                     tf.train.RMSPropOptimizer
+    :param experiments: number of experiments to be made
+    :type experiments: int
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
+    :param divisor: param to resize the learning rate
+    :type divisor: float
     """
     LR = np.random.random_sample([experiments]) / divisor
     LR.sort()
@@ -58,7 +97,7 @@ def lr_search(name_tfrecords,
         net_name = "DFN"
 
     header = "\nSearching learning rate for the model {} in the {} data\n".format(net_name,  # noqa
-                                                                                  name_tfrecords) # noqa
+                                                                                  name_tfrecords)  # noqa
     print(header)
     for lr in LR:
         config = Config(height=height,
@@ -123,18 +162,6 @@ def lr_search(name_tfrecords,
 def main():
     """
     Main script to perform learnig rate search.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
-
-    "experiment" is the number of experiments to be done.
     """
     parser = argparse.ArgumentParser(description='Perform learnig rate search')
     parser.add_argument("-n",
@@ -242,14 +269,14 @@ def main():
         record = args.name_tfrecords + record
         new_records.append(record)
 
-    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer, # noqa
+    optimizer_dict = {"GradientDescent": tf.train.GradientDescentOptimizer,  # noqa
                       "Adadelta": tf.train.AdadeltaOptimizer,
                       "Adagrad": tf.train.AdagradOptimizer,
                       "Adam": tf.train.AdamOptimizer,
                       "Ftrl": tf.train.FtrlOptimizer,
-                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer, # noqa
-                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer, # noqa
-                      "RMSProp":tf.train.RMSPropOptimizer} # noqa
+                      "ProximalGradientDescent": tf.train.ProximalGradientDescentOptimizer,  # noqa
+                      "ProximalAdagrad": tf.train.ProximalAdagradOptimizer,  # noqa
+                      "RMSProp": tf.train.RMSPropOptimizer}  # noqa
 
     activations_dict = {"relu": tf.nn.relu,
                         "sigmoid": tf.nn.sigmoid,

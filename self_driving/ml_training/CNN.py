@@ -6,7 +6,7 @@ import tensorflow as tf
 
 class CNN():
     """
-    A general Convolutional neural network
+    A general Convolutional Neural Network (CNN)
 
     :param graph: computation graph
     :type graph: tf.Graph
@@ -50,6 +50,7 @@ class CNN():
                                           dype=tf.float32)
         :param reuse: param to control reuse variables
         :type reuse: None or True
+        :return: logits
         :rtype: tf.Tensor(shape=(None, categories),
                           dype=tf.float32)
         """

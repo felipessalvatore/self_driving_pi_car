@@ -6,7 +6,6 @@ import os
 import numpy as np
 import shutil
 import argparse
-
 from DataHolder import DataHolder
 from Config import Config
 from Trainer import Trainer
@@ -36,10 +35,40 @@ def optmizers_search(name_tfrecords,
     Script to run optmizers search,
     the result is saved on the file optmizers_results.txt
 
+    :param name_tfrecords: name of the used tfrecords
+    :type name_tfrecords: str
+    :param records: list of paths to train, test, and valid tfrecords
+    :type records: list of str
+    :param height: image height
+    :type heights: int
+    :param width: image width
+    :type width: int
     :param channels: image channels
     :type channels: int
-    :param records: list of paths to tf_records
-    :type records: none or list of str
+    :param architecture: network architecture
+    :type architecture: list of int
+    :param activations: list of different tf functions
+    :type activations: list of tf.nn.sigmoid, tf.nn.relu, tf.nn.tanh
+    :param conv_architecture: convolutional architecture
+    :type conv_architecture: list of int
+    :param kernel_sizes: filter sizes
+    :type kernel_sizes: list of int
+    :param pool_kernel: pooling filter sizes
+    :type pool_kernel: list of int
+    :param batch_size: batch size for training
+    :type batch_size: int
+    :param epochs: number of epochs
+    :type epochs: int
+    :param num_steps: number of iterations for each epoch
+    :type num_steps: int
+    :param save_step: when step % save_step == 0, the model
+                      parameters are saved.
+    :type save_step: int
+    :param learning_rate: learning rate for the optimizer
+    :type learning_rate: float
+    :param conv: param to control if the model will be a CNN
+                 or DFN
+    :type conv: bool
     """
     OT = [tf.train.GradientDescentOptimizer,
           tf.train.AdadeltaOptimizer,
@@ -66,8 +95,8 @@ def optmizers_search(name_tfrecords,
     else:
         net_name = "DFN"
 
-    header = "\nSearching optimizer for the {} model in the {} data\n".format(net_name, # noqa
-                                                                              name_tfrecords) # noqa
+    header = "\nSearching optimizer for the {} model in the {} data\n".format(net_name,  # noqa
+                                                                              name_tfrecords)  # noqa
     print(header)
 
     for name, opt in zip(OT_name, OT):
@@ -130,16 +159,6 @@ def optmizers_search(name_tfrecords,
 def main():
     """
     Main script to perform optmizer search.
-
-    "mode" is the argument to choose which kind of data will be used:
-        "pure": rgb image with no manipulation.
-        "flip": flippped rgb image (a image with label "left" is
-                flipped and transform in an image with label
-                "right", and vice versa; to have a balanced data).
-        "aug": flippped rgb image with new shadowed and blurred images.
-        "bin": binary image, only one channel.
-        "gray": grayscale image, only one channel.
-        "green": image with only the green channel.
     """
     parser = argparse.ArgumentParser(description='Perform optmizer search')
     parser.add_argument("-n",

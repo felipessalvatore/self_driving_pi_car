@@ -183,7 +183,9 @@ class DataHolder():
 
     def get_train_tfrecord(self):
         """
-        retun path to train tf records
+        retun path to train tfrecords
+
+        :return: path to train tfrecords
         :rtype: str
         """
         if self.records is None:
@@ -194,6 +196,8 @@ class DataHolder():
     def get_valid_tfrecord(self):
         """
         retun path to valid tf records
+
+        :return: path to valid tfrecords
         :rtype: str
         """
         if self.records is None:
@@ -204,6 +208,8 @@ class DataHolder():
     def get_test_tfrecord(self):
         """
         retun path to test tf records
+
+        :return: path to test tfrecords
         :rtype: str
         """
         if self.records is None:
