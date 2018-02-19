@@ -16,7 +16,7 @@ This repository was created by [Paula Moraes](https://github.com/paulaksm) and [
 Robot driving on a track
 </p>
 
-You can read more about the project on Medium <link> link here </link>
+You can read more about the project on [Medium](https://medium.com/@project_m/self-drives-me-crazy-from-0-to-self-driving-car-in-150-hours-bf4f68d50d8a)
 
 ## Getting Started
 
