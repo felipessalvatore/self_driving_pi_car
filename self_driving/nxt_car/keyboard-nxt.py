@@ -8,13 +8,11 @@ sock = BlueSock(ID)
 
 
 def moveCar(bk):
-    ''' remote control function to NXT robot with keyboard inputs.
+    '''
+    Remote control function to NXT robot with keyboard inputs.
 
-    Args:
-        bk (brick): brick object
-
-    Returns:
-        None - user stops exectution when pressing 'q'
+    :param bk: brick
+    :type bk: brick object
     '''
     leftMotor = nxt.Motor(bk, nxt.PORT_B)
     rightMotor = nxt.Motor(bk, nxt.PORT_A)
