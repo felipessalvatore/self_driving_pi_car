@@ -1,6 +1,6 @@
 # Self-Driving Pi Car 
 
-[![Build Status](https://travis-ci.org/felipessalvatore/self_driving_project.svg?branch=master)](https://travis-ci.org/felipessalvatore/self_driving_project)
+[![Build Status](https://travis-ci.org/felipessalvatore/self_driving_pi_car.svg?branch=master)](https://travis-ci.org/felipessalvatore/self_driving_pi_car)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/felipessalvatore/self_driving_pi_car/blob/master/LICENSE)
 
 ## Introduction
