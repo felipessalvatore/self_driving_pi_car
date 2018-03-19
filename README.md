@@ -199,7 +199,7 @@ These last tests check if the image manipulation functions and the tensorflow mo
 ### Citation
 ```
   @misc{self_driving_pi_car2018,
-    author = {Paula Moraes, Felipe Salvatore},
+    author = {Paula Moraes and Felipe Salvatore},
     title = {Self-Driving Pi Car},
     year = {2018},
     howpublished = {\url{https://github.com/felipessalvatore/self_driving_pi_car}},
