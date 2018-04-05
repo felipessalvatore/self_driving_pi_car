@@ -52,9 +52,9 @@ sudo apt-get install libusb-dev
 # Setup USB connection for nxt robot
 sudo dd of=/etc/udev/rules.d/70-lego.rules << EOF
 # Lego NXT brick in normal mode
-SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="00$
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0002", GROUP="lego", MODE="0660"
 # Lego NXT brick in firmware update mode (Atmel SAM-BA mode)
-SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="61$
+SUBSYSTEM=="usb", DRIVER=="usb", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6124", GROUP="lego", MODE="0660"
 EOF
 sudo groupadd lego
 sudo gpasswd -a pi lego
