@@ -3,6 +3,10 @@ sudo: required
 dist: trusty
 python:
   - "2.7"
+  - "3.6"
+matrix:
+  allow_failures:
+    - python: "3.6"
 install:
   - pip install numpy
   - pip install tensorflow==1.2.1
